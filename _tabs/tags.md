@@ -1,5 +1,6 @@
 ---
 layout: tags
-icon: fas fa-tags
-order: 2
+title: Tags
+permalink: /tags/
+order: 5
 ---
