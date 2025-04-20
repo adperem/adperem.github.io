@@ -5,8 +5,15 @@ url: "https://adperem.github.io"
 github:
   username: adperem
 author: Adrián
-avatar: /assets/img/avatar.jpg  # Sube una imagen a esta ruta
+avatar: /assets/img/avatar.jpg  
 timezone: Spain/Madrid  # Ajusta a tu zona horaria
 lang: es_ES  # Para español
 theme_mode: dark  # O 'light' para modo claro
 paginate: 10
+chirpy:
+  categories:
+    layout: categories
+    path: /categories/
+  tags:
+    layout: tags
+    path: /tags/
