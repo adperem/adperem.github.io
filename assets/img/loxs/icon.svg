@@ -1,0 +1,82 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 200">
+                    <defs>
+                        <linearGradient id="scanGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" style="stop-color:#6E44FF"/>
+                        <stop offset="50%" style="stop-color:#1CDCE8"/>
+                        <stop offset="100%" style="stop-color:#F77E21"/>
+                        </linearGradient>
+                        <linearGradient id="textGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="0%" style="stop-color:#FF5F6D"/>
+                        <stop offset="50%" style="stop-color:#FFC371"/>
+                        <stop offset="100%" style="stop-color:#FF5F6D"/>
+                        </linearGradient>
+                    </defs>
+
+                    <!-- Central Scanner Element -->
+                    <g transform="translate(150,100)">
+                        <!-- Outer Ring -->
+                        <circle r="100" fill="none" stroke="#1CDCE8" stroke-width="4" stroke-dasharray="10 5">
+                        <animateTransform attributeName="transform" type="rotate" from="0" to="360" dur="20s" repeatCount="indefinite"/>
+                        </circle>
+                        
+                        <!-- Middle Ring -->
+                        <circle r="85" fill="none" stroke="#F77E21" stroke-width="3" stroke-dasharray="8 4">
+                        <animateTransform attributeName="transform" type="rotate" from="360" to="0" dur="15s" repeatCount="indefinite"/>
+                        </circle>
+                        
+                        <!-- Inner Ring -->
+                        <circle r="50" fill="none" stroke="#6E44FF" stroke-width="2" stroke-dasharray="6 3">
+                        <animateTransform attributeName="transform" type="rotate" from="0" to="360" dur="10s" repeatCount="indefinite"/>
+                        </circle>
+                    </g>
+
+                    <!-- Scanning Beam -->
+                    <g transform="translate(150,100)">
+                        <path d="M0,0 L-70,0 A70,70 0 0,1 -49.5,-49.5" fill="none" stroke="url(#scanGradient)" stroke-width="4">
+                        <animateTransform attributeName="transform" type="rotate" from="0" to="360" dur="4s" repeatCount="indefinite"/>
+                        </path>
+                    </g>
+
+                    <!-- Vulnerability Nodes -->
+                    <g id="vulnerabilityNodes">
+                        <circle cx="150" cy="30" r="5" fill="#FF5F6D">
+                        <animate attributeName="r" values="5;7;5" dur="2s" repeatCount="indefinite"/>
+                        </circle>
+                        <circle cx="230" cy="100" r="5" fill="#FFC371">
+                        <animate attributeName="r" values="5;7;5" dur="2.5s" repeatCount="indefinite"/>
+                        </circle>
+                        <circle cx="190" cy="170" r="5" fill="#F77E21">
+                        <animate attributeName="r" values="5;7;5" dur="3s" repeatCount="indefinite"/>
+                        </circle>
+                        <circle cx="110" cy="170" r="5" fill="#1CDCE8">
+                        <animate attributeName="r" values="5;7;5" dur="2.7s" repeatCount="indefinite"/>
+                        </circle>
+                        <circle cx="70" cy="100" r="5" fill="#6E44FF">
+                        <animate attributeName="r" values="5;7;5" dur="2.2s" repeatCount="indefinite"/>
+                        </circle>
+                    </g>
+
+                    <!-- Connecting Lines -->
+                    <g stroke="#1CDCE8" stroke-width="1" opacity="0.6">
+                        <line x1="150" y1="30" x2="230" y2="100">
+                        <animate attributeName="opacity" values="0.6;0.2;0.6" dur="3s" repeatCount="indefinite"/>
+                        </line>
+                        <line x1="230" y1="100" x2="190" y2="170">
+                        <animate attributeName="opacity" values="0.6;0.2;0.6" dur="3.5s" repeatCount="indefinite"/>
+                        </line>
+                        <line x1="190" y1="170" x2="110" y2="170">
+                        <animate attributeName="opacity" values="0.6;0.2;0.6" dur="4s" repeatCount="indefinite"/>
+                        </line>
+                        <line x1="110" y1="170" x2="70" y2="100">
+                        <animate attributeName="opacity" values="0.6;0.2;0.6" dur="3.7s" repeatCount="indefinite"/>
+                        </line>
+                        <line x1="70" y1="100" x2="150" y2="30">
+                        <animate attributeName="opacity" values="0.6;0.2;0.6" dur="3.2s" repeatCount="indefinite"/>
+                        </line>
+                    </g>
+
+                    <!-- LOXS Text -->
+                    <g transform="translate(150,100)">
+                        <text x="0" y="5" font-family="Arial, sans-serif" font-size="40" font-weight="bold" fill="url(#textGradient)" text-anchor="middle">LOXS</text>
+                    </g>
+                    </svg>
