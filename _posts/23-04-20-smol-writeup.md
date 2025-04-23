@@ -14,7 +14,7 @@ image:
 **Smol** is a TryHackMe machine designed to teach enumeration, web application vulnerabilities, and basic privilege escalation techniques.
 
 - Difficulty: Medium
-- IP Address: `<IP>`
+- IP Address: `10.10.98.160`
 - Creator: josemlwdf
 
 ## Enumeration
@@ -22,12 +22,12 @@ image:
 We begin with a standard Nmap scan to identify open ports and services:
 
 ```bash
-nmap -sC -sV -Pn -p- <IP> -oN nmap.txt
+nmap -sC -sV -Pn -p- 10.10.98.160 -oN nmap.txt
 ```
 
 ```
-# Nmap 7.95 scan initiated Mon Apr 21 09:56:10 2025 as: /usr/lib/nmap/nmap --privileged -sC -sV -Pn -p- -oN nmap.txt -vvv <IP>
-Nmap scan report for <IP>
+# Nmap 7.95 scan initiated Mon Apr 21 09:56:10 2025 as: /usr/lib/nmap/nmap --privileged -sC -sV -Pn -p- -oN nmap.txt -vvv 10.10.98.160
+Nmap scan report for 10.10.98.160
 Host is up, received user-set (0.057s latency).
 Scanned at 2025-04-21 09:56:23 CEST for 50s
 Not shown: 65533 closed tcp ports (reset)
@@ -58,9 +58,9 @@ Nmap reveals two open ports:
 - **22** (`SSH`)
 - **80** (`HTTP`)
 
-Before browsing to the IP (`http://<IP>`) we should add it to the hosts file
+Before browsing to the IP (`http://10.10.98.160`) we should add it to the hosts file
 ```bash
-sudo echo <IP> www.smol.thm >> /etc/hosts
+sudo echo 10.10.98.160 www.smol.thm >> /etc/hosts
 ```
 
 ## HTTP
@@ -92,7 +92,7 @@ ______________________________________________________________
        @_WPScan_, @ethicalhack3r, @erwan_lr, @firefart
 _______________________________________________________________
 
-[32m[+][0m URL: http://www.smol.thm/ [<IP>]
+[32m[+][0m URL: http://www.smol.thm/ [10.10.98.160]
 [32m[+][0m Started: Mon Apr 21 10:09:24 2025
 
 Interesting Finding(s):
