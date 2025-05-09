@@ -10,8 +10,6 @@ image:
 description: An in-depth analysis of the LockBit ransomware group's tactics, victim negotiations, and affected companies based on leaked documents.
 ---
 
-# How the LockBit Group Operates with Its Victims: An Analysis of Their Conversations
-
 ## Introduction
 The LockBit ransomware group has gained notoriety for its attacks on businesses and organizations worldwide. Thanks to leaked documents following the hacking of LockBit, we can analyze how they interact with their victims, their negotiation tactics, and the companies affected. This article explores the conversations between LockBit and its victims, citing specific examples from the leaked documents, and provides detailed information about the targeted companies.
 
