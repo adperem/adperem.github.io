@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "User Manual for loxs (adperem Fork)"
+title: "m Fork)"
 date: 2025-04-20 12:30
 categories: [Manual, Open Source, loxs]
 tags: [loxs, automation, tor, open-source, guide]
