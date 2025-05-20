@@ -1,12 +1,13 @@
 ---
+layout: post
 title: "Introducing Fuzzstorm: The Ultimate Fuzzing Tool with Soft 404 Detection and Stunning HTML Reports"
 date: 2025-05-20 09:00:00
 categories: [Cybersecurity, Fuzzing, Tools]
 tags: [fuzzing, cybersecurity, web-security, penetration-testing, soft-404, html-reports]
 description: "Discover Fuzzstorm, a new fuzzing tool designed to simplify web application testing with comprehensive scans, unique soft 404 detection, and beautiful HTML reports for easy result interpretation."
-layout: post
-toc: true
-comments: true
+image:  
+  path: /assets/img/fuzzstorm-logo.png  
+  alt: "fuzzstorm"
 ---
 
 # Introducing Fuzzstorm: Revolutionizing Fuzzing with Simplicity, Precision, and Beautiful Reports
