@@ -5,7 +5,7 @@ date: 2025-05-20 17:02:00
 categories: [Ciberseguridad, Privacidad, Herramientas]
 tags: [tor, oniux, ciberseguridad, privacidad, linux, anonimato]
 image:
-  path: /assets/img/oniux/oniux-logo.png
+  path: /assets/img/loxs/icon.svg
   alt: "oniux logo"
 description: "Introducing Oniux: a new tool from the Tor Project that isolates Linux apps and guarantees secure, leak-proof routing through the Tor network."
 ---
