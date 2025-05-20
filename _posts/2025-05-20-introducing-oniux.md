@@ -74,12 +74,4 @@ For debugging, enable detailed logs with:
 RUST_LOG=debug oniux curl https://icanhazip.com
 ```
 
-## Experimental Status and Call to the Community
 
-The Tor Project emphasizes that Oniux is still experimental and has not been extensively tested in all scenarios. It is not recommended for critical operations until it matures. Users are encouraged to try Oniux, report issues, and contribute to its development through the [GitLab repository](https://gitlab.torproject.org/tpo/core/oniux).
-
-## Conclusion
-
-Oniux is a step forward in online privacy protection, offering a robust solution to route Linux application traffic through Tor without leakage risks. Its use of Linux namespaces and integration with Arti and onionmasq make it a promising tool for environments where privacy is essential. If you're looking to maximize your anonymity, Oniux is a tool worth exploring.
-
-For more information, visit the [Tor Project's official blog](https://blog.torproject.org/introducing-oniux-tor-isolation-using-linux-namespaces/) or the [Oniux repository](https://gitlab.torproject.org/tpo/core/oniux). Join the community and help strengthen this tool!
