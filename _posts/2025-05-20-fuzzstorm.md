@@ -10,7 +10,7 @@ image:
   alt: "fuzzstorm"
 ---
 
-# Introducing Fuzzstorm: Revolutionizing Fuzzing with Simplicity, Precision, and Beautiful Reports
+## Introducing Fuzzstorm: Revolutionizing Fuzzing with Simplicity, Precision, and Beautiful Reports
 
 In the fast-paced world of cybersecurity, fuzzing is a critical technique for uncovering hidden vulnerabilities in web applications. Yet, many fuzzing tools are complex, prone to false positives, or require endless configuration tweaks. Enter **[Fuzzstorm](https://github.com/adperem/fuzzstorm)**, a game-changing fuzzing tool designed to simplify the process, deliver accurate results, and present findings in a visually stunning way. Whether you're a pentester, bug bounty hunter, or developer, Fuzzstorm is here to make your life easier.
 
