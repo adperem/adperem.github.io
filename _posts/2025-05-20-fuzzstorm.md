@@ -1,13 +1,13 @@
 ---
 layout: post
-title: "m Fork)"
-date: 2025-04-20 12:30
-categories: [Manual, Open Source, loxs]
-tags: [loxs, automation, tor, open-source, guide]
-image:
-  path: /assets/img/loxs/icon.svg
-  alt: "loxs"
-description: A comprehensive guide to using the loxs tool (adperem fork), an enhanced automation utility with Tor traffic routing.
+title: "Introducing Fuzzstorm: The Ultimate Fuzzing Tool with Soft 404 Detection and Stunning HTML Reports"
+date: 2025-05-20 09:00:00
+categories: [Cybersecurity, Fuzzing, Tools]
+tags: [fuzzing, cybersecurity, web-security, penetration-testing, soft-404, html-reports]
+description: "Discover Fuzzstorm, a new fuzzing tool designed to simplify web application testing with comprehensive scans, unique soft 404 detection, and beautiful HTML reports for easy result interpretation."
+image:  
+  path: /assets/img/fuzzstorm-logo.png  
+  alt: "fuzzstorm"
 ---
 
 ## Introduction
