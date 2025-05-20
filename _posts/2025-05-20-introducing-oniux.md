@@ -10,7 +10,7 @@ image:
   alt: "oniux logo"
 ---
 
-# Oniux: The Tor Project's New Tool to Route Traffic Through Tor
+## Oniux: The Tor Project's New Tool to Route Traffic Through Tor
 
 The Tor Project has recently launched **Oniux**, an innovative command-line utility designed to enhance the privacy and security of Linux users. Oniux allows any Linux application to be isolated and have its traffic routed exclusively through the Tor network, eliminating the risk of data leaks. Although still experimental, this tool marks a significant advancement for those requiring online anonymity, such as activists, journalists, and researchers.
 
