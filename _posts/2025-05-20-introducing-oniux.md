@@ -73,6 +73,7 @@ You’ll need a Linux system with **Rust** installed. Then simply run:
 git clone https://gitlab.torproject.org/tpo/core/oniux.git
 cd oniux
 cargo build --release
+sudo cp target/release/oniux /usr/local/bin/
 ```
 
 ### 💡 Example Usage:
