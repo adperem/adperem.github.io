@@ -71,6 +71,8 @@ You’ll need a Linux system with **Rust** installed. Then simply run:
 
 ```bash
 git clone https://gitlab.torproject.org/tpo/core/oniux.git
+cd oniux
+cargo build --release
 ```
 
 ### 💡 Example Usage:
