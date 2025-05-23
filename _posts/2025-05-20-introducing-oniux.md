@@ -70,7 +70,9 @@ Oniux uses **Linux namespaces**, a kernel feature, to spin up isolated processes
 You’ll need a Linux system with **Rust** installed. Then simply run:
 
 ```bash
-cargo install --git https://gitlab.torproject.org/tpo/core/oniux oniux@0.4.0
+git clone https://gitlab.torproject.org/tpo/core/oniux.git
+cd oniux
+cargo build --release
 ```
 
 ### 💡 Example Usage:
