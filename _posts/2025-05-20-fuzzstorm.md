@@ -61,6 +61,8 @@ Ready to revolutionize your fuzzing process? Fuzzstorm is open-source and availa
    ```
 2. **Install Dependencies**:
    ```bash
+   python3 -m venv fuzzVenv
+   source fuzzVenv/bin/activate
    pip install -r requirements.txt
    ```  
 3. **Run Fuzzstorm**:
