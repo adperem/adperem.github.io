@@ -1,0 +1,35 @@
+menu:
+  home: "Home"
+  categories: "Categories"
+  tags: "Tags"
+  archives: "Archives"
+  about: "About"
+  search: "Search"
+
+footer:
+  copyright: "© 2025 adperem. All rights reserved."
+  powered_by: "Powered by Jekyll and Chirpy"
+
+search:
+  placeholder: "Search..."
+  no_results: "No results found."
+
+post:
+  read_more: "Read more"
+  toc: "Table of Contents"
+  updated: "Updated"
+  words: "words"
+  minutes: "minutes read"
+
+pagination:
+  previous: "Previous"
+  next: "Next"
+
+comment:
+  leave_comment: "Leave a Comment"
+
+404:
+  title: "404"
+  message: "Oops! That page can’t be found."
+  back_home: "Back to Home"
+
