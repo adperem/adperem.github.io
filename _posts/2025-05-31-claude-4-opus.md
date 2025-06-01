@@ -6,9 +6,8 @@ tags: [claude 4 opus, anthropic, ai security, autonomous ai, cybersecurity risks
 description: "Anthropic’s Claude 4 Opus isn’t just advanced AI: it’s an autonomous agent that could shield your data or tear down your defenses. What happens when your greatest tech ally becomes your worst nightmare?"
 layout: post
 image:
-  path: /assets/img/claude4opus/claude-logo-png.png
+  path: /assets/img/claude-logo-png.png
   alt: "Claude 4 Opus AI"
-lang: en
 ---
 
 ## Claude 4 Opus: Ultimate Cybersecurity Guardian or Silent Enemy?
