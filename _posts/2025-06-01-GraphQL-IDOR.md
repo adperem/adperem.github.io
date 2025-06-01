@@ -5,7 +5,7 @@ date: 2025-06-01 18:45:00
 categories: [Cybersecurity, GraphQL, Bug Bounty]
 tags: [idor, graphql, shopify, bug bounty, insecure direct object reference]
 image:
-  path: /assets/img/graphql-idor.png
+  path: /assets/img/IDOR/graphql-idor.png
   alt: "GraphQL IDOR diagram"
 description: "How a single missing permission check allowed me to read and modify any customer cart on the target shop."
 ---
