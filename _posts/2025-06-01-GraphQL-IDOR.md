@@ -12,8 +12,6 @@ description: "How a single missing permission check allowed me to read and modif
 
 # Critical IDOR in the GraphQL Endpoint of **[redacted-domain]**
 
-![Nuclei Scan](https://raw.githubusercontent.com/projectdiscovery/nuclei/master/docs/img/nuclei-logo.png "Nuclei Logo")
-
 **Responsible disclosure:** This research was conducted for educational purposes. The findings were reported to the *[redacted-domain]* team prior to publication, and mitigations are already in place.
 
 ---
@@ -49,7 +47,7 @@ GraphQL exposes **an entire data model** under a single URL (`/api/graphql`). If
 
 *Below is a screenshot of the result of running Nuclei against `/api/graphql`:*
 
-![Nuclei Scan Result](/assets/img/nuclei-scan-result.png "Nuclei Scan Results for GraphQL")
+![Nuclei Scan Result](/assets/img/IDOR/nuclei-scan.png "Nuclei Scan Results for GraphQL")
 
 ---
 
