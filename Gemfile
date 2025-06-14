@@ -7,7 +7,7 @@ gem 'jekyll-multiple-languages-plugin'
 gem 'jekyll-sitemap'
 gem 'jekyll-feed'
 gem 'jekyll-seo-tag'
-gem 'jekyll-archives'
+
 
 gem "html-proofer", "~> 5.0", group: :test
 
