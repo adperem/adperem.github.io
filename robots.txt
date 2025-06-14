@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://adperem.github.io/sitemap.xml
