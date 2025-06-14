@@ -17,13 +17,17 @@ exclude_from_localization:
 lang: en
 
 # Timezone
-timezone: Europe/Spaina
+timezone: Europe/Madrid
+
+# Plugins
+plugins:
+  - jekyll-sitemap
 
 # jekyll-seo-tag settings
-title: adperem
-tagline:
+title: "Adperem Cybersecurity Blog"
+tagline: "Cybersecurity Blog & Tools"
 description: >-
-  Simple blog for sharing writeups, tools and more
+  Cybersecurity blog sharing writeups, tools and more
 
 url: "https://adperem.github.io"
 
