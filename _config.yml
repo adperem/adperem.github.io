@@ -23,7 +23,6 @@ timezone: Europe/Madrid
 plugins:
   - jekyll-sitemap
   - jekyll-feed
-  - jekyll-multiple-languages-plugin
 
 # jekyll-seo-tag settings
 title: "Adperem Cybersecurity Blog"
