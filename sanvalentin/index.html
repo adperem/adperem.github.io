@@ -10,8 +10,6 @@
       --shadow: 0 16px 60px rgba(0,0,0,.45);
     }
     *{box-sizing:border-box}
-
-    /* A prueba de estilos externos */
     [hidden]{ display:none !important; }
 
     body{
@@ -23,26 +21,21 @@
                   var(--bg);
       overflow:hidden;
     }
-    .wrap{
-      width:min(980px, 92vw);
-      display:grid;
-      gap:18px;
-    }
+    canvas#confetti{ position:fixed; inset:0; pointer-events:none; }
+
+    .wrap{ width:min(980px, 92vw); display:grid; gap:18px; }
     header{
       background: rgba(18,26,42,.7);
       border:1px solid rgba(255,255,255,.08);
       border-radius:20px;
-      padding:18px 18px;
+      padding:18px;
       box-shadow: var(--shadow);
       backdrop-filter: blur(10px);
     }
     h1{margin:0 0 6px; font-size: clamp(18px, 2.4vw, 28px);}
     p{margin:0; color:var(--muted); line-height:1.4}
-    .grid{
-      display:grid;
-      grid-template-columns: 1fr;
-      gap:18px;
-    }
+
+    .grid{ display:grid; grid-template-columns: 1fr; gap:18px; }
     @media (min-width: 900px){
       .grid{ grid-template-columns: 1.1fr .9fr; align-items:start; }
     }
@@ -81,6 +74,13 @@
     }
     .btn:hover{ transform: translateY(-1px); background: rgba(255,255,255,.10); }
     .btn:active{ transform: translateY(0px) scale(.99); }
+    .btn.primary{
+      background: linear-gradient(135deg, rgba(255,77,141,.95), rgba(255,140,190,.9));
+      border:none;
+      color:#0b0f17;
+      font-weight:800;
+    }
+    .btn:disabled{ opacity:.45; cursor:not-allowed; transform:none; }
 
     .board{
       width: min(92vw, 520px);
@@ -101,7 +101,6 @@
       border-radius:14px;
       background-size: 300% 300%;
       background-repeat:no-repeat;
-      position:relative;
       outline: 1px solid rgba(255,255,255,.08);
       cursor:pointer;
       transition: transform .08s ease, outline-color .12s ease, filter .12s ease;
@@ -109,15 +108,10 @@
     }
     .tile:hover{ transform: scale(1.01); outline-color: rgba(255,77,141,.55); }
     .tile.selected{ outline: 2px solid rgba(255,77,141,.95); filter: saturate(1.1); }
-    .tile::after{ content:""; }
 
-    .hint{
-      font-size:14px;
-      color: var(--muted);
-      margin-top:10px;
-    }
+    .hint{ font-size:14px; color: var(--muted); margin-top:10px; }
 
-    .ok{
+    .panel{
       margin-top:14px;
       padding:14px;
       border-radius:16px;
@@ -129,10 +123,67 @@
       from{ opacity:0; transform: translateY(6px); }
       to{ opacity:1; transform: translateY(0); }
     }
-    .ok h2{ margin:0 0 6px; font-size:18px;}
-    .question{
-      font-size:18px;
-      margin:0 0 12px;
+    .panel h2{ margin:0 0 6px; font-size:18px; }
+    .panel p{ margin:0 0 10px; }
+
+    .camBox{
+      margin-top:10px;
+      border-radius:16px;
+      overflow:hidden;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.04);
+    }
+    video{
+      width:100%;
+      height:auto;
+      display:block;
+      background:#000;
+    }
+    .camOverlay{
+      position:relative;
+    }
+    .overlayText{
+      position:absolute;
+      left:12px;
+      right:12px;
+      bottom:12px;
+      padding:10px 12px;
+      border-radius:14px;
+      background: rgba(0,0,0,.45);
+      border:1px solid rgba(255,255,255,.14);
+      color: rgba(255,255,255,.88);
+      font-size:13px;
+    }
+    .row{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top:10px;
+    }
+    .previewImg{
+      width:100%;
+      display:block;
+      border-top:1px solid rgba(255,255,255,.10);
+    }
+    .error{
+      margin-top:10px;
+      padding:10px 12px;
+      border-radius:14px;
+      background: rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.12);
+      color: rgba(255,255,255,.85);
+      font-size:13px;
+    }
+
+    .question{ font-size:18px; margin:0 0 12px; }
+    .heart{
+      display:inline-block;
+      transform-origin:center;
+      animation: pop 1.2s ease-in-out infinite;
+    }
+    @keyframes pop{
+      0%,100%{ transform: scale(1); }
+      50%{ transform: scale(1.18); }
     }
 
     .ctaRow{
@@ -151,9 +202,9 @@
     }
     .yes{
       background: linear-gradient(135deg, rgba(255,77,141,.95), rgba(255,140,190,.9));
-      border: none;
+      border:none;
       color:#0b0f17;
-      font-weight:700;
+      font-weight:800;
       padding:12px 18px;
       border-radius:14px;
       cursor:pointer;
@@ -186,17 +237,6 @@
     }
     .final .big{ font-size:22px; font-weight:800; margin:0 0 6px;}
     .final .small{ color:var(--muted); margin:0;}
-    .heart{
-      display:inline-block;
-      transform-origin:center;
-      animation: pop 1.2s ease-in-out infinite;
-    }
-    @keyframes pop{
-      0%,100%{ transform: scale(1); }
-      50%{ transform: scale(1.18); }
-    }
-
-    canvas{ position:fixed; inset:0; pointer-events:none; }
   </style>
 </head>
 <body>
@@ -205,7 +245,7 @@
   <div class="wrap">
     <header>
       <h1>Modo San Valentín (edición informática)</h1>
-      <p>Reconstruye la foto para desbloquear una pregunta importante. Pista: toca dos piezas para intercambiarlas.</p>
+      <p>Primero el puzzle. Luego una prueba con cámara. Al final, la pregunta.</p>
     </header>
 
     <div class="grid">
@@ -220,11 +260,37 @@
       <aside class="card">
         <div class="badge">✅ Objetivo</div>
         <div class="hint">
-          Cuando esté bien, se desbloquea la pregunta final.<br/>
-          Consejo: usa una foto cuadrada para que no recorte raro.
+          1. Reconstruye la foto.<br/>
+          2. Haz una foto con el monito de peluche.<br/>
+          3. Se desbloquea la pregunta final.
         </div>
 
-        <div class="ok" id="ok" hidden>
+        <div class="panel" id="cameraStep" hidden>
+          <h2>Prueba 2: cámara</h2>
+          <p>Activa la cámara y haz una foto sosteniendo el monito de peluche 🐒</p>
+
+          <div class="row">
+            <button class="btn primary" id="startCam" type="button">Activar cámara</button>
+            <button class="btn" id="takePhoto" type="button" disabled>Hacer foto</button>
+            <button class="btn" id="continueAfterPhoto" type="button" disabled>Continuar</button>
+          </div>
+
+          <div class="camBox" id="camBox" hidden>
+            <div class="camOverlay">
+              <video id="video" autoplay muted playsinline></video>
+              <div class="overlayText">
+                Mantén el monito visible en el encuadre y pulsa “Hacer foto”.
+              </div>
+            </div>
+            <img id="preview" class="previewImg" alt="Foto capturada" hidden />
+          </div>
+
+          <div class="error" id="camError" hidden></div>
+
+          <canvas id="snap" hidden></canvas>
+        </div>
+
+        <div class="panel" id="finalStep" hidden>
           <h2>Acceso concedido</h2>
           <p class="question">¿Quieres ser mi San Valentín? <span class="heart">❤️</span></p>
 
@@ -233,7 +299,7 @@
             <button class="no" id="no" type="button">No</button>
           </div>
 
-          <div class="final" id="final">
+          <div class="final" id="finalMsg">
             <p class="big">Te quiero muchísimo 🥰</p>
             <p class="small">Has desbloqueado el evento: “San Valentín contigo”.</p>
           </div>
@@ -243,55 +309,93 @@
   </div>
 
   <script>
-    const IMG_URL = "assets/photo.jpg";
-    const SIZE = 3;
-    const TOTAL = SIZE * SIZE;
+    // Foto del puzzle: sanvalentin/assets/photo.jpg
+    var IMG_URL = "assets/photo.jpg";
 
-    const boardEl = document.getElementById("board");
-    const movesEl = document.getElementById("moves");
-    const okEl = document.getElementById("ok");
-    const shuffleBtn = document.getElementById("shuffle");
+    var SIZE = 3;
+    var TOTAL = SIZE * SIZE;
 
-    let order = [...Array(TOTAL).keys()];
-    let selectedPos = null;
-    let moves = 0;
+    var boardEl = document.getElementById("board");
+    var movesEl = document.getElementById("moves");
+    var shuffleBtn = document.getElementById("shuffle");
 
-    const tiles = [];
+    var cameraStep = document.getElementById("cameraStep");
+    var finalStep = document.getElementById("finalStep");
+
+    var startCamBtn = document.getElementById("startCam");
+    var takePhotoBtn = document.getElementById("takePhoto");
+    var continueBtn = document.getElementById("continueAfterPhoto");
+    var camBox = document.getElementById("camBox");
+    var camError = document.getElementById("camError");
+
+    var video = document.getElementById("video");
+    var snapCanvas = document.getElementById("snap");
+    var previewImg = document.getElementById("preview");
+
+    var yesBtn = document.getElementById("yes");
+    var noBtn = document.getElementById("no");
+    var row = document.getElementById("ctaRow");
+    var finalMsg = document.getElementById("finalMsg");
+
+    var order = [];
+    var selectedPos = null;
+    var moves = 0;
+    var tiles = [];
+
+    var mediaStream = null;
+    var photoTaken = false;
+
+    function initOrderSolved(){
+      order = [];
+      var i = 0;
+      while (i < TOTAL){
+        order.push(i);
+        i++;
+      }
+    }
 
     function createTiles(){
       boardEl.innerHTML = "";
-      tiles.length = 0;
-
-      for(let pos = 0; pos < TOTAL; pos++){
-        const tile = document.createElement("div");
-        tile.className = "tile";
-        tile.dataset.pos = String(pos);
-        tile.addEventListener("click", () => onTileClick(pos));
-        tiles.push(tile);
-        boardEl.appendChild(tile);
+      tiles = [];
+      var pos = 0;
+      while (pos < TOTAL){
+        (function(p){
+          var tile = document.createElement("div");
+          tile.className = "tile";
+          tile.dataset.pos = String(p);
+          tile.addEventListener("click", function(){ onTileClick(p); });
+          tiles.push(tile);
+          boardEl.appendChild(tile);
+        })(pos);
+        pos++;
       }
     }
 
     function applyOrder(){
-      for(let pos = 0; pos < TOTAL; pos++){
-        const tileIndex = order[pos];
-        const tileEl = tiles[pos];
+      var pos = 0;
+      while (pos < TOTAL){
+        var tileIndex = order[pos];
+        var tileEl = tiles[pos];
 
-        tileEl.classList.toggle("selected", pos === selectedPos);
+        if (pos === selectedPos) tileEl.classList.add("selected");
+        else tileEl.classList.remove("selected");
 
-        const x = tileIndex % SIZE;
-        const y = Math.floor(tileIndex / SIZE);
+        var x = tileIndex % SIZE;
+        var y = Math.floor(tileIndex / SIZE);
 
-        tileEl.style.backgroundImage = `url('${IMG_URL}')`;
-        tileEl.style.backgroundPosition = `${(x * 100) / (SIZE - 1)}% ${(y * 100) / (SIZE - 1)}%`;
+        tileEl.style.backgroundImage = "url('" + IMG_URL + "')";
+        tileEl.style.backgroundPosition =
+          ((x * 100) / (SIZE - 1)) + "% " + ((y * 100) / (SIZE - 1)) + "%";
+
+        pos++;
       }
 
-      movesEl.textContent = `· ${moves} movimientos`;
+      movesEl.textContent = "· " + moves + " movimientos";
       checkSolved();
     }
 
     function swap(a, b){
-      const tmp = order[a];
+      var tmp = order[a];
       order[a] = order[b];
       order[b] = tmp;
     }
@@ -318,112 +422,253 @@
     }
 
     function shuffledOrder(){
-      const arr = [...Array(TOTAL).keys()];
-      for(let i = arr.length - 1; i > 0; i--){
-        const j = Math.floor(Math.random() * (i + 1));
-        [arr[i], arr[j]] = [arr[j], arr[i]];
+      var arr = [];
+      var i = 0;
+      while (i < TOTAL){
+        arr.push(i);
+        i++;
       }
-      if (arr.every((v, i) => v === i)) return shuffledOrder();
+
+      i = arr.length - 1;
+      while (i > 0){
+        var j = Math.floor(Math.random() * (i + 1));
+        var t = arr[i];
+        arr[i] = arr[j];
+        arr[j] = t;
+        i--;
+      }
+
+      var solved = true;
+      i = 0;
+      while (i < arr.length){
+        if (arr[i] !== i){ solved = false; break; }
+        i++;
+      }
+      if (solved) return shuffledOrder();
       return arr;
     }
 
     function checkSolved(){
-      const solved = order.every((v, i) => v === i);
-      if (solved) unlock();
+      var i = 0;
+      while (i < TOTAL){
+        if (order[i] !== i) return;
+        i++;
+      }
+      unlockPuzzle();
     }
 
-    function unlock(){
-      if (!okEl.hidden) return;
-      okEl.hidden = false;
+    function unlockPuzzle(){
+      if (!cameraStep.hidden) return;
+      cameraStep.hidden = false;
       fireConfetti();
     }
 
-    shuffleBtn.addEventListener("click", () => {
+    function unlockFinal(){
+      if (!finalStep.hidden) return;
+      finalStep.hidden = false;
+      fireConfetti();
+    }
+
+    function resetFlow(){
+      stopCamera();
+      photoTaken = false;
+
+      cameraStep.hidden = true;
+      finalStep.hidden = true;
+
+      camBox.hidden = true;
+      camError.hidden = true;
+      camError.textContent = "";
+
+      previewImg.hidden = true;
+      previewImg.src = "";
+
+      takePhotoBtn.disabled = true;
+      continueBtn.disabled = true;
+    }
+
+    shuffleBtn.addEventListener("click", function(){
+      resetFlow();
+
       selectedPos = null;
       order = shuffledOrder();
       moves = 0;
 
-      okEl.hidden = true;
-      document.getElementById("final").style.display = "none";
-
       applyOrder();
     });
 
-    const noBtn = document.getElementById("no");
-    const row = document.getElementById("ctaRow");
-    const yesBtn = document.getElementById("yes");
-    const finalEl = document.getElementById("final");
+    // Cámara
+    function showError(msg){
+      camError.textContent = msg;
+      camError.hidden = false;
+    }
 
-    function clamp(v, min, max){ return Math.max(min, Math.min(max, v)); }
+    function clearError(){
+      camError.textContent = "";
+      camError.hidden = true;
+    }
+
+    function startCamera(){
+      clearError();
+
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){
+        showError("Este navegador no permite cámara. Prueba con Safari o Chrome en el móvil.");
+        return;
+      }
+
+      navigator.mediaDevices.getUserMedia({
+        video: { facingMode: "user" },
+        audio: false
+      }).then(function(stream){
+        mediaStream = stream;
+        video.srcObject = stream;
+
+        camBox.hidden = false;
+        previewImg.hidden = true;
+
+        takePhotoBtn.disabled = false;
+        continueBtn.disabled = true;
+      }).catch(function(err){
+        showError("No se pudo acceder a la cámara. Revisa permisos del navegador y vuelve a intentar.");
+      });
+    }
+
+    function stopCamera(){
+      if (!mediaStream) return;
+      var tracks = mediaStream.getTracks();
+      var i = 0;
+      while (i < tracks.length){
+        tracks[i].stop();
+        i++;
+      }
+      mediaStream = null;
+      video.srcObject = null;
+    }
+
+    function takePhoto(){
+      if (!mediaStream) return;
+
+      var w = video.videoWidth || 720;
+      var h = video.videoHeight || 1280;
+
+      // Mejor aspecto para selfie en vertical
+      snapCanvas.width = w;
+      snapCanvas.height = h;
+
+      var ctx = snapCanvas.getContext("2d");
+      ctx.drawImage(video, 0, 0, w, h);
+
+      var dataUrl = snapCanvas.toDataURL("image/jpeg", 0.92);
+      previewImg.src = dataUrl;
+      previewImg.hidden = false;
+
+      photoTaken = true;
+      continueBtn.disabled = false;
+
+      // Si quieres, puedes parar cámara al hacer la foto:
+      // stopCamera();
+    }
+
+    startCamBtn.addEventListener("click", function(){
+      startCamera();
+    });
+
+    takePhotoBtn.addEventListener("click", function(){
+      takePhoto();
+    });
+
+    continueBtn.addEventListener("click", function(){
+      if (!photoTaken){
+        showError("Primero haz la foto con el monito.");
+        return;
+      }
+      stopCamera();
+      unlockFinal();
+    });
+
+    window.addEventListener("pagehide", function(){
+      stopCamera();
+    });
+
+    // Botón No que huye
+    function clamp(v, min, max){
+      return Math.max(min, Math.min(max, v));
+    }
 
     function moveNoButtonAwayFrom(px, py){
-      const r = row.getBoundingClientRect();
-      const b = noBtn.getBoundingClientRect();
+      var r = row.getBoundingClientRect();
+      var b = noBtn.getBoundingClientRect();
 
-      const padding = 10;
-      const maxLeft = r.width - b.width - padding;
-      const maxTop  = r.height - b.height - padding;
+      var padding = 10;
+      var maxLeft = r.width - b.width - padding;
+      var maxTop = r.height - b.height - padding;
 
-      const curLeft = parseFloat(noBtn.style.left || "0");
-      const curTop  = parseFloat(noBtn.style.top || "0");
+      var curLeft = parseFloat(noBtn.style.left || "0");
+      var curTop = parseFloat(noBtn.style.top || "0");
 
-      const btnCx = r.left + curLeft + b.width / 2;
-      const btnCy = r.top + curTop + b.height / 2;
-      const dx = btnCx - px;
-      const dy = btnCy - py;
+      var btnCx = r.left + curLeft + b.width / 2;
+      var btnCy = r.top + curTop + b.height / 2;
 
-      const push = 80;
-      const len = Math.hypot(dx, dy) || 1;
+      var dx = btnCx - px;
+      var dy = btnCy - py;
 
-      let newLeft = curLeft + (dx / len) * push + (Math.random() * 30 - 15);
-      let newTop  = curTop  + (dy / len) * push + (Math.random() * 30 - 15);
+      var push = 80;
+      var len = Math.hypot(dx, dy) || 1;
+
+      var newLeft = curLeft + (dx / len) * push + (Math.random() * 30 - 15);
+      var newTop = curTop + (dy / len) * push + (Math.random() * 30 - 15);
 
       newLeft = clamp(newLeft, padding, maxLeft);
-      newTop  = clamp(newTop, padding, maxTop);
+      newTop = clamp(newTop, padding, maxTop);
 
-      noBtn.style.left = `${newLeft}px`;
-      noBtn.style.top = `${newTop}px`;
+      noBtn.style.left = newLeft + "px";
+      noBtn.style.top = newTop + "px";
     }
 
     noBtn.style.left = "62%";
     noBtn.style.top = "22px";
 
-    noBtn.addEventListener("pointerdown", (e) => {
+    noBtn.addEventListener("pointerdown", function(e){
       e.preventDefault();
       moveNoButtonAwayFrom(e.clientX, e.clientY);
     });
 
-    row.addEventListener("pointermove", (e) => {
-      const b = noBtn.getBoundingClientRect();
-      const cx = b.left + b.width / 2;
-      const cy = b.top + b.height / 2;
-      const dist = Math.hypot(e.clientX - cx, e.clientY - cy);
+    row.addEventListener("pointermove", function(e){
+      if (finalStep.hidden) return;
+
+      var b = noBtn.getBoundingClientRect();
+      var cx = b.left + b.width / 2;
+      var cy = b.top + b.height / 2;
+      var dist = Math.hypot(e.clientX - cx, e.clientY - cy);
 
       if (dist < 90) moveNoButtonAwayFrom(e.clientX, e.clientY);
     });
 
-    yesBtn.addEventListener("click", () => {
-      finalEl.style.display = "block";
+    yesBtn.addEventListener("click", function(){
+      finalMsg.style.display = "block";
       fireConfetti();
     });
 
-    const canvas = document.getElementById("confetti");
-    const ctx = canvas.getContext("2d");
-    let confetti = [];
+    // Confetti simple
+    var confettiCanvas = document.getElementById("confetti");
+    var confettiCtx = confettiCanvas.getContext("2d");
+    var confetti = [];
+    var animating = false;
 
     function resize(){
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
+      confettiCanvas.width = window.innerWidth;
+      confettiCanvas.height = window.innerHeight;
     }
     window.addEventListener("resize", resize);
     resize();
 
     function fireConfetti(){
-      const count = 160;
-      const cx = canvas.width * 0.5;
-      const cy = canvas.height * 0.25;
+      var count = 160;
+      var cx = confettiCanvas.width * 0.5;
+      var cy = confettiCanvas.height * 0.25;
 
-      for(let i = 0; i < count; i++){
+      var i = 0;
+      while (i < count){
         confetti.push({
           x: cx,
           y: cy,
@@ -433,28 +678,35 @@
           s: 4 + Math.random() * 4,
           r: Math.random() * Math.PI
         });
+        i++;
       }
+
       if (!animating) animate();
     }
 
-    let animating = false;
     function animate(){
       animating = true;
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      confettiCtx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
 
-      confetti = confetti.filter(p => p.y < canvas.height + 40);
+      confetti = confetti.filter(function(p){
+        return p.y < confettiCanvas.height + 40;
+      });
 
-      for(const p of confetti){
+      var i = 0;
+      while (i < confetti.length){
+        var p = confetti[i];
         p.vy += p.g;
         p.x += p.vx;
         p.y += p.vy;
         p.r += 0.12;
 
-        ctx.save();
-        ctx.translate(p.x, p.y);
-        ctx.rotate(p.r);
-        ctx.fillRect(-p.s/2, -p.s/2, p.s, p.s*0.6);
-        ctx.restore();
+        confettiCtx.save();
+        confettiCtx.translate(p.x, p.y);
+        confettiCtx.rotate(p.r);
+        confettiCtx.fillRect(-p.s/2, -p.s/2, p.s, p.s*0.6);
+        confettiCtx.restore();
+
+        i++;
       }
 
       if (confetti.length > 0){
@@ -464,8 +716,9 @@
       }
     }
 
-    // Init correcto: primero creamos tiles, luego mezclamos, luego pintamos
-    okEl.hidden = true;
+    // Init
+    resetFlow();
+    initOrderSolved();
     createTiles();
     order = shuffledOrder();
     applyOrder();
