@@ -1,0 +1,15 @@
+{% comment %}
+  Compatibility override for GitHub Pages (Jekyll 3.10 / Liquid 4):
+  `number_of_words` in this environment only accepts 1 argument.
+{% endcomment %}
+
+{% assign words = include.content | strip_html | number_of_words %}
+{% assign wpm = 180 %}
+{% assign read_time = words | divided_by: wpm %}
+{% if read_time < 1 %}
+  {% assign read_time = 1 %}
+{% endif %}
+
+<span class="readtime">
+  {{ read_time }} min read
+</span>
