@@ -10,6 +10,10 @@
       --shadow: 0 16px 60px rgba(0,0,0,.45);
     }
     *{box-sizing:border-box}
+
+    /* A prueba de estilos externos */
+    [hidden]{ display:none !important; }
+
     body{
       margin:0; min-height:100vh; display:grid; place-items:center;
       font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
@@ -52,7 +56,6 @@
       backdrop-filter: blur(10px);
     }
 
-    /* Puzzle */
     .puzzleTop{
       display:flex; align-items:center; justify-content:space-between; gap:12px;
       margin-bottom:12px;
@@ -106,18 +109,14 @@
     }
     .tile:hover{ transform: scale(1.01); outline-color: rgba(255,77,141,.55); }
     .tile.selected{ outline: 2px solid rgba(255,77,141,.95); filter: saturate(1.1); }
-
-    /* Oculta numeritos (queda más bonito). Si los quieres, borra este bloque */
     .tile::after{ content:""; }
 
-    /* Right side */
     .hint{
       font-size:14px;
       color: var(--muted);
       margin-top:10px;
     }
 
-    /* Bloque desbloqueable */
     .ok{
       margin-top:14px;
       padding:14px;
@@ -130,12 +129,12 @@
       from{ opacity:0; transform: translateY(6px); }
       to{ opacity:1; transform: translateY(0); }
     }
-
     .ok h2{ margin:0 0 6px; font-size:18px;}
     .question{
       font-size:18px;
       margin:0 0 12px;
     }
+
     .ctaRow{
       position:relative;
       height:90px;
@@ -197,7 +196,6 @@
       50%{ transform: scale(1.18); }
     }
 
-    /* Confetti canvas */
     canvas{ position:fixed; inset:0; pointer-events:none; }
   </style>
 </head>
@@ -226,7 +224,6 @@
           Consejo: usa una foto cuadrada para que no recorte raro.
         </div>
 
-        <!-- IMPORTANT: hidden = no aparece hasta resolver -->
         <div class="ok" id="ok" hidden>
           <h2>Acceso concedido</h2>
           <p class="question">¿Quieres ser mi San Valentín? <span class="heart">❤️</span></p>
@@ -246,31 +243,26 @@
   </div>
 
   <script>
-    // ===== Config =====
-    // Coloca tu foto aquí: sanvalentin/assets/photo.jpg
     const IMG_URL = "assets/photo.jpg";
-
-    const SIZE = 3; // 3x3
+    const SIZE = 3;
     const TOTAL = SIZE * SIZE;
 
-    // ===== Elements =====
     const boardEl = document.getElementById("board");
     const movesEl = document.getElementById("moves");
     const okEl = document.getElementById("ok");
     const shuffleBtn = document.getElementById("shuffle");
 
-    // ===== Puzzle state =====
-    let order = [...Array(TOTAL).keys()]; // order[pos] = tileIndexCorrect
+    let order = [...Array(TOTAL).keys()];
     let selectedPos = null;
     let moves = 0;
 
-    // Create tiles
     const tiles = [];
+
     function createTiles(){
       boardEl.innerHTML = "";
       tiles.length = 0;
 
-      for(let pos=0; pos<TOTAL; pos++){
+      for(let pos = 0; pos < TOTAL; pos++){
         const tile = document.createElement("div");
         tile.className = "tile";
         tile.dataset.pos = String(pos);
@@ -278,11 +270,10 @@
         tiles.push(tile);
         boardEl.appendChild(tile);
       }
-      applyOrder();
     }
 
     function applyOrder(){
-      for(let pos=0; pos<TOTAL; pos++){
+      for(let pos = 0; pos < TOTAL; pos++){
         const tileIndex = order[pos];
         const tileEl = tiles[pos];
 
@@ -299,23 +290,22 @@
       checkSolved();
     }
 
-    function swap(a,b){
+    function swap(a, b){
       const tmp = order[a];
       order[a] = order[b];
       order[b] = tmp;
     }
 
     function onTileClick(pos){
-      // vibración suave (móvil)
       if (navigator.vibrate) navigator.vibrate(12);
 
-      if(selectedPos === null){
+      if (selectedPos === null){
         selectedPos = pos;
         applyOrder();
         return;
       }
 
-      if(selectedPos === pos){
+      if (selectedPos === pos){
         selectedPos = null;
         applyOrder();
         return;
@@ -329,29 +319,26 @@
 
     function shuffledOrder(){
       const arr = [...Array(TOTAL).keys()];
-      for(let i=arr.length-1; i>0; i--){
-        const j = Math.floor(Math.random() * (i+1));
+      for(let i = arr.length - 1; i > 0; i--){
+        const j = Math.floor(Math.random() * (i + 1));
         [arr[i], arr[j]] = [arr[j], arr[i]];
       }
-      if(arr.every((v,i)=>v===i)) return shuffledOrder();
+      if (arr.every((v, i) => v === i)) return shuffledOrder();
       return arr;
     }
 
     function checkSolved(){
-      const solved = order.every((v,i)=>v===i);
-      if(solved){
-        unlock();
-      }
+      const solved = order.every((v, i) => v === i);
+      if (solved) unlock();
     }
 
-    // IMPORTANT: usa hidden para que NO pueda mostrarse hasta resolver
     function unlock(){
       if (!okEl.hidden) return;
       okEl.hidden = false;
       fireConfetti();
     }
 
-    shuffleBtn.addEventListener("click", ()=>{
+    shuffleBtn.addEventListener("click", () => {
       selectedPos = null;
       order = shuffledOrder();
       moves = 0;
@@ -362,7 +349,6 @@
       applyOrder();
     });
 
-    // ===== Button that runs away (mobile-first) =====
     const noBtn = document.getElementById("no");
     const row = document.getElementById("ctaRow");
     const yesBtn = document.getElementById("yes");
@@ -381,16 +367,16 @@
       const curLeft = parseFloat(noBtn.style.left || "0");
       const curTop  = parseFloat(noBtn.style.top || "0");
 
-      const btnCx = r.left + curLeft + b.width/2;
-      const btnCy = r.top + curTop + b.height/2;
+      const btnCx = r.left + curLeft + b.width / 2;
+      const btnCy = r.top + curTop + b.height / 2;
       const dx = btnCx - px;
       const dy = btnCy - py;
 
       const push = 80;
       const len = Math.hypot(dx, dy) || 1;
 
-      let newLeft = curLeft + (dx/len) * push + (Math.random()*30 - 15);
-      let newTop  = curTop  + (dy/len) * push + (Math.random()*30 - 15);
+      let newLeft = curLeft + (dx / len) * push + (Math.random() * 30 - 15);
+      let newTop  = curTop  + (dy / len) * push + (Math.random() * 30 - 15);
 
       newLeft = clamp(newLeft, padding, maxLeft);
       newTop  = clamp(newTop, padding, maxTop);
@@ -399,34 +385,28 @@
       noBtn.style.top = `${newTop}px`;
     }
 
-    // posición inicial
     noBtn.style.left = "62%";
     noBtn.style.top = "22px";
 
-    // huye al intentar tocarlo
-    noBtn.addEventListener("pointerdown", (e)=>{
+    noBtn.addEventListener("pointerdown", (e) => {
       e.preventDefault();
       moveNoButtonAwayFrom(e.clientX, e.clientY);
     });
 
-    // huye si el dedo pasa cerca
-    row.addEventListener("pointermove", (e)=>{
+    row.addEventListener("pointermove", (e) => {
       const b = noBtn.getBoundingClientRect();
-      const cx = b.left + b.width/2;
-      const cy = b.top + b.height/2;
+      const cx = b.left + b.width / 2;
+      const cy = b.top + b.height / 2;
       const dist = Math.hypot(e.clientX - cx, e.clientY - cy);
 
-      if(dist < 90){
-        moveNoButtonAwayFrom(e.clientX, e.clientY);
-      }
+      if (dist < 90) moveNoButtonAwayFrom(e.clientX, e.clientY);
     });
 
-    yesBtn.addEventListener("click", ()=>{
+    yesBtn.addEventListener("click", () => {
       finalEl.style.display = "block";
       fireConfetti();
     });
 
-    // ===== Confetti (sin librerías) =====
     const canvas = document.getElementById("confetti");
     const ctx = canvas.getContext("2d");
     let confetti = [];
@@ -443,24 +423,24 @@
       const cx = canvas.width * 0.5;
       const cy = canvas.height * 0.25;
 
-      for(let i=0; i<count; i++){
+      for(let i = 0; i < count; i++){
         confetti.push({
           x: cx,
           y: cy,
-          vx: (Math.random()*2 - 1) * (3 + Math.random()*5),
-          vy: (Math.random()*2 - 1) * (2 + Math.random()*5) - 6,
-          g: 0.18 + Math.random()*0.12,
-          s: 4 + Math.random()*4,
-          r: Math.random()*Math.PI
+          vx: (Math.random() * 2 - 1) * (3 + Math.random() * 5),
+          vy: (Math.random() * 2 - 1) * (2 + Math.random() * 5) - 6,
+          g: 0.18 + Math.random() * 0.12,
+          s: 4 + Math.random() * 4,
+          r: Math.random() * Math.PI
         });
       }
-      if(!animating) animate();
+      if (!animating) animate();
     }
 
     let animating = false;
     function animate(){
       animating = true;
-      ctx.clearRect(0,0,canvas.width,canvas.height);
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
 
       confetti = confetti.filter(p => p.y < canvas.height + 40);
 
@@ -477,14 +457,15 @@
         ctx.restore();
       }
 
-      if(confetti.length > 0){
+      if (confetti.length > 0){
         requestAnimationFrame(animate);
       } else {
         animating = false;
       }
     }
 
-    // Init
+    // Init correcto: primero creamos tiles, luego mezclamos, luego pintamos
+    okEl.hidden = true;
     createTiles();
     order = shuffledOrder();
     applyOrder();
