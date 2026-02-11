@@ -2,8 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-  <meta name="theme-color" content="#0b0f17" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>San Valentín</title>
   <style>
     :root{
@@ -20,20 +19,29 @@
                   var(--bg);
       overflow:hidden;
     }
-    .wrap{ width:min(980px, 92vw); display:grid; gap:18px; }
+    .wrap{
+      width:min(980px, 92vw);
+      display:grid;
+      gap:18px;
+    }
     header{
       background: rgba(18,26,42,.7);
       border:1px solid rgba(255,255,255,.08);
       border-radius:20px;
-      padding:18px;
+      padding:18px 18px;
       box-shadow: var(--shadow);
       backdrop-filter: blur(10px);
     }
     h1{margin:0 0 6px; font-size: clamp(18px, 2.4vw, 28px);}
     p{margin:0; color:var(--muted); line-height:1.4}
-
-    .grid{ display:grid; grid-template-columns: 1fr; gap:18px; }
-    @media (min-width: 900px){ .grid{ grid-template-columns: 1.1fr .9fr; align-items:start; } }
+    .grid{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap:18px;
+    }
+    @media (min-width: 900px){
+      .grid{ grid-template-columns: 1.1fr .9fr; align-items:start; }
+    }
 
     .card{
       background: rgba(18,26,42,.7);
@@ -44,7 +52,11 @@
       backdrop-filter: blur(10px);
     }
 
-    .puzzleTop{ display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:12px; }
+    /* Puzzle */
+    .puzzleTop{
+      display:flex; align-items:center; justify-content:space-between; gap:12px;
+      margin-bottom:12px;
+    }
     .badge{
       display:inline-flex; gap:8px; align-items:center;
       padding:8px 12px; border-radius:999px;
@@ -63,7 +75,6 @@
       color:var(--text);
       border:1px solid rgba(255,255,255,.10);
       transition: transform .12s ease, background .12s ease;
-      -webkit-tap-highlight-color: transparent;
     }
     .btn:hover{ transform: translateY(-1px); background: rgba(255,255,255,.10); }
     .btn:active{ transform: translateY(0px) scale(.99); }
@@ -75,8 +86,8 @@
       overflow:hidden;
       display:grid;
       grid-template-columns: repeat(3, 1fr);
-      gap:8px;
-      padding:8px;
+      gap:6px;
+      padding:6px;
       background: rgba(255,255,255,.05);
       border:1px solid rgba(255,255,255,.08);
       margin:0 auto;
@@ -96,16 +107,38 @@
     .tile:hover{ transform: scale(1.01); outline-color: rgba(255,77,141,.55); }
     .tile.selected{ outline: 2px solid rgba(255,77,141,.95); filter: saturate(1.1); }
 
-    .hint{ font-size:14px; color: var(--muted); margin-top:10px; }
+    /* Oculta numeritos (queda más bonito). Si los quieres, borra este bloque */
+    .tile::after{ content:""; }
 
-    .ok{ display:none; margin-top:14px; padding:14px; border-radius:16px; border:1px solid rgba(255,77,141,.35);
-      background: rgba(255,77,141,.10); }
-    .ok h2{ margin:0 0 6px; font-size:18px; }
-    .question{ font-size:18px; margin:0 0 12px; }
+    /* Right side */
+    .hint{
+      font-size:14px;
+      color: var(--muted);
+      margin-top:10px;
+    }
 
+    /* Bloque desbloqueable */
+    .ok{
+      margin-top:14px;
+      padding:14px;
+      border-radius:16px;
+      border:1px solid rgba(255,77,141,.35);
+      background: rgba(255,77,141,.10);
+      animation: fadeIn .35s ease both;
+    }
+    @keyframes fadeIn{
+      from{ opacity:0; transform: translateY(6px); }
+      to{ opacity:1; transform: translateY(0); }
+    }
+
+    .ok h2{ margin:0 0 6px; font-size:18px;}
+    .question{
+      font-size:18px;
+      margin:0 0 12px;
+    }
     .ctaRow{
       position:relative;
-      height:96px;
+      height:90px;
       border-radius:16px;
       border:1px dashed rgba(255,255,255,.18);
       background: rgba(255,255,255,.03);
@@ -121,15 +154,13 @@
       background: linear-gradient(135deg, rgba(255,77,141,.95), rgba(255,140,190,.9));
       border: none;
       color:#0b0f17;
-      font-weight:800;
+      font-weight:700;
       padding:12px 18px;
       border-radius:14px;
       cursor:pointer;
       transition: transform .12s ease;
-      -webkit-tap-highlight-color: transparent;
     }
     .yes:hover{ transform: translateY(-1px); }
-
     .no{
       position:absolute;
       left: 62%;
@@ -154,12 +185,19 @@
       border:1px solid rgba(110,168,255,.35);
       margin-top:14px;
     }
-    .final .big{ font-size:22px; font-weight:900; margin:0 0 6px; }
-    .final .small{ color:var(--muted); margin:0; }
+    .final .big{ font-size:22px; font-weight:800; margin:0 0 6px;}
+    .final .small{ color:var(--muted); margin:0;}
+    .heart{
+      display:inline-block;
+      transform-origin:center;
+      animation: pop 1.2s ease-in-out infinite;
+    }
+    @keyframes pop{
+      0%,100%{ transform: scale(1); }
+      50%{ transform: scale(1.18); }
+    }
 
-    .heart{ display:inline-block; transform-origin:center; animation: pop 1.2s ease-in-out infinite; }
-    @keyframes pop{ 0%,100%{ transform: scale(1); } 50%{ transform: scale(1.18); } }
-
+    /* Confetti canvas */
     canvas{ position:fixed; inset:0; pointer-events:none; }
   </style>
 </head>
@@ -168,8 +206,8 @@
 
   <div class="wrap">
     <header>
-      <h1>Modo San Valentín (edición móvil)</h1>
-      <p>Reconstruye la foto para desbloquear una pregunta. Toca dos piezas para intercambiarlas.</p>
+      <h1>Modo San Valentín (edición informática)</h1>
+      <p>Reconstruye la foto para desbloquear una pregunta importante. Pista: toca dos piezas para intercambiarlas.</p>
     </header>
 
     <div class="grid">
@@ -184,10 +222,12 @@
       <aside class="card">
         <div class="badge">✅ Objetivo</div>
         <div class="hint">
-          Consejo: usa una foto cuadrada (1:1) para que el puzzle quede perfecto.
+          Cuando esté bien, se desbloquea la pregunta final.<br/>
+          Consejo: usa una foto cuadrada para que no recorte raro.
         </div>
 
-        <div class="ok" id="ok">
+        <!-- IMPORTANT: hidden = no aparece hasta resolver -->
+        <div class="ok" id="ok" hidden>
           <h2>Acceso concedido</h2>
           <p class="question">¿Quieres ser mi San Valentín? <span class="heart">❤️</span></p>
 
@@ -198,7 +238,7 @@
 
           <div class="final" id="final">
             <p class="big">Te quiero muchísimo 🥰</p>
-            <p class="small">Evento desbloqueado: “San Valentín contigo”.</p>
+            <p class="small">Has desbloqueado el evento: “San Valentín contigo”.</p>
           </div>
         </div>
       </aside>
@@ -206,20 +246,25 @@
   </div>
 
   <script>
-    // Coloca tu foto aquí (misma carpeta repo): /sanvalentin/assets/photo.jpg
+    // ===== Config =====
+    // Coloca tu foto aquí: sanvalentin/assets/photo.jpg
     const IMG_URL = "assets/photo.jpg";
-    const SIZE = 3;
+
+    const SIZE = 3; // 3x3
     const TOTAL = SIZE * SIZE;
 
+    // ===== Elements =====
     const boardEl = document.getElementById("board");
     const movesEl = document.getElementById("moves");
     const okEl = document.getElementById("ok");
     const shuffleBtn = document.getElementById("shuffle");
 
-    let order = [...Array(TOTAL).keys()];
+    // ===== Puzzle state =====
+    let order = [...Array(TOTAL).keys()]; // order[pos] = tileIndexCorrect
     let selectedPos = null;
     let moves = 0;
 
+    // Create tiles
     const tiles = [];
     function createTiles(){
       boardEl.innerHTML = "";
@@ -249,6 +294,7 @@
         tileEl.style.backgroundImage = `url('${IMG_URL}')`;
         tileEl.style.backgroundPosition = `${(x * 100) / (SIZE - 1)}% ${(y * 100) / (SIZE - 1)}%`;
       }
+
       movesEl.textContent = `· ${moves} movimientos`;
       checkSolved();
     }
@@ -260,6 +306,7 @@
     }
 
     function onTileClick(pos){
+      // vibración suave (móvil)
       if (navigator.vibrate) navigator.vibrate(12);
 
       if(selectedPos === null){
@@ -292,12 +339,15 @@
 
     function checkSolved(){
       const solved = order.every((v,i)=>v===i);
-      if(solved) unlock();
+      if(solved){
+        unlock();
+      }
     }
 
+    // IMPORTANT: usa hidden para que NO pueda mostrarse hasta resolver
     function unlock(){
-      if(okEl.style.display === "block") return;
-      okEl.style.display = "block";
+      if (!okEl.hidden) return;
+      okEl.hidden = false;
       fireConfetti();
     }
 
@@ -305,12 +355,14 @@
       selectedPos = null;
       order = shuffledOrder();
       moves = 0;
-      okEl.style.display = "none";
+
+      okEl.hidden = true;
       document.getElementById("final").style.display = "none";
+
       applyOrder();
     });
 
-    // Botón "No" que huye (móvil + escritorio)
+    // ===== Button that runs away (mobile-first) =====
     const noBtn = document.getElementById("no");
     const row = document.getElementById("ctaRow");
     const yesBtn = document.getElementById("yes");
@@ -334,8 +386,9 @@
       const dx = btnCx - px;
       const dy = btnCy - py;
 
-      const push = 90;
+      const push = 80;
       const len = Math.hypot(dx, dy) || 1;
+
       let newLeft = curLeft + (dx/len) * push + (Math.random()*30 - 15);
       let newTop  = curTop  + (dy/len) * push + (Math.random()*30 - 15);
 
@@ -343,20 +396,29 @@
       newTop  = clamp(newTop, padding, maxTop);
 
       noBtn.style.left = `${newLeft}px`;
-      noBtn.style.top  = `${newTop}px`;
+      noBtn.style.top = `${newTop}px`;
     }
 
+    // posición inicial
+    noBtn.style.left = "62%";
+    noBtn.style.top = "22px";
+
+    // huye al intentar tocarlo
     noBtn.addEventListener("pointerdown", (e)=>{
       e.preventDefault();
       moveNoButtonAwayFrom(e.clientX, e.clientY);
     });
 
+    // huye si el dedo pasa cerca
     row.addEventListener("pointermove", (e)=>{
       const b = noBtn.getBoundingClientRect();
       const cx = b.left + b.width/2;
       const cy = b.top + b.height/2;
       const dist = Math.hypot(e.clientX - cx, e.clientY - cy);
-      if(dist < 90) moveNoButtonAwayFrom(e.clientX, e.clientY);
+
+      if(dist < 90){
+        moveNoButtonAwayFrom(e.clientX, e.clientY);
+      }
     });
 
     yesBtn.addEventListener("click", ()=>{
@@ -364,7 +426,7 @@
       fireConfetti();
     });
 
-    // Confetti simple
+    // ===== Confetti (sin librerías) =====
     const canvas = document.getElementById("confetti");
     const ctx = canvas.getContext("2d");
     let confetti = [];
@@ -377,7 +439,7 @@
     resize();
 
     function fireConfetti(){
-      const count = 170;
+      const count = 160;
       const cx = canvas.width * 0.5;
       const cy = canvas.height * 0.25;
 
@@ -401,6 +463,7 @@
       ctx.clearRect(0,0,canvas.width,canvas.height);
 
       confetti = confetti.filter(p => p.y < canvas.height + 40);
+
       for(const p of confetti){
         p.vy += p.g;
         p.x += p.vx;
