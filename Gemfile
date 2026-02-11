@@ -2,7 +2,11 @@
 
 source "https://rubygems.org"
 
-gem "jekyll-include-cache", group: :jekyll_plugins
+gem "jekyll", "~> 4.3"
+gem "jekyll-theme-chirpy"
+gem "jekyll-include-cache"
+gem "html-proofer", "~> 5.0", group: :jekyll_plugins
+
 
 
 
