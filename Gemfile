@@ -2,10 +2,8 @@
 
 source "https://rubygems.org"
 
-gem "jekyll-theme-chirpy", "~> 7.2", ">= 7.2.4"
-gem 'jekyll-multiple-languages-plugin'
-gem 'jekyll-sitemap'
-gem 'jekyll-feed'
+gem "github-pages", "~> 232", group: :jekyll_plugins
+gem "jekyll-include-cache", group: :jekyll_plugins
 
 
 
