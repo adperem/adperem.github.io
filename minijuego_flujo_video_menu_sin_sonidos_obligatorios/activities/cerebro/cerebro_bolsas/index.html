@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>CEREBRO · BOLSAS NA NE NI NO NU</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <main class="app">
+    <div class="bg-scene" aria-hidden="true"></div>
+    <div class="bg-overlay" aria-hidden="true"></div>
+    <div class="bg-animal" aria-hidden="true"></div>
+
+    <div class="decor cloud c1" aria-hidden="true"></div>
+    <div class="decor cloud c2" aria-hidden="true"></div>
+    <div class="decor sticker s1" aria-hidden="true">🧠</div>
+    <div class="decor sticker s2" aria-hidden="true">⭐</div>
+    <div class="decor sticker s3" aria-hidden="true">💖</div>
+
+    <section class="content" aria-label="CONTENIDO">
+      <section class="panel" aria-label="PALABRAS">
+        <div class="panel-title">ARRASTRA CADA PALABRA A SU BOLSA (NA · NE · NI · NO · NU)</div>
+        <div class="words" id="words"></div>
+      </section>
+
+      <section class="bags" aria-label="BOLSAS">
+        <div class="bag bag-na" data-bag="NA">
+          <div class="bag-top">
+            <div class="bag-title">NA</div>
+            <div class="bag-emoji">👜</div>
+          </div>
+          <div class="bag-drop" id="dropNA"></div>
+        </div>
+
+        <div class="bag bag-ne" data-bag="NE">
+          <div class="bag-top">
+            <div class="bag-title">NE</div>
+            <div class="bag-emoji">👜</div>
+          </div>
+          <div class="bag-drop" id="dropNE"></div>
+        </div>
+
+        <div class="bag bag-ni" data-bag="NI">
+          <div class="bag-top">
+            <div class="bag-title">NI</div>
+            <div class="bag-emoji">👜</div>
+          </div>
+          <div class="bag-drop" id="dropNI"></div>
+        </div>
+
+        <div class="bag bag-no" data-bag="NO">
+          <div class="bag-top">
+            <div class="bag-title">NO</div>
+            <div class="bag-emoji">👜</div>
+          </div>
+          <div class="bag-drop" id="dropNO"></div>
+        </div>
+
+        <div class="bag bag-nu" data-bag="NU">
+          <div class="bag-top">
+            <div class="bag-title">NU</div>
+            <div class="bag-emoji">👜</div>
+          </div>
+          <div class="bag-drop" id="dropNU"></div>
+        </div>
+      </section>
+    </section>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+    <div class="finish" id="finish" aria-hidden="true">
+      <div class="finish-card">
+        <div class="finish-title">¡GENIAL!</div>
+        <div class="finish-text">HAS COMPLETADO ESTA ACTIVIDAD</div>
+        <div class="finish-actions">
+          <a class="btn btn-good" href="../../index.html">VOLVER AL MENÚ</a>
+          <button class="btn" id="btnAgain" type="button">JUGAR OTRA VEZ</button>
+        </div>
+      </div>
+    </div>
+
+    <footer class="bottomBar" aria-label="BARRA INFERIOR">
+      <div class="bb-left">
+        <div class="pill">CEREBRO</div>
+        <div class="pill" id="counter">0 DE 12</div>
+      </div>
+      <div class="bb-right">
+        <button class="btn" id="btnReset" type="button">REINICIAR</button>
+        <a class="btn btn-ghost" href="../../index.html">VOLVER</a>
+      </div>
+    </footer>
+
+    <audio id="sndClap" preload="none" data-src="/asstests/aplausos.mp4" ></audio>
+    <audio id="sndOhh" preload="none" data-src="/asstests/ohh.mp4" ></audio>
+  </main>
+
+  <script src="./game.js" defer></script>
+</body>
+</html>
