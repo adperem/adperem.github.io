@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ESTÓMAGO</title>
+  <style>
+    :root{
+      --panel-bg: rgba(255,255,255,0.88);
+      --panel-border: rgba(255,255,255,0.9);
+      --shadow: 0 18px 45px rgba(0,0,0,0.18);
+      --shadow-soft: 0 10px 25px rgba(0,0,0,0.14);
+      --radius-xl: 28px;
+      --ink: #1f2a37;
+      --muted: #3b556f;
+      --accent: rgba(124,58,237,1);
+      --accent2: rgba(6,182,212,1);
+      --bottom-h: 112px;
+    }
+
+    *{ box-sizing: border-box; }
+    html, body{
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      color: var(--ink);
+      overflow: hidden;
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: none;
+      background: #0b1220;
+    }
+
+    body::before{
+      content: "";
+      position: fixed;
+      inset: -40px;
+      background-image: url("../../assets/fondo_parque.webp");
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+      filter: blur(14px) saturate(1.2);
+      transform: scale(1.08);
+      z-index: -2;
+    }
+    body::after{
+      content: "";
+      position: fixed;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(255,255,255,0.12), rgba(255,255,255,0.05));
+      z-index: -1;
+    }
+
+    .stage{
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 18px;
+    }
+    .frame{
+      width: min(1920px, 100vw);
+      height: min(1080px, 100vh);
+      position: relative;
+      border-radius: 34px;
+      overflow: hidden;
+    }
+
+    .header{
+      position: absolute;
+      left: 22px;
+      right: 22px;
+      top: 18px;
+      padding: 14px 16px;
+      border-radius: var(--radius-xl);
+      background: rgba(255,255,255,0.78);
+      border: 2px solid rgba(255,255,255,0.7);
+      box-shadow: var(--shadow-soft);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+    }
+    .title{
+      font-size: 42px;
+      font-weight: 1000;
+      letter-spacing: 1px;
+      line-height: 1.05;
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      white-space: nowrap;
+    }
+    .hint{
+      font-size: 18px;
+      font-weight: 950;
+      color: var(--muted);
+      text-transform: uppercase;
+      text-align: right;
+      line-height: 1.1;
+    }
+    .badge{
+      font-size: 18px;
+      font-weight: 1000;
+      padding: 9px 14px;
+      border-radius: 999px;
+      background: rgba(124,58,237,0.12);
+      border: 2px solid rgba(124,58,237,0.28);
+      color: #3b2a8f;
+      text-transform: uppercase;
+      white-space: nowrap;
+      min-width: 140px;
+      text-align: center;
+    }
+
+    .main{
+      position: absolute;
+      left: 22px;
+      right: 22px;
+      top: 112px;
+      bottom: calc(var(--bottom-h) + 18px);
+      display: grid;
+      grid-template-rows: 1fr;
+    }
+
+    .panel{
+      background: var(--panel-bg);
+      border: 2px solid var(--panel-border);
+      border-radius: 34px;
+      box-shadow: var(--shadow);
+      padding: 16px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .videoBox, .menuBox{
+      width: 100%;
+      height: 100%;
+      border-radius: 26px;
+      background: rgba(255,255,255,0.62);
+      border: 2px solid rgba(0,0,0,0.06);
+      box-shadow: inset 0 0 0 2px rgba(255,255,255,0.45);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .video{
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      background: rgba(0,0,0,0.12);
+    }
+
+    .overlay{
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      background: rgba(255,255,255,0.25);
+      backdrop-filter: blur(6px);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 160ms ease;
+    }
+    .overlay.show{
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .bigButton{
+      width: min(720px, 92%);
+      height: 110px;
+      border-radius: 28px;
+      border: 2px solid rgba(0,0,0,0.08);
+      box-shadow: var(--shadow-soft);
+      background: rgba(255,255,255,0.92);
+      font-size: 34px;
+      font-weight: 1000;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #1f2a37;
+      cursor: pointer;
+      touch-action: manipulation;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      padding: 0 18px;
+    }
+    .bigButton:active{ transform: translateY(1px); }
+
+    .skipRow{
+      position: absolute;
+      left: 16px;
+      right: 16px;
+      bottom: 16px;
+      display: flex;
+      gap: 12px;
+      justify-content: space-between;
+      pointer-events: none;
+    }
+    .miniBtn{
+      pointer-events: auto;
+      height: 78px;
+      border-radius: 22px;
+      border: 2px solid rgba(0,0,0,0.08);
+      box-shadow: var(--shadow-soft);
+      background: rgba(255,255,255,0.92);
+      font-size: 26px;
+      font-weight: 1000;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #1f2a37;
+      cursor: pointer;
+      touch-action: manipulation;
+      padding: 0 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+    }
+    .miniBtn:active{ transform: translateY(1px); }
+
+    .menuTop{
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+    .menuTitle{
+      font-size: 30px;
+      font-weight: 1100;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #111827;
+    }
+
+    .grid{
+      width: 100%;
+      height: calc(100% - 64px);
+      display: grid;
+      gap: 14px;
+      grid-template-columns: repeat(3, 1fr);
+      grid-auto-rows: 1fr;
+      overflow: hidden;
+    }
+    .card{
+      border-radius: 28px;
+      background: rgba(255,255,255,0.95);
+      border: 2px solid rgba(0,0,0,0.08);
+      box-shadow: 0 16px 34px rgba(0,0,0,0.14);
+      display: grid;
+      place-items: center;
+      padding: 14px;
+      cursor: pointer;
+      touch-action: manipulation;
+      position: relative;
+      overflow: hidden;
+    }
+    .card:active{ transform: translateY(1px); }
+    .emoji{
+      font-size: 84px;
+      line-height: 1;
+      filter: drop-shadow(0 12px 14px rgba(0,0,0,0.10));
+    }
+    .label{
+      margin-top: 10px;
+      font-size: 22px;
+      font-weight: 1100;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: #22314a;
+      text-align: center;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 95%;
+    }
+
+    .bottomBar{
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: var(--bottom-h);
+      padding: 14px 18px;
+      background: rgba(255,255,255,0.90);
+      border-top: 2px solid rgba(255,255,255,0.8);
+      box-shadow: 0 -18px 45px rgba(0,0,0,0.16);
+      display: grid;
+      grid-template-columns: 1fr 1fr 1.2fr;
+      gap: 14px;
+      align-items: center;
+    }
+    .btn{
+      height: 78px;
+      border-radius: 22px;
+      border: 2px solid rgba(0,0,0,0.08);
+      box-shadow: var(--shadow-soft);
+      background: rgba(255,255,255,0.92);
+      font-size: 28px;
+      font-weight: 1000;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #1f2a37;
+      cursor: pointer;
+      touch-action: manipulation;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      padding: 0 18px;
+    }
+    .btn:active{ transform: translateY(1px); }
+    .btn.primary{
+      background: rgba(124,58,237,0.14);
+      border-color: rgba(124,58,237,0.26);
+      color: #2f1d78;
+    }
+    .btn.secondary{
+      background: rgba(6,182,212,0.12);
+      border-color: rgba(6,182,212,0.22);
+      color: #0b5563;
+    }
+    .statusBox{
+      height: 78px;
+      border-radius: 22px;
+      border: 2px solid rgba(0,0,0,0.08);
+      box-shadow: var(--shadow-soft);
+      background: rgba(255,255,255,0.92);
+      display: grid;
+      grid-template-columns: 1fr;
+      align-items: center;
+      padding: 8px 14px;
+      gap: 6px;
+    }
+    .statusTop{
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      font-size: 18px;
+      font-weight: 1000;
+      text-transform: uppercase;
+      color: #334155;
+    }
+    .statusValue{
+      font-size: 24px;
+      font-weight: 1100;
+      text-transform: uppercase;
+      color: #111827;
+      letter-spacing: 0.6px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    @media (max-width: 1400px){
+      .grid{ grid-template-columns: repeat(2, 1fr); }
+      .emoji{ font-size: 74px; }
+      .label{ font-size: 20px; }
+      .title{ font-size: 36px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="stage">
+    <div class="frame" id="frame">
+      <header class="header">
+        <div class="title">🍽️ ESTÓMAGO</div>
+        <div class="hint">COME</div>
+        <div class="badge" id="badge">VIDEO</div>
+      </header>
+
+      <main class="main">
+        <section class="panel">
+          <div class="videoBox" id="videoBox">
+            <video class="video" id="introVideo" playsinline preload="auto">
+              <source src="intro.mp4" type="video/mp4" />
+              <source src="intro.webm" type="video/webm" />
+            </video>
+
+            <div class="overlay show" id="tapOverlay">
+              <button class="bigButton" id="btnPlay" type="button">TOCA PARA VER EL VIDEO</button>
+            </div>
+
+            <div class="skipRow">
+              <button class="miniBtn" id="btnSkip" type="button">SALTAR</button>
+              <button class="miniBtn" id="btnRepeat" type="button">REPETIR</button>
+            </div>
+          </div>
+
+          <div class="menuBox" id="menuBox" style="display:none;">
+            <div class="menuTop">
+              <div class="menuTitle">ACTIVIDADES</div>
+              <button class="miniBtn" id="btnWatch" type="button">VER VIDEO</button>
+            </div>
+
+            <div class="grid" id="grid"></div>
+          </div>
+        </section>
+      </main>
+
+      <div class="bottomBar">
+        <button class="btn primary" id="btnReset">REINICIAR</button>
+        <button class="btn secondary" id="btnBack">VOLVER</button>
+        <div class="statusBox" role="status" aria-live="polite">
+          <div class="statusTop">
+            <span>ESTADO</span>
+            <span id="miniRight">LISTO</span>
+          </div>
+          <div class="statusValue" id="statusText">TOCA PARA EMPEZAR</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function(){
+      "use strict";
+
+      var ORGAN = {"id": "estomago", "name": "ESTÓMAGO", "activities": [{"label": "SI NO", "icon": "✅", "file": "estomago_si_no.html"}, {"label": "DOLOR", "icon": "🤢", "file": "evita_dolor_barriga.html"}]};
+
+      var introVideo = document.getElementById("introVideo");
+      var videoBox = document.getElementById("videoBox");
+      var menuBox = document.getElementById("menuBox");
+      var grid = document.getElementById("grid");
+
+      var tapOverlay = document.getElementById("tapOverlay");
+      var btnPlay = document.getElementById("btnPlay");
+      var btnSkip = document.getElementById("btnSkip");
+      var btnRepeat = document.getElementById("btnRepeat");
+      var btnWatch = document.getElementById("btnWatch");
+
+      var btnReset = document.getElementById("btnReset");
+      var btnBack = document.getElementById("btnBack");
+
+      var badge = document.getElementById("badge");
+      var statusText = document.getElementById("statusText");
+      var miniRight = document.getElementById("miniRight");
+
+      function setStatus(t){ statusText.textContent = t; }
+      function setBadge(t){ badge.textContent = t; }
+
+      function showVideo(){
+        menuBox.style.display = "none";
+        videoBox.style.display = "block";
+        setBadge("VIDEO");
+        setStatus("TOCA PARA VER EL VIDEO");
+        miniRight.textContent = "VIDEO";
+        tapOverlay.classList.add("show");
+      }
+
+      function showMenu(){
+        videoBox.style.display = "none";
+        menuBox.style.display = "block";
+        setBadge("JUEGOS");
+        setStatus("ELIGE UNA ACTIVIDAD");
+        miniRight.textContent = "MENU";
+      }
+
+      function tryPlay(){
+        tapOverlay.classList.remove("show");
+        setStatus("VIENDO VIDEO");
+        miniRight.textContent = "VIDEO";
+        try{
+          var p = introVideo.play();
+          if(p && typeof p.catch === "function") p.catch(function(){
+            tapOverlay.classList.add("show");
+            setStatus("TOCA PARA VER EL VIDEO");
+            miniRight.textContent = "VIDEO";
+          });
+        }catch(e){
+          tapOverlay.classList.add("show");
+        }
+      }
+
+      function repeat(){
+        try{ introVideo.currentTime = 0; }catch(e){}
+        showVideo();
+        tryPlay();
+      }
+
+      function skip(){
+        try{ introVideo.pause(); }catch(e){}
+        showMenu();
+      }
+
+      function goBackHome(){
+        location.href = "../../index.html";
+      }
+
+      function reset(){
+        // REINICIAR: VUELVE AL VIDEO
+        try{ introVideo.pause(); introVideo.currentTime = 0; }catch(e){}
+        showVideo();
+      }
+
+      function buildGrid(){
+        grid.innerHTML = "";
+        (ORGAN.activities || []).forEach(function(a){
+          var btn = document.createElement("button");
+          btn.type = "button";
+          btn.className = "card";
+          btn.innerHTML = '<div class="emoji">' + a.icon + '</div><div class="label">' + a.label + '</div>';
+          btn.addEventListener("pointerdown", function(ev){
+            ev.preventDefault();
+            location.href = a.file;
+          }, { passive: false });
+          grid.appendChild(btn);
+        });
+      }
+
+      // VIDEO EVENTS
+      introVideo.addEventListener("ended", function(){
+        showMenu();
+      });
+      introVideo.addEventListener("error", function(){
+        // SI NO HAY VIDEO, ENTRA DIRECTO AL MENU
+        showMenu();
+      });
+
+      btnPlay.addEventListener("click", function(){ tryPlay(); });
+      btnSkip.addEventListener("click", function(){ skip(); });
+      btnRepeat.addEventListener("click", function(){ repeat(); });
+      btnWatch.addEventListener("click", function(){ repeat(); });
+
+      btnReset.addEventListener("click", function(){ reset(); });
+      btnBack.addEventListener("click", function(){ goBackHome(); });
+
+      buildGrid();
+      showVideo();
+    })();
+  </script>
+</body>
+</html>

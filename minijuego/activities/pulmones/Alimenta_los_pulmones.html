@@ -1,0 +1,1133 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>ALIMENTA A LOS PULMONES</title>
+<style>
+  :root{
+    --ink:#1f2a37;
+    --muted:#64748b;
+    --panel:rgba(255,255,255,.88);
+    --panel2:rgba(255,255,255,.80);
+    --line:rgba(124,156,255,.22);
+    --shadow:0 14px 34px rgba(31,41,55,.14);
+    --ok:#4ade80;
+    --bad:#fb7185;
+  }
+
+  *{
+    box-sizing:border-box;
+    -webkit-tap-highlight-color:transparent;
+    user-select:none;
+  }
+
+  html,body{
+    margin:0;
+    width:100%;
+    height:100%;
+    overflow:hidden;
+    font-family:Arial, Helvetica, sans-serif;
+    background:#dff1ff;
+  }
+
+  body{
+    text-transform:uppercase;
+    color:var(--ink);
+  }
+
+  .bg{
+    position:fixed;
+    inset:0;
+    background:url('assets/fondo_parque.webp') center/cover no-repeat;
+    filter:blur(10px) saturate(1.04);
+    transform:scale(1.05);
+  }
+
+  .bg::after{
+    content:"";
+    position:absolute;
+    inset:0;
+    background:
+      radial-gradient(circle at 12% 14%, rgba(255,255,255,.60), transparent 34%),
+      radial-gradient(circle at 84% 18%, rgba(255,255,255,.40), transparent 30%),
+      linear-gradient(to bottom, rgba(255,255,255,.20), rgba(255,255,255,.08));
+  }
+
+  .app{
+    position:relative;
+    z-index:1;
+    width:100%;
+    height:100%;
+    display:grid;
+    grid-template-rows:120px 1fr 98px;
+    gap:12px;
+    padding:14px 18px 16px;
+  }
+
+  .panel{
+    background:var(--panel);
+    border:2px solid rgba(255,255,255,.88);
+    border-radius:28px;
+    box-shadow:var(--shadow);
+    min-height:0;
+  }
+
+  .top{
+    display:grid;
+    grid-template-columns:110px 1fr 250px;
+    align-items:center;
+    gap:12px;
+    padding:12px 16px;
+  }
+
+  .mascot{
+    width:96px;
+    height:96px;
+    border-radius:22px;
+    background:linear-gradient(180deg,#eef8ff,#dff0ff);
+    border:3px solid rgba(105,184,255,.32);
+    display:grid;
+    place-items:center;
+    font-size:56px;
+    box-shadow:inset 0 8px 14px rgba(255,255,255,.7);
+  }
+
+  .title-wrap{
+    min-width:0;
+  }
+
+  h1{
+    margin:0;
+    font-size:48px;
+    line-height:1;
+    letter-spacing:.8px;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+
+  .subtitle{
+    margin-top:8px;
+    display:inline-block;
+    background:rgba(255,255,255,.86);
+    border:2px solid rgba(255,255,255,.92);
+    border-radius:16px;
+    padding:8px 12px;
+    font-size:22px;
+    font-weight:900;
+    line-height:1;
+  }
+
+  .chips{
+    display:flex;
+    flex-direction:column;
+    align-items:flex-end;
+    gap:8px;
+  }
+
+  .chip{
+    background:rgba(255,255,255,.90);
+    border:2px solid var(--line);
+    border-radius:15px;
+    padding:7px 11px;
+    font-size:18px;
+    font-weight:900;
+    white-space:nowrap;
+  }
+
+  .main{
+    display:grid;
+    grid-template-columns:29% 71%;
+    gap:14px;
+    min-height:0;
+  }
+
+  .left{
+    padding:14px;
+    display:grid;
+    grid-template-rows:auto auto auto 1fr auto;
+    gap:12px;
+    min-height:0;
+    overflow:hidden;
+  }
+
+  .section-title{
+    margin:0;
+    background:rgba(255,255,255,.78);
+    border-radius:18px;
+    padding:9px 12px;
+    font-size:28px;
+    font-weight:900;
+    line-height:1;
+  }
+
+  .objective-card{
+    background:rgba(255,255,255,.95);
+    border:3px solid rgba(124,156,255,.18);
+    border-radius:24px;
+    padding:14px;
+    display:grid;
+    grid-template-columns:140px 1fr;
+    gap:12px;
+    align-items:center;
+    box-shadow:var(--shadow);
+    min-height:0;
+  }
+
+  .obj-icon-box{
+    width:140px;
+    height:140px;
+    border-radius:22px;
+    background:linear-gradient(180deg,#fff6fb,#ffeaf2);
+    display:grid;
+    place-items:center;
+    border:3px solid rgba(255,255,255,.95);
+  }
+
+  .obj-icon-box .ico{
+    font-size:76px;
+  }
+
+  .obj-text .big{
+    font-size:28px;
+    font-weight:900;
+    line-height:1.03;
+    margin-bottom:8px;
+  }
+
+  .obj-text .small{
+    font-size:18px;
+    font-weight:900;
+    line-height:1.08;
+    color:#475569;
+    background:#f4f9ff;
+    border-radius:15px;
+    padding:10px 12px;
+  }
+
+  .legend-card{
+    background:rgba(255,255,255,.92);
+    border:2px solid rgba(255,255,255,.95);
+    border-radius:20px;
+    padding:12px;
+    box-shadow:var(--shadow);
+    display:grid;
+    gap:8px;
+  }
+
+  .legend-title{
+    font-size:20px;
+    font-weight:900;
+    color:var(--muted);
+    line-height:1;
+  }
+
+  .legend-row{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:8px;
+  }
+
+  .legend-pill{
+    border-radius:14px;
+    padding:10px;
+    font-weight:900;
+    font-size:18px;
+    text-align:center;
+    border:2px solid rgba(255,255,255,.95);
+    background:rgba(255,255,255,.90);
+    line-height:1;
+  }
+
+  .legend-pill.good{
+    box-shadow:inset 0 0 0 2px rgba(74,222,128,.18);
+  }
+
+  .legend-pill.bad{
+    box-shadow:inset 0 0 0 2px rgba(251,113,133,.18);
+  }
+
+  .left-spacer{
+    min-height:0;
+  }
+
+  .count-pill{
+    justify-self:start;
+    background:rgba(255,255,255,.92);
+    border:2px solid var(--line);
+    border-radius:999px;
+    padding:10px 14px;
+    font-size:20px;
+    font-weight:900;
+    line-height:1;
+  }
+
+  .right{
+    padding:14px;
+    display:grid;
+    grid-template-rows:auto 205px 1fr;
+    gap:12px;
+    min-height:0;
+    overflow:hidden;
+  }
+
+  .board-head{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    background:rgba(255,255,255,.78);
+    border-radius:18px;
+    padding:10px 14px;
+    min-height:0;
+  }
+
+  .board-head h2{
+    margin:0;
+    font-size:32px;
+    line-height:1;
+  }
+
+  .board-state{
+    font-size:18px;
+    font-weight:900;
+    background:rgba(255,255,255,.92);
+    border:2px solid var(--line);
+    border-radius:999px;
+    padding:8px 12px;
+    white-space:nowrap;
+    line-height:1;
+  }
+
+  .zones{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:12px;
+    min-height:0;
+  }
+
+  .zone{
+    background:rgba(255,255,255,.95);
+    border:3px solid rgba(255,255,255,.95);
+    border-radius:22px;
+    box-shadow:var(--shadow);
+    padding:10px;
+    display:grid;
+    grid-template-rows:auto 1fr;
+    gap:8px;
+    min-height:0;
+    transition:transform .12s ease, box-shadow .12s ease, border-color .12s ease;
+  }
+
+  .zone.good{
+    background:linear-gradient(180deg, rgba(241,255,246,.96), rgba(255,255,255,.96));
+  }
+
+  .zone.bad{
+    background:linear-gradient(180deg, rgba(255,244,247,.96), rgba(255,255,255,.96));
+  }
+
+  .zone.over.good{
+    border-color:rgba(74,222,128,.85);
+    box-shadow:0 0 0 5px rgba(74,222,128,.12), var(--shadow);
+    transform:translateY(-1px);
+  }
+
+  .zone.over.bad{
+    border-color:rgba(251,113,133,.85);
+    box-shadow:0 0 0 5px rgba(251,113,133,.12), var(--shadow);
+    transform:translateY(-1px);
+  }
+
+  .zone-title{
+    background:rgba(255,255,255,.94);
+    border:2px solid rgba(255,255,255,.95);
+    border-radius:14px;
+    padding:8px 10px;
+    text-align:center;
+    font-size:20px;
+    font-weight:900;
+    line-height:1;
+  }
+
+  .zone-list{
+    background:rgba(255,255,255,.70);
+    border:2px dashed rgba(124,156,255,.22);
+    border-radius:16px;
+    padding:8px;
+    display:grid;
+    grid-template-columns:1fr;
+    gap:6px;
+    align-content:start;
+    min-height:0;
+    overflow:auto;
+  }
+
+  .placed{
+    background:rgba(255,255,255,.95);
+    border:2px solid rgba(255,255,255,.95);
+    border-radius:12px;
+    min-height:44px;
+    display:grid;
+    grid-template-columns:24px 1fr;
+    gap:6px;
+    align-items:center;
+    padding:6px 8px;
+    font-weight:900;
+    font-size:14px;
+    line-height:1.05;
+  }
+
+  .placed .icon{
+    width:24px;
+    text-align:center;
+    font-size:18px;
+  }
+
+  .cards-panel{
+    background:rgba(255,255,255,.90);
+    border:2px solid rgba(255,255,255,.95);
+    border-radius:22px;
+    padding:10px 12px;
+    display:grid;
+    grid-template-rows:auto 1fr;
+    gap:8px;
+    min-height:0;
+    overflow:hidden;
+  }
+
+  .cards-title{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    min-height:0;
+  }
+
+  .cards-title .label{
+    font-size:20px;
+    font-weight:900;
+    background:rgba(255,255,255,.92);
+    border-radius:14px;
+    padding:6px 10px;
+    line-height:1;
+  }
+
+  .cards-title .hint{
+    font-size:15px;
+    font-weight:900;
+    color:var(--muted);
+    background:rgba(255,255,255,.80);
+    border-radius:999px;
+    padding:6px 10px;
+    line-height:1;
+    white-space:nowrap;
+  }
+
+  .cards-grid{
+    display:grid;
+    grid-template-columns:repeat(3, minmax(0,1fr));
+    grid-template-rows:repeat(2, minmax(0,1fr));
+    gap:10px;
+    min-height:0;
+    height:100%;
+  }
+
+  .card{
+    position:relative;
+    background:rgba(255,255,255,.97);
+    border:3px solid rgba(255,255,255,.95);
+    border-radius:16px;
+    box-shadow:var(--shadow);
+    display:grid;
+    grid-template-columns:44px 1fr;
+    gap:8px;
+    align-items:center;
+    padding:8px 9px;
+    height:100%;
+    min-height:0;
+    cursor:grab;
+    touch-action:none;
+    transition:transform .12s ease, opacity .12s ease, border-color .12s ease;
+    overflow:hidden;
+  }
+
+  .card:active{
+    cursor:grabbing;
+  }
+
+  .card .icon{
+    width:40px;
+    height:40px;
+    border-radius:12px;
+    background:linear-gradient(180deg,#eef8ff,#dff0ff);
+    border:2px solid rgba(124,156,255,.20);
+    display:grid;
+    place-items:center;
+    font-size:22px;
+  }
+
+  .card .txt{
+    font-size:13px;
+    font-weight:900;
+    line-height:1.05;
+    text-align:left;
+    overflow:hidden;
+    display:-webkit-box;
+    -webkit-box-orient:vertical;
+    -webkit-line-clamp:2;
+    word-break:break-word;
+  }
+
+  .card.drag-source{
+    opacity:.22;
+  }
+
+  .card.solved{
+    opacity:.38;
+    pointer-events:none;
+  }
+
+  .card.good-solved{
+    border-color:rgba(74,222,128,.65);
+  }
+
+  .card.bad-solved{
+    border-color:rgba(251,113,133,.65);
+  }
+
+  .drag-float{
+    position:fixed;
+    left:0;
+    top:0;
+    z-index:9999;
+    pointer-events:none;
+    width:min(250px, 26vw);
+    transform:translate(-50%,-50%) scale(1.02);
+    box-shadow:0 20px 40px rgba(0,0,0,.18);
+  }
+
+  .bottom{
+    display:grid;
+    grid-template-columns:1fr 1fr 180px 180px;
+    gap:10px;
+    align-items:center;
+    padding:10px 12px;
+    min-height:0;
+  }
+
+  .status-box,
+  .progress-box{
+    background:rgba(255,255,255,.82);
+    border:2px solid rgba(255,255,255,.92);
+    border-radius:20px;
+    padding:10px 12px;
+    min-height:74px;
+    display:grid;
+    align-content:center;
+    box-shadow:var(--shadow);
+  }
+
+  .status-top,
+  .progress-top{
+    font-size:16px;
+    font-weight:900;
+    color:var(--muted);
+    line-height:1;
+  }
+
+  .status-main{
+    margin-top:6px;
+    font-size:18px;
+    font-weight:900;
+    line-height:1.05;
+  }
+
+  .progress-line{
+    margin-top:8px;
+    height:16px;
+    background:#e7eef7;
+    border-radius:999px;
+    overflow:hidden;
+    border:2px solid rgba(124,156,255,.10);
+  }
+
+  .progress-fill{
+    width:0%;
+    height:100%;
+    border-radius:999px;
+    background:linear-gradient(90deg,#93c5fd,#60a5fa);
+    transition:width .18s ease;
+  }
+
+  .progress-count{
+    margin-top:6px;
+    font-size:18px;
+    font-weight:900;
+    text-align:right;
+    line-height:1;
+  }
+
+  button.ctrl{
+    border:0;
+    border-radius:20px;
+    height:74px;
+    font-size:22px;
+    font-weight:900;
+    color:#123;
+    cursor:pointer;
+    box-shadow:var(--shadow);
+    border:3px solid rgba(124,156,255,.20);
+  }
+
+  .ctrl.primary{
+    background:linear-gradient(180deg,#ffe7a7,#ffd36d);
+  }
+
+  .ctrl.secondary{
+    background:linear-gradient(180deg,#e6f4ff,#cde9ff);
+  }
+
+  .ctrl:active{
+    transform:translateY(2px);
+  }
+
+  .feedback{
+    position:fixed;
+    left:50%;
+    top:50%;
+    transform:translate(-50%,-50%) scale(.9);
+    opacity:0;
+    pointer-events:none;
+    z-index:100;
+    background:rgba(255,255,255,.96);
+    border:3px solid rgba(255,255,255,.95);
+    border-radius:24px;
+    padding:14px 22px;
+    font-size:32px;
+    font-weight:900;
+    box-shadow:0 24px 50px rgba(0,0,0,.18);
+    transition:opacity .18s ease, transform .18s ease;
+  }
+
+  .feedback.show{
+    opacity:1;
+    transform:translate(-50%,-50%) scale(1);
+  }
+
+  .feedback.ok{
+    border-color:rgba(64,196,99,.72);
+    color:#176a2f;
+  }
+
+  .feedback.err{
+    border-color:rgba(255,107,107,.72);
+    color:#9f1d1d;
+  }
+
+  .spark{
+    position:absolute;
+    width:22px;
+    height:22px;
+    display:grid;
+    place-items:center;
+    font-size:20px;
+    opacity:0;
+    pointer-events:none;
+    animation:spark .7s ease forwards;
+  }
+
+  @keyframes spark{
+    0%{ transform:translate(0,0) scale(.6); opacity:0; }
+    20%{ opacity:1; }
+    100%{ transform:translate(var(--sx), var(--sy)) scale(1.15); opacity:0; }
+  }
+
+  @media (max-width: 1400px){
+    .app{
+      grid-template-rows:108px 1fr 88px;
+      padding:10px 12px 12px;
+      gap:10px;
+    }
+
+    .top{
+      grid-template-columns:94px 1fr 220px;
+      padding:10px 12px;
+    }
+
+    .mascot{
+      width:82px;
+      height:82px;
+      font-size:44px;
+    }
+
+    h1{ font-size:34px; }
+    .subtitle{ font-size:16px; padding:6px 10px; }
+    .chip{ font-size:14px; }
+
+    .main{ gap:10px; }
+    .left, .right{ padding:10px; border-radius:22px; }
+
+    .section-title{ font-size:22px; }
+    .objective-card{
+      grid-template-columns:92px 1fr;
+      padding:10px;
+    }
+    .obj-icon-box{
+      width:92px; height:92px;
+    }
+    .obj-icon-box .ico{ font-size:52px; }
+    .obj-text .big{ font-size:20px; }
+    .obj-text .small{ font-size:14px; }
+
+    .legend-title{ font-size:15px; }
+    .legend-pill{ font-size:14px; }
+
+    .count-pill{ font-size:16px; }
+
+    .right{
+      grid-template-rows:auto 170px 1fr;
+    }
+
+    .board-head h2{ font-size:24px; }
+    .board-state{ font-size:14px; }
+
+    .zone-title{ font-size:16px; }
+    .placed{ font-size:11px; min-height:34px; }
+    .placed .icon{ font-size:14px; width:18px; }
+
+    .cards-title .label{ font-size:16px; }
+    .cards-title .hint{ font-size:11px; }
+    .cards-grid{ gap:6px; }
+
+    .card{
+      grid-template-columns:32px 1fr;
+      padding:5px 6px;
+      border-radius:12px;
+    }
+
+    .card .icon{
+      width:28px; height:28px; font-size:16px; border-radius:8px;
+    }
+
+    .card .txt{
+      font-size:10px;
+    }
+
+    .bottom{
+      grid-template-columns:1fr 1fr 145px 145px;
+      gap:8px;
+      padding:8px 10px;
+    }
+
+    .status-box, .progress-box{
+      min-height:64px;
+      padding:8px 10px;
+    }
+
+    .status-main{ font-size:14px; }
+    .progress-count{ font-size:14px; }
+    button.ctrl{ height:64px; font-size:18px; }
+  }
+</style>
+</head>
+<body>
+<div class="bg"></div>
+
+<audio id="audioOk" preload="none" data-src="/asstests/aplausos.mp4" ></audio>
+<audio id="audioErr" preload="none" data-src="/asstests/ohh.mp4" ></audio>
+
+<div class="app">
+  <header class="panel top">
+    <div class="mascot">🫁</div>
+
+    <div class="title-wrap">
+      <h1>ALIMENTA A LOS PULMONES</h1>
+      <div class="subtitle">ARRASTRA CADA TARJETA A SU LUGAR</div>
+    </div>
+
+    <div class="chips">
+      <div class="chip">PULMONES 🌬️</div>
+      <div class="chip">BUENO / MALO ✅❌</div>
+    </div>
+  </header>
+
+  <main class="main">
+    <section class="panel left">
+      <h2 class="section-title">OBJETIVO</h2>
+
+      <div class="objective-card">
+        <div class="obj-icon-box">
+          <div class="ico" id="lungsFace">🫁</div>
+        </div>
+        <div class="obj-text">
+          <div class="big">CLASIFICA LOS HÁBITOS</div>
+          <div class="small">SEPARA LO QUE AYUDA A RESPIRAR BIEN DE LO QUE HACE DAÑO</div>
+        </div>
+      </div>
+
+      <div class="legend-card">
+        <div class="legend-title">CLASIFICA EN DOS ZONAS</div>
+        <div class="legend-row">
+          <div class="legend-pill good">ME AYUDA ✅</div>
+          <div class="legend-pill bad">ME HACE DAÑO ❌</div>
+        </div>
+      </div>
+
+      <div class="left-spacer"></div>
+
+      <div class="count-pill">6 TARJETAS</div>
+    </section>
+
+    <section class="panel right">
+      <div class="board-head">
+        <h2>TABLERO</h2>
+        <div class="board-state" id="boardState">CLASIFICA TODO</div>
+      </div>
+
+      <div class="zones">
+        <div class="zone good" id="zoneGood" data-zone="GOOD">
+          <div class="zone-title">ME AYUDA ✅</div>
+          <div class="zone-list" id="goodList"></div>
+        </div>
+
+        <div class="zone bad" id="zoneBad" data-zone="BAD">
+          <div class="zone-title">ME HACE DAÑO ❌</div>
+          <div class="zone-list" id="badList"></div>
+        </div>
+      </div>
+
+      <div class="cards-panel">
+        <div class="cards-title">
+          <div class="label">TARJETAS</div>
+          <div class="hint">TOCA Y ARRASTRA</div>
+        </div>
+        <div class="cards-grid" id="trayGrid"></div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="panel bottom">
+    <div class="status-box">
+      <div class="status-top">ESTADO</div>
+      <div class="status-main" id="statusMain">CLASIFICA LAS 6 TARJETAS</div>
+    </div>
+
+    <div class="progress-box">
+      <div class="progress-top">PROGRESO</div>
+      <div class="progress-line">
+        <div class="progress-fill" id="progressFill"></div>
+      </div>
+      <div class="progress-count" id="progressCount">0 / 6</div>
+    </div>
+
+    <button class="ctrl primary" id="btnReset" type="button">REINICIAR</button>
+    <button class="ctrl secondary" id="btnBack" type="button">VOLVER</button>
+  </footer>
+</div>
+
+<div class="feedback" id="feedback">¡MUY BIEN!</div>
+
+<script>
+(function(){
+  var ITEMS = [
+    { id:'i1', icon:'🏃', text:'CORRER', group:'GOOD' },
+    { id:'i2', icon:'🌳', text:'AIRE LIMPIO EN EL PARQUE', group:'GOOD' },
+    { id:'i3', icon:'👃', text:'RESPIRAR POR LA NARIZ', group:'GOOD' },
+
+    { id:'i4', icon:'🏭', text:'MUCHA CONTAMINACIÓN', group:'BAD' },
+    { id:'i5', icon:'🧹', text:'POLVO EN EL AIRE', group:'BAD' },
+    { id:'i6', icon:'🔥', text:'HUMO DE BASURA', group:'BAD' }
+  ];
+
+  var state = {
+    items: [],
+    placedGood: [],
+    placedBad: [],
+    solvedMap: {},
+    drag: null
+  };
+
+  var trayGrid = document.getElementById('trayGrid');
+  var goodList = document.getElementById('goodList');
+  var badList = document.getElementById('badList');
+  var zoneGood = document.getElementById('zoneGood');
+  var zoneBad = document.getElementById('zoneBad');
+
+  var boardState = document.getElementById('boardState');
+  var statusMain = document.getElementById('statusMain');
+  var progressFill = document.getElementById('progressFill');
+  var progressCount = document.getElementById('progressCount');
+
+  var feedback = document.getElementById('feedback');
+  var audioOk = document.getElementById('audioOk');
+  var audioErr = document.getElementById('audioErr');
+
+  function playSound(a){
+    try{
+      a.pause();
+      a.currentTime = 0;
+      var p = a.play();
+      if (p && p.catch){ p.catch(function(){}); }
+    }catch(e){}
+  }
+
+  function showFeedback(text, kind){
+    feedback.textContent = text;
+    feedback.className = 'feedback ' + (kind === 'ok' ? 'ok' : 'err') + ' show';
+    clearTimeout(showFeedback.t);
+    showFeedback.t = setTimeout(function(){
+      feedback.className = 'feedback';
+    }, 700);
+  }
+
+  function shuffle(arr){
+    var a = arr.slice();
+    for (var i = a.length - 1; i > 0; i--){
+      var j = Math.floor(Math.random() * (i + 1));
+      var t = a[i];
+      a[i] = a[j];
+      a[j] = t;
+    }
+    return a;
+  }
+
+  function clearZoneHover(){
+    zoneGood.classList.remove('over');
+    zoneBad.classList.remove('over');
+  }
+
+  function zoneFromPoint(x, y){
+    var el = document.elementFromPoint(x, y);
+    if (!el) return null;
+    return el.closest('.zone');
+  }
+
+  function makeDragFloat(sourceEl){
+    var clone = sourceEl.cloneNode(true);
+    clone.classList.remove('drag-source','solved','good-solved','bad-solved');
+    clone.classList.add('drag-float');
+    document.body.appendChild(clone);
+    return clone;
+  }
+
+  function setDragFloatPos(el, x, y){
+    el.style.left = x + 'px';
+    el.style.top = y + 'px';
+  }
+
+  function createSpark(container){
+    var s = document.createElement('div');
+    s.className = 'spark';
+    s.textContent = '⭐';
+    s.style.left = Math.floor(16 + Math.random() * 70) + '%';
+    s.style.top = Math.floor(18 + Math.random() * 60) + '%';
+    s.style.setProperty('--sx', (Math.floor(Math.random() * 80) - 40) + 'px');
+    s.style.setProperty('--sy', (Math.floor(Math.random() * 70) - 35) + 'px');
+    container.appendChild(s);
+    setTimeout(function(){
+      if (s.parentNode) s.parentNode.removeChild(s);
+    }, 760);
+  }
+
+  function updateStatus(){
+    var placed = state.placedGood.length + state.placedBad.length;
+    var total = state.items.length;
+    var pct = total ? (placed / total) * 100 : 0;
+
+    progressCount.textContent = placed + ' / ' + total;
+    progressFill.style.width = pct + '%';
+
+    if (placed === total){
+      boardState.textContent = '¡PULMONES FELICES!';
+      statusMain.textContent = '¡MUY BIEN! TODO CLASIFICADO';
+    } else {
+      boardState.textContent = 'CLASIFICA TODO';
+      statusMain.textContent = 'CLASIFICA LAS 6 TARJETAS';
+    }
+  }
+
+  function renderPlaced(listEl, items){
+    listEl.innerHTML = '';
+    for (var i = 0; i < items.length; i++){
+      var it = items[i];
+      var row = document.createElement('div');
+      row.className = 'placed';
+
+      var icon = document.createElement('div');
+      icon.className = 'icon';
+      icon.textContent = it.icon;
+
+      var txt = document.createElement('div');
+      txt.textContent = it.text;
+
+      row.appendChild(icon);
+      row.appendChild(txt);
+      listEl.appendChild(row);
+    }
+  }
+
+  function makeCard(item){
+    var btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'card';
+    btn.setAttribute('data-id', item.id);
+    btn.setAttribute('aria-label', item.text);
+
+    var icon = document.createElement('div');
+    icon.className = 'icon';
+    icon.textContent = item.icon;
+
+    var txt = document.createElement('div');
+    txt.className = 'txt';
+    txt.textContent = item.text;
+
+    btn.appendChild(icon);
+    btn.appendChild(txt);
+
+    btn.addEventListener('pointerdown', function(ev){
+      onCardPointerDown(ev, item, btn);
+    });
+
+    return btn;
+  }
+
+  function renderTray(){
+    trayGrid.innerHTML = '';
+    for (var i = 0; i < state.items.length; i++){
+      var item = state.items[i];
+      var card = makeCard(item);
+      var solvedKind = state.solvedMap[item.id];
+
+      if (solvedKind){
+        card.classList.add('solved');
+        card.classList.add(solvedKind === 'GOOD' ? 'good-solved' : 'bad-solved');
+      }
+
+      trayGrid.appendChild(card);
+    }
+  }
+
+  function onCardPointerDown(ev, item, sourceEl){
+    if (state.solvedMap[item.id]) return;
+
+    ev.preventDefault();
+    sourceEl.setPointerCapture(ev.pointerId);
+    sourceEl.classList.add('drag-source');
+
+    var dragFloat = makeDragFloat(sourceEl);
+    setDragFloatPos(dragFloat, ev.clientX, ev.clientY);
+
+    state.drag = {
+      pointerId: ev.pointerId,
+      item: item,
+      sourceEl: sourceEl,
+      floatEl: dragFloat
+    };
+
+    function onMove(e){
+      if (!state.drag || e.pointerId !== state.drag.pointerId) return;
+
+      setDragFloatPos(state.drag.floatEl, e.clientX, e.clientY);
+
+      clearZoneHover();
+      var z = zoneFromPoint(e.clientX, e.clientY);
+      if (z) z.classList.add('over');
+    }
+
+    function onUp(e){
+      if (!state.drag || e.pointerId !== state.drag.pointerId) return;
+
+      clearZoneHover();
+
+      var z = zoneFromPoint(e.clientX, e.clientY);
+      var targetZone = z ? z.getAttribute('data-zone') : null;
+      var correct = targetZone && targetZone === item.group;
+
+      sourceEl.classList.remove('drag-source');
+
+      if (state.drag.floatEl && state.drag.floatEl.parentNode){
+        state.drag.floatEl.parentNode.removeChild(state.drag.floatEl);
+      }
+
+      if (correct){
+        state.solvedMap[item.id] = item.group;
+
+        if (item.group === 'GOOD'){
+          state.placedGood.push(item);
+          createSpark(goodList);
+        } else {
+          state.placedBad.push(item);
+          createSpark(badList);
+        }
+
+        renderTray();
+        renderPlaced(goodList, state.placedGood);
+        renderPlaced(badList, state.placedBad);
+        updateStatus();
+
+        playSound(audioOk);
+        showFeedback('¡BIEN!', 'ok');
+
+        if ((state.placedGood.length + state.placedBad.length) === state.items.length){
+          setTimeout(function(){
+            playSound(audioOk);
+            showFeedback('¡GENIAL! PULMONES FELICES', 'ok');
+          }, 180);
+        }
+      } else {
+        boardState.textContent = 'PRUEBA OTRA VEZ';
+        statusMain.textContent = 'ESE NO ES SU SITIO';
+        playSound(audioErr);
+        showFeedback('ESE NO ES SU SITIO', 'err');
+
+        setTimeout(function(){
+          if ((state.placedGood.length + state.placedBad.length) < state.items.length){
+            boardState.textContent = 'CLASIFICA TODO';
+            statusMain.textContent = 'CLASIFICA LAS 6 TARJETAS';
+          }
+        }, 650);
+      }
+
+      state.drag = null;
+      window.removeEventListener('pointermove', onMove);
+      window.removeEventListener('pointerup', onUp);
+      window.removeEventListener('pointercancel', onUp);
+    }
+
+    window.addEventListener('pointermove', onMove);
+    window.addEventListener('pointerup', onUp);
+    window.addEventListener('pointercancel', onUp);
+  }
+
+  function resetGame(){
+    state.items = shuffle(ITEMS);
+    state.placedGood = [];
+    state.placedBad = [];
+    state.solvedMap = {};
+    state.drag = null;
+
+    renderTray();
+    renderPlaced(goodList, state.placedGood);
+    renderPlaced(badList, state.placedBad);
+    updateStatus();
+
+    showFeedback('ACTIVIDAD REINICIADA', 'ok');
+  }
+
+  document.getElementById('btnReset').addEventListener('click', resetGame);
+
+  document.getElementById('btnBack').addEventListener('click', function(){
+    if (window.history.length > 1){
+      window.history.back();
+    } else {
+      window.location.href = './';
+    }
+  });
+
+  resetGame();
+})();
+</script>
+</body>
+</html>

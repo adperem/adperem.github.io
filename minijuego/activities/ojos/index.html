@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>VISTA</title>
+  <style>
+    html, body { margin:0; padding:0; height:100%; font-family: system-ui, Segoe UI, Roboto, Arial; background:#0b1220; color:#fff; }
+    .wrap { min-height:100%; display:flex; align-items:center; justify-content:center; padding:24px; }
+    .card {
+      width:min(720px, 100%);
+      background: rgba(255,255,255,0.10);
+      border: 1px solid rgba(255,255,255,0.18);
+      border-radius: 18px;
+      padding: 18px;
+    }
+    h1 { margin: 0 0 10px; }
+    p { margin: 0 0 14px; font-size: 18px; line-height: 1.35; }
+    button {
+      width: 100%;
+      font-size: 22px;
+      padding: 14px;
+      border-radius: 14px;
+      border: 0;
+      cursor: pointer;
+    }
+    .row { display:flex; gap:12px; margin-top: 12px; }
+    .row button { width: 50%; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <h1>VISTA</h1>
+      <p>Aprendemos a cuidar la vista. Hacemos descansos y miramos la pantalla desde lejos.</p>
+
+      <div class="row">
+        <button id="complete">He aprendido</button>
+        <button id="back">Volver</button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { markCompleted } from "../../src/storage.js";
+
+    document.getElementById("complete").addEventListener("click", () => {
+      markCompleted("vista");
+      window.location.href = "../../index.html";
+    });
+
+    document.getElementById("back").addEventListener("click", () => {
+      window.location.href = "../../index.html";
+    });
+  </script>
+</body>
+</html>
