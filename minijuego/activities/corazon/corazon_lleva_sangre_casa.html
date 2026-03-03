@@ -1,0 +1,961 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CORAZÓN: LLEVA LA SANGRE A CASA</title>
+  <style>
+
+    :root{
+      --panel-bg: rgba(255,255,255,0.88);
+      --panel-border: rgba(255,255,255,0.9);
+      --shadow: 0 18px 45px rgba(0,0,0,0.18);
+      --shadow-soft: 0 10px 25px rgba(0,0,0,0.14);
+      --radius-xl: 28px;
+      --ink: #1f2a37;
+      --muted: #3b556f;
+      --accent: rgba(124,58,237,1);
+      --accent2: rgba(6,182,212,1);
+      --good: rgba(34,197,94,1);
+      --bad: rgba(239,68,68,1);
+      --bottom-h: 112px;
+    }
+
+    *{ box-sizing: border-box; }
+    html, body{
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      color: var(--ink);
+      overflow: hidden;
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: none;
+      background: #0b1220;
+    }
+
+    body::before{
+      content: "";
+      position: fixed;
+      inset: -40px;
+      background-image: url("assets/fondo_parque.webp");
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+      filter: blur(14px) saturate(1.2);
+      transform: scale(1.08);
+      z-index: -2;
+    }
+    body::after{
+      content: "";
+      position: fixed;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(255,255,255,0.12), rgba(255,255,255,0.05));
+      z-index: -1;
+    }
+
+    .stage{
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 18px;
+    }
+    .frame{
+      width: min(1920px, 100vw);
+      height: min(1080px, 100vh);
+      position: relative;
+      border-radius: 34px;
+      overflow: hidden;
+    }
+
+    .cloud{
+      position: absolute;
+      width: 280px;
+      height: 120px;
+      background: rgba(255,255,255,0.70);
+      border-radius: 999px;
+      box-shadow: var(--shadow-soft);
+      border: 2px solid rgba(255,255,255,0.6);
+      opacity: 0.9;
+      pointer-events: none;
+    }
+    .cloud::before, .cloud::after{
+      content: "";
+      position: absolute;
+      background: rgba(255,255,255,0.72);
+      border-radius: 999px;
+      border: 2px solid rgba(255,255,255,0.55);
+    }
+    .cloud::before{ width: 120px; height: 90px; left: 40px; top: -28px; }
+    .cloud::after { width: 150px; height: 105px; left: 120px; top: -38px; }
+    .cloud.c1{ left: 24px; top: 24px; transform: rotate(-2deg); }
+    .cloud.c2{ right: 24px; top: 56px; transform: rotate(3deg) scale(0.95); }
+
+    .sticker{
+      position: absolute;
+      width: 140px;
+      height: 140px;
+      border-radius: 30px;
+      background: rgba(255,255,255,0.62);
+      box-shadow: var(--shadow-soft);
+      border: 2px dashed rgba(255,255,255,0.65);
+      display: grid;
+      place-items: center;
+      font-size: 60px;
+      pointer-events: none;
+      opacity: 0.9;
+    }
+    .st1{ left: 32px; bottom: calc(var(--bottom-h) + 18px); transform: rotate(-8deg); }
+    .st2{ right: 38px; bottom: calc(var(--bottom-h) + 26px); transform: rotate(10deg); }
+    .st3{ left: 260px; top: 54px; transform: rotate(7deg) scale(0.85); opacity: 0.85; }
+
+    .header{
+      position: absolute;
+      left: 22px;
+      right: 22px;
+      top: 18px;
+      padding: 14px 16px;
+      border-radius: var(--radius-xl);
+      background: rgba(255,255,255,0.78);
+      border: 2px solid rgba(255,255,255,0.7);
+      box-shadow: var(--shadow-soft);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+    }
+    .title{
+      font-size: 42px;
+      font-weight: 1000;
+      letter-spacing: 1px;
+      line-height: 1.05;
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      white-space: nowrap;
+    }
+    .hint{
+      font-size: 20px;
+      font-weight: 950;
+      color: var(--muted);
+      text-transform: uppercase;
+      text-align: right;
+      line-height: 1.1;
+    }
+    .badge{
+      font-size: 18px;
+      font-weight: 1000;
+      padding: 9px 14px;
+      border-radius: 999px;
+      background: rgba(124,58,237,0.12);
+      border: 2px solid rgba(124,58,237,0.28);
+      color: #3b2a8f;
+      text-transform: uppercase;
+      white-space: nowrap;
+      min-width: 140px;
+      text-align: center;
+    }
+
+    .toast{
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      padding: 16px 20px;
+      border-radius: 22px;
+      background: rgba(255,255,255,0.92);
+      border: 2px solid rgba(0,0,0,0.08);
+      box-shadow: var(--shadow);
+      font-size: 34px;
+      font-weight: 1000;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 160ms ease, transform 160ms ease;
+      z-index: 60;
+      text-align: center;
+      max-width: 86%;
+    }
+    .toast.show{
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1.02);
+    }
+    .toast.good{ background: rgba(34,197,94,0.18); border-color: rgba(34,197,94,0.28); color: #14532d; }
+    .toast.bad{ background: rgba(239,68,68,0.18); border-color: rgba(239,68,68,0.28); color: #7f1d1d; }
+
+    .confetti{
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+      z-index: 55;
+    }
+    .confetti i{
+      position: absolute;
+      width: 14px;
+      height: 14px;
+      border-radius: 4px;
+      opacity: 0;
+      animation: fall 900ms ease-out forwards;
+    }
+    @keyframes fall{
+      0%{ transform: translateY(0) rotate(0deg) scale(0.9); opacity: 0; }
+      10%{ opacity: 1; }
+      100%{ transform: translateY(420px) rotate(360deg) scale(1.0); opacity: 0; }
+    }
+
+    .overlay{
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      background: rgba(255,255,255,0.35);
+      backdrop-filter: blur(6px);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 180ms ease;
+      z-index: 80;
+    }
+    .overlay.show{
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .modal{
+      width: min(980px, 92%);
+      border-radius: 30px;
+      background: rgba(255,255,255,0.92);
+      border: 2px solid rgba(0,0,0,0.08);
+      box-shadow: var(--shadow);
+      padding: 22px 22px 18px 22px;
+      text-align: center;
+    }
+    .modal h2{
+      margin: 0 0 10px 0;
+      font-size: 46px;
+      font-weight: 1000;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    .modal p{
+      margin: 0 0 16px 0;
+      font-size: 26px;
+      font-weight: 950;
+      text-transform: uppercase;
+      color: #334155;
+      line-height: 1.2;
+    }
+    .startBtn{
+      height: 94px;
+      width: 100%;
+      border-radius: 24px;
+      border: 2px solid rgba(0,0,0,0.08);
+      box-shadow: var(--shadow-soft);
+      background: rgba(124,58,237,0.14);
+      color: #2f1d78;
+      font-size: 34px;
+      font-weight: 1000;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      cursor: pointer;
+      touch-action: manipulation;
+    }
+    .startBtn:active{ transform: translateY(1px); }
+
+    .bottomBar{
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: var(--bottom-h);
+      padding: 14px 18px;
+      background: rgba(255,255,255,0.90);
+      border-top: 2px solid rgba(255,255,255,0.8);
+      box-shadow: 0 -18px 45px rgba(0,0,0,0.16);
+      display: grid;
+      grid-template-columns: 1fr 1fr 1.2fr;
+      gap: 14px;
+      align-items: center;
+    }
+    .btn{
+      height: 78px;
+      border-radius: 22px;
+      border: 2px solid rgba(0,0,0,0.08);
+      box-shadow: var(--shadow-soft);
+      background: rgba(255,255,255,0.92);
+      font-size: 28px;
+      font-weight: 1000;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #1f2a37;
+      cursor: pointer;
+      touch-action: manipulation;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      padding: 0 18px;
+    }
+    .btn:active{ transform: translateY(1px); }
+    .btn.primary{
+      background: rgba(124,58,237,0.14);
+      border-color: rgba(124,58,237,0.26);
+      color: #2f1d78;
+    }
+    .btn.secondary{
+      background: rgba(6,182,212,0.12);
+      border-color: rgba(6,182,212,0.22);
+      color: #0b5563;
+    }
+    .statusBox{
+      height: 78px;
+      border-radius: 22px;
+      border: 2px solid rgba(0,0,0,0.08);
+      box-shadow: var(--shadow-soft);
+      background: rgba(255,255,255,0.92);
+      display: grid;
+      grid-template-columns: 1fr;
+      align-items: center;
+      padding: 8px 14px;
+      gap: 6px;
+    }
+    .statusTop{
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      font-size: 18px;
+      font-weight: 1000;
+      text-transform: uppercase;
+      color: #334155;
+    }
+    .statusValue{
+      font-size: 26px;
+      font-weight: 1000;
+      text-transform: uppercase;
+      color: #111827;
+      letter-spacing: 0.6px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    @media (max-width: 1400px){
+      .title{ font-size: 34px; }
+      .hint{ font-size: 16px; }
+    }
+
+
+    .main{
+      position: absolute;
+      left: 22px;
+      right: 22px;
+      top: 112px;
+      bottom: calc(var(--bottom-h) + 18px);
+      display: grid;
+      grid-template-rows: auto 1fr;
+      gap: 14px;
+    }
+
+    .panel{
+      background: var(--panel-bg);
+      border: 2px solid var(--panel-border);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow);
+      padding: 16px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .instruction{
+      border-radius: 22px;
+      background: rgba(255,255,255,0.74);
+      border: 2px solid rgba(0,0,0,0.07);
+      box-shadow: var(--shadow-soft);
+      padding: 14px 16px;
+      display: grid;
+      align-content: center;
+      gap: 6px;
+      text-align: center;
+      min-height: 92px;
+    }
+    .instruction .big{
+      font-size: 34px;
+      font-weight: 1000;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: #22314a;
+      line-height: 1.1;
+    }
+    .instruction .small{
+      font-size: 18px;
+      font-weight: 950;
+      text-transform: uppercase;
+      color: #334155;
+      opacity: 0.94;
+      line-height: 1.15;
+    }
+
+    .play{
+      width: 100%;
+      height: 100%;
+      border-radius: 26px;
+      background: rgba(255,255,255,0.62);
+      border: 2px solid rgba(0,0,0,0.06);
+      box-shadow: inset 0 0 0 2px rgba(255,255,255,0.45);
+      overflow: hidden;
+      position: relative;
+      touch-action: none;
+    }
+
+    .heartZone{
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -52%);
+      width: 520px;
+      height: 520px;
+      border-radius: 999px;
+      background: radial-gradient(circle at 30% 25%, rgba(255,255,255,0.85), rgba(255,255,255,0) 55%),
+                  linear-gradient(180deg, rgba(255,90,120,0.95), rgba(255,40,90,0.95));
+      box-shadow: 0 22px 55px rgba(0,0,0,0.20);
+      border: 3px solid rgba(255,255,255,0.75);
+      opacity: 0.92;
+      pointer-events: none;
+    }
+    .heartZone::before{
+      content:"";
+      position:absolute;
+      inset: 16px;
+      border-radius: inherit;
+      border: 2px solid rgba(0,0,0,0.07);
+      opacity: 0.75;
+    }
+
+    .heartFace{
+      position: absolute;
+      left: 50%;
+      top: 52%;
+      transform: translate(-50%, -50%);
+      width: 70%;
+      height: 60%;
+      display: grid;
+      grid-template-rows: 1fr auto;
+      gap: 14px;
+      align-items: center;
+      justify-items: center;
+    }
+    .eyes{
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      padding: 0 14px;
+    }
+    .eye{
+      width: 84px;
+      height: 84px;
+      background: rgba(255,255,255,0.95);
+      border: 3px solid rgba(0,0,0,0.08);
+      border-radius: 999px;
+      box-shadow: 0 10px 18px rgba(0,0,0,0.12);
+      position: relative;
+      overflow: hidden;
+    }
+    .pupil{
+      width: 28px;
+      height: 28px;
+      background: rgba(25,25,35,0.92);
+      border-radius: 999px;
+      position: absolute;
+      left: 28px;
+      top: 30px;
+      box-shadow: 0 0 0 8px rgba(0,0,0,0.05);
+    }
+    .mouth{
+      width: 150px;
+      height: 62px;
+      border-radius: 0 0 999px 999px;
+      background: rgba(0,0,0,0.08);
+      position: relative;
+      overflow: hidden;
+      border: 3px solid rgba(0,0,0,0.08);
+    }
+    .tongue{
+      position: absolute;
+      left: 50%;
+      bottom: -16px;
+      transform: translateX(-50%);
+      width: 96px;
+      height: 58px;
+      border-radius: 999px;
+      background: rgba(255,120,150,0.85);
+      border: 3px solid rgba(0,0,0,0.06);
+    }
+
+    .targets{
+      position: absolute;
+      inset: 18px;
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 16px;
+      align-items: end;
+      pointer-events: none;
+    }
+    .target{
+      height: 240px;
+      border-radius: 28px;
+      background: rgba(255,255,255,0.85);
+      border: 2px solid rgba(0,0,0,0.08);
+      box-shadow: 0 16px 34px rgba(0,0,0,0.12);
+      padding: 14px;
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      gap: 10px;
+      align-items: center;
+      pointer-events: auto;
+      position: relative;
+      overflow: hidden;
+    }
+    .target .icon{
+      font-size: 54px;
+      filter: drop-shadow(0 10px 12px rgba(0,0,0,0.10));
+      text-align: center;
+    }
+    .target .name{
+      font-size: 30px;
+      font-weight: 1000;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      text-align: center;
+      color: #111827;
+    }
+    .target .sub{
+      font-size: 18px;
+      font-weight: 950;
+      text-transform: uppercase;
+      text-align: center;
+      color: #334155;
+      opacity: 0.9;
+    }
+    .target.highlight{
+      box-shadow: 0 0 0 8px rgba(6,182,212,0.20), 0 16px 34px rgba(0,0,0,0.12);
+      border-color: rgba(6,182,212,0.35);
+    }
+    .target.ok{
+      box-shadow: 0 0 0 8px rgba(34,197,94,0.18), 0 16px 34px rgba(0,0,0,0.12);
+      border-color: rgba(34,197,94,0.35);
+    }
+    .target.bad{
+      box-shadow: 0 0 0 8px rgba(239,68,68,0.16), 0 16px 34px rgba(0,0,0,0.12);
+      border-color: rgba(239,68,68,0.35);
+    }
+
+    .drop{
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 130px;
+      height: 130px;
+      transform: translate(-50%, -50%);
+      border-radius: 34px;
+      background: rgba(255,255,255,0.95);
+      border: 2px solid rgba(0,0,0,0.08);
+      box-shadow: 0 18px 40px rgba(0,0,0,0.18);
+      display: grid;
+      place-items: center;
+      cursor: grab;
+      touch-action: none;
+      z-index: 40;
+    }
+    .drop:active{ cursor: grabbing; }
+    .drop.dragging{ box-shadow: 0 22px 55px rgba(0,0,0,0.28); }
+
+    .drop .emoji{ font-size: 64px; line-height: 1; }
+    .drop .label{
+      position: absolute;
+      left: 50%;
+      bottom: 10px;
+      transform: translateX(-50%);
+      font-size: 16px;
+      font-weight: 1000;
+      text-transform: uppercase;
+      padding: 6px 8px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.88);
+      border: 2px solid rgba(0,0,0,0.08);
+      letter-spacing: 0.6px;
+      white-space: nowrap;
+    }
+
+    .shake{ animation: shake 220ms ease-in-out; }
+    @keyframes shake{
+      0%{ transform: translateX(0); }
+      20%{ transform: translateX(-10px); }
+      40%{ transform: translateX(10px); }
+      60%{ transform: translateX(-8px); }
+      80%{ transform: translateX(8px); }
+      100%{ transform: translateX(0); }
+    }
+
+    @media (max-width: 1400px){
+      .heartZone{ width: 440px; height: 440px; }
+      .target{ height: 220px; }
+      .drop{ width: 120px; height: 120px; }
+      .target .name{ font-size: 26px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="stage">
+    <div class="frame" id="frame">
+      <div class="cloud c1"></div>
+      <div class="cloud c2"></div>
+      <div class="sticker st1">🩸</div>
+      <div class="sticker st2">🏠</div>
+      <div class="sticker st3">☁️</div>
+
+      <header class="header">
+        <div class="title"><span style="font-size:46px">❤️</span> CORAZÓN: LLEVA LA SANGRE</div>
+        <div class="hint">
+          ARRASTRA LA GOTITA A SU CASA
+          <div style="font-size:16px; font-weight:1000; opacity:0.9;">SIGUE LA FRASE DE ARRIBA</div>
+        </div>
+        <div class="badge" id="badge">LISTO</div>
+      </header>
+
+      <main class="main">
+        <section class="panel">
+          <div class="instruction">
+            <div class="big" id="instBig">TOCA EMPEZAR</div>
+            <div class="small" id="instSmall">ARRASTRA LA GOTITA AL LUGAR CORRECTO</div>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="play" id="play">
+            <div class="heartZone" aria-hidden="true">
+              <div class="heartFace" aria-hidden="true">
+                <div class="eyes">
+                  <div class="eye"><div class="pupil" id="p1"></div></div>
+                  <div class="eye"><div class="pupil" id="p2"></div></div>
+                </div>
+                <div class="mouth"><div class="tongue"></div></div>
+              </div>
+            </div>
+
+            <div class="targets">
+              <div class="target" id="tBrain" data-key="CEREBRO">
+                <div class="icon">🧠</div>
+                <div class="name">CEREBRO</div>
+                <div class="sub">PIENSA</div>
+              </div>
+              <div class="target" id="tHands" data-key="MANOS">
+                <div class="icon">👐</div>
+                <div class="name">MANOS</div>
+                <div class="sub">TOCAN</div>
+              </div>
+              <div class="target" id="tFeet" data-key="PIES">
+                <div class="icon">🦶</div>
+                <div class="name">PIES</div>
+                <div class="sub">CAMINAN</div>
+              </div>
+            </div>
+
+            <div class="drop" id="drop" role="button" aria-label="Gotita de sangre">
+              <div class="emoji">🩸</div>
+              <div class="label">SANGRE</div>
+            </div>
+
+            <div class="confetti" id="confetti"></div>
+            <div class="toast" id="toast"></div>
+
+            <div class="overlay show" id="overlay">
+              <div class="modal">
+                <h2>¿LISTO?</h2>
+                <p>ARRASTRA LA GOTITA DE SANGRE A LA CASA CORRECTA</p>
+                <button class="startBtn" id="btnStart">EMPEZAR</button>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <div class="bottomBar" aria-label="Barra inferior">
+        <button class="btn primary" id="btnReset">REINICIAR</button>
+        <button class="btn secondary" id="btnBack">VOLVER</button>
+        <div class="statusBox" role="status" aria-live="polite">
+          <div class="statusTop">
+            <span>ESTADO</span>
+            <span id="miniRight">ACIERTOS: 0</span>
+          </div>
+          <div class="statusValue" id="statusText">TOCA EMPEZAR</div>
+        </div>
+      </div>
+
+      <audio id="sndOk" src="/asstests/aplausos.mp4" preload="auto"></audio>
+      <audio id="sndBad" src="/asstests/ohh.mp4" preload="auto"></audio>
+    </div>
+  </div>
+
+  <script>
+    (function(){
+      "use strict";
+
+      var frame = document.getElementById("frame");
+      var overlay = document.getElementById("overlay");
+      var btnStart = document.getElementById("btnStart");
+      var btnReset = document.getElementById("btnReset");
+      var btnBack = document.getElementById("btnBack");
+
+      var instBig = document.getElementById("instBig");
+      var instSmall = document.getElementById("instSmall");
+      var badge = document.getElementById("badge");
+      var toast = document.getElementById("toast");
+      var confetti = document.getElementById("confetti");
+      var statusText = document.getElementById("statusText");
+      var miniRight = document.getElementById("miniRight");
+
+      var tBrain = document.getElementById("tBrain");
+      var tHands = document.getElementById("tHands");
+      var tFeet = document.getElementById("tFeet");
+      var targets = [tBrain, tHands, tFeet];
+
+      var drop = document.getElementById("drop");
+
+      var sndOk = document.getElementById("sndOk");
+      var sndBad = document.getElementById("sndBad");
+
+      var started = false;
+      var allowDrag = false;
+      var correct = 0;
+      var currentKey = "CEREBRO";
+
+      var drag = {
+        active: false,
+        pointerId: null,
+        startX: 0,
+        startY: 0,
+        baseLeft: 0,
+        baseTop: 0
+      };
+
+      function setStatus(t){
+        statusText.textContent = t;
+      }
+
+      function showToast(text, kind){
+        toast.textContent = text;
+        toast.className = "toast show " + (kind || "");
+        window.clearTimeout(showToast._t);
+        showToast._t = window.setTimeout(function(){
+          toast.className = "toast";
+        }, 650);
+      }
+
+      function playSound(ok){
+        try{
+          var a = ok ? sndOk : sndBad;
+          a.currentTime = 0;
+          a.play();
+        }catch(e){}
+      }
+
+      function popConfetti(count){
+        confetti.innerHTML = "";
+        var n = count || 18;
+        var colors = [
+          "rgba(124,58,237,0.9)",
+          "rgba(6,182,212,0.9)",
+          "rgba(34,197,94,0.9)",
+          "rgba(251,191,36,0.9)",
+          "rgba(255,255,255,0.9)"
+        ];
+        var rect = frame.getBoundingClientRect();
+        for(var i=0;i<n;i++){
+          var piece = document.createElement("i");
+          var x = rect.width*0.5 + (Math.random()*260 - 130);
+          var y = rect.height*0.40 + (Math.random()*70 - 35);
+          piece.style.left = x + "px";
+          piece.style.top = y + "px";
+          piece.style.background = colors[Math.floor(Math.random()*colors.length)];
+          piece.style.transform = "translateY(0) rotate(" + (Math.random()*60) + "deg)";
+          piece.style.animationDelay = (Math.random()*120) + "ms";
+          confetti.appendChild(piece);
+        }
+        window.setTimeout(function(){ confetti.innerHTML = ""; }, 980);
+      }
+
+      function rectsOverlap(r1, r2){
+        return !(r1.right < r2.left || r1.left > r2.right || r1.bottom < r2.top || r1.top > r2.bottom);
+      }
+
+      function clearTargetStates(){
+        for(var i=0;i<targets.length;i++){
+          targets[i].classList.remove("highlight", "ok", "bad");
+        }
+      }
+
+      function updateMini(){
+        miniRight.textContent = "ACIERTOS: " + correct;
+      }
+
+      function centerDrop(){
+        drop.style.left = "50%";
+        drop.style.top = "50%";
+        drop.style.transform = "translate(-50%, -50%)";
+      }
+
+      function shake(el){
+        el.classList.remove("shake");
+        void el.offsetWidth;
+        el.classList.add("shake");
+        window.setTimeout(function(){
+          el.classList.remove("shake");
+        }, 240);
+      }
+
+      function pickNext(){
+        var keys = ["CEREBRO","MANOS","PIES"];
+        currentKey = keys[Math.floor(Math.random()*keys.length)];
+        instBig.textContent = "LLEVA LA SANGRE A: " + currentKey;
+        instSmall.textContent = "ARRASTRA LA GOTITA HASTA SU CASA";
+        badge.textContent = "LISTO";
+        setStatus("ARRASTRA Y SUELTA");
+        centerDrop();
+        clearTargetStates();
+        allowDrag = true;
+      }
+
+      function goBack(){
+        var ok = false;
+        try{
+          if(document.referrer) ok = (new URL(document.referrer)).origin === location.origin;
+        }catch(e){ ok = false; }
+        if(ok) history.back();
+        else location.href = "index.html";
+      }
+
+      drop.addEventListener("pointerdown", function(ev){
+        if(!started || !allowDrag) return;
+        ev.preventDefault();
+
+        drag.active = true;
+        drag.pointerId = ev.pointerId;
+        drop.setPointerCapture(ev.pointerId);
+
+        var fr = frame.getBoundingClientRect();
+        var r = drop.getBoundingClientRect();
+        drag.baseLeft = r.left - fr.left;
+        drag.baseTop = r.top - fr.top;
+        drag.startX = ev.clientX;
+        drag.startY = ev.clientY;
+
+        drop.classList.add("dragging");
+        drop.style.position = "absolute";
+        drop.style.left = drag.baseLeft + "px";
+        drop.style.top = drag.baseTop + "px";
+        drop.style.transform = "translate(0,0)";
+        badge.textContent = "JUGANDO";
+      }, { passive: false });
+
+      drop.addEventListener("pointermove", function(ev){
+        if(!drag.active) return;
+        ev.preventDefault();
+
+        var dx = ev.clientX - drag.startX;
+        var dy = ev.clientY - drag.startY;
+        drop.style.left = (drag.baseLeft + dx) + "px";
+        drop.style.top  = (drag.baseTop + dy) + "px";
+
+        var rDrop = drop.getBoundingClientRect();
+        clearTargetStates();
+        for(var i=0;i<targets.length;i++){
+          if(rectsOverlap(rDrop, targets[i].getBoundingClientRect())){
+            targets[i].classList.add("highlight");
+          }
+        }
+      }, { passive: false });
+
+      drop.addEventListener("pointerup", function(ev){
+        if(!drag.active) return;
+        ev.preventDefault();
+
+        drag.active = false;
+        try{ drop.releasePointerCapture(drag.pointerId); }catch(e){}
+        drop.classList.remove("dragging");
+
+        var rDrop = drop.getBoundingClientRect();
+        var chosen = null;
+        for(var i=0;i<targets.length;i++){
+          if(rectsOverlap(rDrop, targets[i].getBoundingClientRect())){
+            chosen = targets[i];
+            break;
+          }
+        }
+        clearTargetStates();
+
+        if(chosen && chosen.getAttribute("data-key") === currentKey){
+          chosen.classList.add("ok");
+          allowDrag = false;
+          correct += 1;
+          updateMini();
+          playSound(true);
+          popConfetti(18);
+          showToast("¡BIEN!", "good");
+          badge.textContent = "CORRECTO";
+          setStatus("¡GENIAL!");
+          window.setTimeout(function(){
+            pickNext();
+          }, 700);
+        }else{
+          if(chosen) chosen.classList.add("bad");
+          playSound(false);
+          showToast("INTENTA OTRA VEZ", "bad");
+          badge.textContent = "UPS";
+          setStatus("PRUEBA DE NUEVO");
+          if(chosen) shake(chosen);
+          centerDrop();
+          allowDrag = true;
+        }
+      }, { passive: false });
+
+      drop.addEventListener("pointercancel", function(ev){
+        if(!drag.active) return;
+        drag.active = false;
+        drop.classList.remove("dragging");
+        centerDrop();
+        clearTargetStates();
+      }, { passive: false });
+
+      function reset(){
+        started = false;
+        allowDrag = false;
+        correct = 0;
+        updateMini();
+        badge.textContent = "LISTO";
+        instBig.textContent = "TOCA EMPEZAR";
+        instSmall.textContent = "ARRASTRA LA GOTITA AL LUGAR CORRECTO";
+        setStatus("TOCA EMPEZAR");
+        centerDrop();
+        clearTargetStates();
+        overlay.classList.add("show");
+      }
+
+      btnStart.addEventListener("click", function(){
+        overlay.classList.remove("show");
+        started = true;
+        pickNext();
+      });
+
+      btnReset.addEventListener("click", function(){ reset(); });
+      btnBack.addEventListener("click", function(){ goBack(); });
+
+      reset();
+    })();
+  </script>
+</body>
+</html>

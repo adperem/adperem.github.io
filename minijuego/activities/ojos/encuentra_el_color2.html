@@ -1,0 +1,481 @@
+<!-- 03_BUSCA_EL_COLOR.html -->
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>BUSCA EL COLOR</title>
+  <style>
+    :root{
+      --ink:#16324f;
+      --muted:#5a6b7a;
+      --card: rgba(255,255,255,.88);
+      --shadow: 0 18px 40px rgba(0,0,0,.12);
+      --shadow2: 0 10px 24px rgba(0,0,0,.10);
+      --radius: 26px;
+      --radius2: 20px;
+      --accent:#ffd77a;
+      --accent2:#9fe7ff;
+      --good:#2ad39c;
+      --bad:#ff6b6b;
+    }
+    *{ box-sizing:border-box; }
+    html,body{ height:100%; }
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      color:var(--ink);
+      overflow:hidden;
+      user-select:none;
+      -webkit-user-select:none;
+    }
+    body::before{
+      content:"";
+      position:fixed;
+      inset:-40px;
+      background: url("assets/fondo_parque.webp") center/cover no-repeat;
+      filter: blur(12px);
+      transform: scale(1.05);
+      z-index:-2;
+    }
+    body::after{
+      content:"";
+      position:fixed;
+      inset:0;
+      background: linear-gradient(180deg, rgba(255,255,255,.25), rgba(255,255,255,.10));
+      z-index:-1;
+    }
+
+    .wrap{
+      height:100%;
+      padding:18px 18px 14px;
+      display:flex;
+      flex-direction:column;
+      gap:14px;
+      position:relative;
+      z-index:1;
+    }
+
+    .topRow{
+      display:grid;
+      grid-template-columns: 1fr 380px;
+      gap:14px;
+      align-items:stretch;
+      min-height:92px;
+    }
+    .titleCard{
+      background: var(--card);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow2);
+      padding:16px 18px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      border: 1px solid rgba(255,255,255,.65);
+    }
+    .titleLeft{ display:flex; flex-direction:column; gap:4px; }
+    .h1{ font-weight:900; letter-spacing:.8px; font-size: 34px; line-height:1.05; }
+    .sub{ font-weight:800; letter-spacing:.9px; color:var(--muted); font-size: 14px; }
+    .pill{
+      background: #ffe9aa;
+      border: 2px solid rgba(0,0,0,.08);
+      padding:10px 16px;
+      border-radius: 999px;
+      font-weight:900;
+      letter-spacing:1px;
+      box-shadow: 0 10px 18px rgba(0,0,0,.08);
+      min-width: 160px;
+      text-align:center;
+    }
+
+    .scoreCard{
+      background: var(--card);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow2);
+      padding:14px 16px;
+      border: 1px solid rgba(255,255,255,.65);
+      display:flex;
+      flex-direction:column;
+      justify-content:center;
+      gap:10px;
+    }
+    .scoreRow{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      font-weight:900;
+      letter-spacing:1px;
+    }
+    .counter{
+      min-width: 56px;
+      background: rgba(255,255,255,.9);
+      border: 2px solid rgba(0,0,0,.08);
+      border-radius: 999px;
+      padding:6px 10px;
+      text-align:center;
+      box-shadow: 0 10px 18px rgba(0,0,0,.06);
+    }
+
+    .panel{
+      flex:1;
+      background: rgba(255,255,255,.55);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      border: 1px solid rgba(255,255,255,.65);
+      padding:14px;
+      min-height:0;
+      overflow:hidden;
+    }
+    .panelInner{
+      height:100%;
+      background: rgba(255,255,255,.78);
+      border-radius: var(--radius2);
+      border: 1px solid rgba(0,0,0,.06);
+      padding:14px;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.35);
+      overflow:hidden;
+      display:flex;
+      flex-direction:column;
+      gap:14px;
+    }
+
+    .grid{
+      flex:1;
+      display:grid;
+      grid-template-columns: repeat(4, 1fr);
+      grid-template-rows: repeat(4, 1fr);
+      gap:14px;
+      min-height:0;
+      padding:8px;
+    }
+    .tile{
+      background: rgba(255,255,255,.92);
+      border-radius: 22px;
+      border: 2px solid rgba(0,0,0,.08);
+      box-shadow: 0 16px 22px rgba(0,0,0,.08);
+      display:grid;
+      place-items:center;
+      cursor:pointer;
+      touch-action:manipulation;
+      position:relative;
+      overflow:hidden;
+    }
+    .tile:active{ transform: translateY(1px); }
+
+    .icon{
+      width: 92px;
+      height: 92px;
+      filter: drop-shadow(0 10px 14px rgba(0,0,0,.10));
+    }
+    .tile.ok{
+      outline: 6px solid rgba(42,211,156,.35);
+    }
+    .tile.bad{
+      outline: 6px solid rgba(255,107,107,.30);
+    }
+    .tile.locked{
+      opacity:.35;
+      pointer-events:none;
+    }
+
+    .bottomBar{
+      height: 86px;
+      background: rgba(255,255,255,.82);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      border: 1px solid rgba(255,255,255,.65);
+      padding: 12px 14px;
+      display:flex;
+      align-items:center;
+      gap:14px;
+    }
+    .progressBox{ flex:1; display:flex; flex-direction:column; gap:8px; }
+    .progressTop{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      font-weight: 950;
+      letter-spacing: 1px;
+      font-size: 13px;
+    }
+    .bar{
+      height: 18px;
+      background: rgba(0,0,0,.08);
+      border-radius: 999px;
+      overflow:hidden;
+      border: 1px solid rgba(0,0,0,.08);
+    }
+    .bar > div{
+      height:100%;
+      width:0%;
+      background: linear-gradient(90deg, #2ad39c, #9fe7ff);
+      border-radius: 999px;
+      transition: width .25s ease;
+    }
+    .btnRow{ display:flex; gap:12px; align-items:center; }
+    .btn{
+      height: 58px;
+      min-width: 210px;
+      border-radius: 18px;
+      border: 2px solid rgba(0,0,0,.10);
+      font-weight: 950;
+      letter-spacing: 1px;
+      font-size: 14px;
+      box-shadow: 0 16px 22px rgba(0,0,0,.10);
+      cursor:pointer;
+      background: var(--accent);
+    }
+    .btn.secondary{ background: var(--accent2); min-width: 200px; }
+    .btn:active{ transform: translateY(1px); }
+
+    .sticker{
+      position:absolute;
+      right: 22px;
+      top: 120px;
+      width: 70px;
+      height: 70px;
+      border-radius: 22px;
+      background: rgba(255,210,246,.70);
+      border: 2px solid rgba(0,0,0,.08);
+      box-shadow: 0 12px 18px rgba(0,0,0,.10);
+      display:grid;
+      place-items:center;
+      font-size: 34px;
+      pointer-events:none;
+      transform: rotate(7deg);
+      z-index:2;
+    }
+
+    svg{ display:block; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="topRow">
+      <div class="titleCard">
+        <div class="titleLeft">
+          <div class="h1">BUSCA EL COLOR</div>
+          <div class="sub">TOCA TODOS LOS OBJETOS DEL COLOR PEDIDO</div>
+        </div>
+        <div class="pill" id="targetPill">COLOR NARANJA</div>
+      </div>
+
+      <div class="scoreCard">
+        <div class="scoreRow">
+          <div>ACIERTOS</div>
+          <div class="counter" id="okCount">0</div>
+        </div>
+        <div class="scoreRow">
+          <div>ERRORES</div>
+          <div class="counter" id="badCount">0</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panelInner">
+        <div class="grid" id="grid"></div>
+      </div>
+    </div>
+
+    <div class="bottomBar">
+      <div class="progressBox">
+        <div class="progressTop">
+          <div>PROGRESO</div>
+          <div id="progressText">0 DE 7</div>
+        </div>
+        <div class="bar"><div id="barFill"></div></div>
+      </div>
+      <div class="btnRow">
+        <button class="btn" id="btnReset">REINICIAR OTRA VEZ</button>
+        <button class="btn secondary" id="btnBack">VOLVER MENÚ</button>
+      </div>
+    </div>
+
+    <div class="sticker" aria-hidden="true">🎨</div>
+  </div>
+
+  <script>
+    (function(){
+      var okAudio = new Audio("/asstests/aplausos.mp4");
+      var badAudio = new Audio("/asstests/ohh.mp4");
+      okAudio.preload = "auto";
+      badAudio.preload = "auto";
+      function playOk(){ try{ okAudio.currentTime=0; okAudio.play(); }catch(e){} }
+      function playBad(){ try{ badAudio.currentTime=0; badAudio.play(); }catch(e){} }
+
+      var grid = document.getElementById("grid");
+      var targetPill = document.getElementById("targetPill");
+      var okCount = document.getElementById("okCount");
+      var badCount = document.getElementById("badCount");
+      var progressText = document.getElementById("progressText");
+      var barFill = document.getElementById("barFill");
+      var btnReset = document.getElementById("btnReset");
+      var btnBack = document.getElementById("btnBack");
+      btnBack.addEventListener("click", function(){ location.href="index.html"; });
+
+      var COLORS = [
+        { key:"NARANJA", hex:"#ffb46a" },
+        { key:"ROJO", hex:"#ff6b6b" },
+        { key:"AZUL", hex:"#74ccff" },
+        { key:"VERDE", hex:"#7ce8a7" },
+        { key:"MORADO", hex:"#c8a7ff" },
+        { key:"AMARILLO", hex:"#ffd77a" }
+      ];
+
+      var SHAPES = ["CUADRADO","CIRCULO","ROMBO","ESTRELLA","CORAZON","TRIANGULO"];
+
+      function svgIcon(shape, fill){
+        var stroke = "rgba(0,0,0,.16)";
+        if(shape === "CUADRADO"){
+          return '<svg class="icon" viewBox="0 0 100 100" aria-hidden="true">' +
+                 '<rect x="18" y="18" width="64" height="64" rx="16" fill="' + fill + '" stroke="' + stroke + '" stroke-width="3"></rect>' +
+                 '</svg>';
+        }
+        if(shape === "CIRCULO"){
+          return '<svg class="icon" viewBox="0 0 100 100" aria-hidden="true">' +
+                 '<circle cx="50" cy="50" r="32" fill="' + fill + '" stroke="' + stroke + '" stroke-width="3"></circle>' +
+                 '</svg>';
+        }
+        if(shape === "ROMBO"){
+          return '<svg class="icon" viewBox="0 0 100 100" aria-hidden="true">' +
+                 '<polygon points="50,14 82,50 50,86 18,50" fill="' + fill + '" stroke="' + stroke + '" stroke-width="3" stroke-linejoin="round"></polygon>' +
+                 '</svg>';
+        }
+        if(shape === "ESTRELLA"){
+          return '<svg class="icon" viewBox="0 0 100 100" aria-hidden="true">' +
+                 '<polygon points="50,10 61,38 91,38 66,56 76,86 50,68 24,86 34,56 9,38 39,38" ' +
+                 'fill="' + fill + '" stroke="' + stroke + '" stroke-width="3" stroke-linejoin="round"></polygon>' +
+                 '</svg>';
+        }
+        if(shape === "CORAZON"){
+          return '<svg class="icon" viewBox="0 0 100 100" aria-hidden="true">' +
+                 '<path d="M50 82 C30 68 16 56 16 40 C16 28 24 20 36 20 C43 20 48 24 50 28 C52 24 57 20 64 20 C76 20 84 28 84 40 C84 56 70 68 50 82 Z" ' +
+                 'fill="' + fill + '" stroke="' + stroke + '" stroke-width="3" stroke-linejoin="round"></path>' +
+                 '</svg>';
+        }
+        return '<svg class="icon" viewBox="0 0 100 100" aria-hidden="true">' +
+               '<polygon points="50,14 86,82 14,82" fill="' + fill + '" stroke="' + stroke + '" stroke-width="3" stroke-linejoin="round"></polygon>' +
+               '</svg>';
+      }
+
+      var state = {
+        round: 1,
+        total: 7,
+        ok: 0,
+        bad: 0,
+        target: null,
+        remaining: 0
+      };
+
+      function shuffle(arr){
+        var i,j,t;
+        for(i=arr.length-1;i>0;i--){
+          j = Math.floor(Math.random()*(i+1));
+          t=arr[i]; arr[i]=arr[j]; arr[j]=t;
+        }
+      }
+
+      function setHud(){
+        okCount.textContent = String(state.ok);
+        badCount.textContent = String(state.bad);
+        progressText.textContent = (state.round-1) + " DE " + state.total;
+        var pct = Math.floor(((state.round-1)/state.total)*100);
+        barFill.style.width = String(pct) + "%";
+        targetPill.textContent = "COLOR " + state.target.key;
+      }
+
+      function pickTarget(){
+        state.target = COLORS[Math.floor(Math.random()*COLORS.length)];
+      }
+
+      function buildRound(){
+        grid.innerHTML = "";
+        pickTarget();
+
+        var tiles = [];
+        var i;
+        for(i=0;i<16;i++){
+          var c = COLORS[Math.floor(Math.random()*COLORS.length)];
+          var s = SHAPES[Math.floor(Math.random()*SHAPES.length)];
+          tiles.push({ color:c, shape:s });
+        }
+
+        var forceCount = 6 + Math.floor(Math.random()*3);
+        var idxs = [];
+        for(i=0;i<16;i++){ idxs.push(i); }
+        shuffle(idxs);
+        for(i=0;i<forceCount;i++){
+          tiles[idxs[i]].color = state.target;
+        }
+
+        var need = 0;
+        for(i=0;i<tiles.length;i++){
+          if(tiles[i].color.key === state.target.key){ need += 1; }
+        }
+        state.remaining = need;
+
+        for(i=0;i<tiles.length;i++){
+          (function(item){
+            var t = document.createElement("div");
+            t.className = "tile";
+            t.innerHTML = svgIcon(item.shape, item.color.hex);
+
+            t.addEventListener("click", function(){
+              if(t.classList.contains("locked")) return;
+
+              if(item.color.key === state.target.key){
+                t.classList.add("ok");
+                t.classList.add("locked");
+                state.ok += 1;
+                state.remaining -= 1;
+                setHud();
+                playOk();
+
+                if(state.remaining <= 0){
+                  setTimeout(function(){
+                    nextRound();
+                  }, 450);
+                }
+              }else{
+                t.classList.add("bad");
+                state.bad += 1;
+                setHud();
+                playBad();
+                setTimeout(function(){ t.classList.remove("bad"); }, 220);
+              }
+            });
+
+            grid.appendChild(t);
+          })(tiles[i]);
+        }
+
+        setHud();
+      }
+
+      function nextRound(){
+        if(state.round >= state.total){
+          barFill.style.width = "100%";
+          progressText.textContent = state.total + " DE " + state.total;
+          targetPill.textContent = "¡MUY BIEN!";
+          return;
+        }
+        state.round += 1;
+        buildRound();
+      }
+
+      function resetGame(){
+        state.round = 1;
+        state.ok = 0;
+        state.bad = 0;
+        buildRound();
+      }
+
+      btnReset.addEventListener("click", function(){ resetGame(); });
+
+      resetGame();
+    })();
+  </script>
+</body>
+</html>

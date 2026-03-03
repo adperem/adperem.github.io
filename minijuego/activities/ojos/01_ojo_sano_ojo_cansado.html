@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OJO SANO / OJO CANSADO</title>
+<style>
+  :root{
+    --panel: rgba(255,255,255,0.88);
+    --panel-2: rgba(255,255,255,0.72);
+    --shadow: 0 14px 34px rgba(31,41,55,.16);
+    --radius: 28px;
+    --good: #40c463;
+    --bad: #ff6b6b;
+    --blue: #69b8ff;
+    --ink: #1f2a37;
+    --accent: #7c9cff;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent; user-select:none;}
+  html,body{width:100%;height:100%;margin:0;font-family:Arial,Helvetica,sans-serif;background:#dff4ff;color:var(--ink);}
+  body{text-transform:uppercase; overflow:hidden;}
+  .bg{
+    position:fixed; inset:0;
+    background:url('assets/fondo_parque.webp') center/cover no-repeat;
+    transform:scale(1.05);
+    filter:blur(10px) saturate(1.05);
+  }
+  .bg::after{
+    content:"";
+    position:absolute; inset:0;
+    background:
+      radial-gradient(circle at 10% 12%, rgba(255,255,255,.65), transparent 36%),
+      radial-gradient(circle at 88% 18%, rgba(255,244,164,.45), transparent 34%),
+      linear-gradient(to bottom, rgba(255,255,255,.22), rgba(255,255,255,.06));
+  }
+  .app{
+    position:relative; z-index:1; width:100%; height:100%;
+    display:grid; grid-template-rows: 150px 1fr 130px;
+    gap:12px; padding:16px 22px 18px;
+  }
+  .top{
+    background:var(--panel); border-radius:30px; box-shadow:var(--shadow);
+    border:2px solid rgba(255,255,255,.75);
+    display:grid; grid-template-columns: 150px 1fr 160px; align-items:center;
+    padding:14px 18px;
+  }
+  .mascot{
+    width:118px; height:118px; border-radius:24px;
+    background:linear-gradient(180deg,#eef7ff,#dff0ff);
+    border:3px solid rgba(105,184,255,.55);
+    display:flex; align-items:center; justify-content:center;
+    font-size:66px; box-shadow: inset 0 8px 14px rgba(255,255,255,.65);
+  }
+  .title-wrap{padding:0 8px;}
+  h1{margin:0; font-size:58px; line-height:1; letter-spacing:1px;}
+  .subtitle{
+    margin-top:10px; font-size:26px; font-weight:700; color:#334155;
+    background:rgba(255,255,255,.75); display:inline-block; padding:8px 14px; border-radius:16px;
+  }
+  .stickers{display:flex; flex-direction:column; align-items:flex-end; gap:10px;}
+  .sticker{
+    background:rgba(255,255,255,.82); border:2px solid rgba(124,156,255,.35);
+    box-shadow:var(--shadow); border-radius:18px; padding:8px 12px;
+    font-size:20px; font-weight:900;
+  }
+  .play{
+    min-height:0;
+    display:grid; grid-template-columns: 46% 54%; gap:16px;
+  }
+  .zones-card, .tray-card{
+    background:var(--panel-2); border-radius:30px; box-shadow:var(--shadow);
+    border:2px solid rgba(255,255,255,.7); padding:14px;
+    min-height:0;
+  }
+  .zones-card{display:grid; grid-template-rows: 1fr 1fr; gap:12px;}
+  .zone{
+    position:relative; border-radius:24px; padding:14px;
+    display:grid; grid-template-columns: 160px 1fr; gap:12px; align-items:center;
+    background:rgba(255,255,255,.82);
+    border:3px dashed rgba(100,116,139,.35);
+    transition:transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+    min-height:230px;
+  }
+  .zone.hover{transform:scale(1.01); box-shadow:0 0 0 6px rgba(255,255,255,.5) inset;}
+  .zone.good{border-color:rgba(64,196,99,.7);}
+  .zone.bad{border-color:rgba(255,107,107,.65);}
+  .zone.sano{background:linear-gradient(180deg, rgba(230,255,239,.95), rgba(219,252,230,.92));}
+  .zone.cansado{background:linear-gradient(180deg, rgba(255,236,236,.95), rgba(255,227,227,.92));}
+  .zone-emoji{
+    width:132px; height:132px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center; font-size:68px;
+    background:rgba(255,255,255,.9); border:4px solid rgba(255,255,255,.95);
+    box-shadow:inset 0 8px 14px rgba(255,255,255,.75);
+    margin:auto;
+  }
+  .zone h2{margin:0 0 8px; font-size:40px; line-height:1;}
+  .zone p{margin:0; font-size:22px; font-weight:700; color:#475569;}
+  .drop-list{
+    display:flex; flex-wrap:wrap; gap:10px; align-content:flex-start;
+    min-height:110px;
+  }
+  .tray-head{
+    display:flex; align-items:center; justify-content:space-between; gap:10px;
+    margin-bottom:12px;
+  }
+  .tray-head h2{margin:0; font-size:34px;}
+  .counter-pill{
+    background:rgba(255,255,255,.9); border-radius:999px; padding:8px 14px;
+    font-weight:900; font-size:20px; border:2px solid rgba(124,156,255,.28);
+  }
+  .tray-grid{
+    min-height:0; height:calc(100% - 56px);
+    display:grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap:12px;
+    align-content:start;
+  }
+  .card{
+    position:relative;
+    background:rgba(255,255,255,.96); border-radius:22px; box-shadow:var(--shadow);
+    border:3px solid rgba(124,156,255,.22);
+    min-height:110px; padding:10px 12px;
+    display:grid; grid-template-columns: 84px 1fr; gap:10px; align-items:center;
+    touch-action:none; cursor:grab;
+    transition:transform .12s ease, box-shadow .12s ease, border-color .12s ease, opacity .12s ease;
+  }
+  .card:active{cursor:grabbing;}
+  .card.dragging{z-index:50; transform:scale(1.03); box-shadow:0 20px 42px rgba(0,0,0,.18);}
+  .card.placed{cursor:default;}
+  .card.okflash{border-color:rgba(64,196,99,.85);}
+  .card.badflash{border-color:rgba(255,107,107,.85);}
+  .ico{
+    width:72px; height:72px; border-radius:18px; display:flex; align-items:center; justify-content:center;
+    background:linear-gradient(180deg,#f7fbff,#e6f3ff); font-size:40px; border:2px solid rgba(105,184,255,.22);
+    margin:auto;
+  }
+  .txt{font-size:22px; font-weight:900; line-height:1.1;}
+  .txt small{display:block; font-size:16px; color:#64748b; margin-top:4px; font-weight:700;}
+  .bottom{
+    background:var(--panel); border-radius:28px; box-shadow:var(--shadow);
+    border:2px solid rgba(255,255,255,.75);
+    display:grid; grid-template-columns: 1fr 190px 190px; gap:12px; align-items:center;
+    padding:14px;
+  }
+  .progress-wrap{
+    background:rgba(255,255,255,.72); border-radius:22px; padding:10px 14px; border:2px solid rgba(255,255,255,.85);
+  }
+  .progress-top{
+    display:flex; align-items:center; justify-content:space-between; gap:12px;
+    font-size:22px; font-weight:900; margin-bottom:8px;
+  }
+  .bar{
+    height:24px; background:#e8eef5; border-radius:999px; overflow:hidden; border:2px solid rgba(0,0,0,.04);
+  }
+  .bar > span{
+    display:block; height:100%; width:0%;
+    background:linear-gradient(90deg,#87e47a,#4fcf95,#68b8ff);
+    border-radius:999px; transition:width .2s ease;
+  }
+  button{
+    border:0; border-radius:22px; height:86px; font-size:27px; font-weight:900; color:#123;
+    background:rgba(255,255,255,.9); box-shadow:var(--shadow); cursor:pointer;
+    border:3px solid rgba(124,156,255,.22);
+  }
+  button.primary{background:linear-gradient(180deg,#ffe7a7,#ffd36d);}
+  button.secondary{background:linear-gradient(180deg,#e6f4ff,#cde9ff);}
+  button:active{transform:translateY(2px);}
+  .feedback{
+    position:fixed; left:50%; top:50%; transform:translate(-50%,-50%) scale(.9);
+    z-index:100; pointer-events:none;
+    background:rgba(255,255,255,.96); border-radius:24px; box-shadow:0 24px 50px rgba(0,0,0,.2);
+    border:3px solid rgba(255,255,255,.95);
+    padding:14px 24px; font-size:34px; font-weight:900; opacity:0;
+    transition:opacity .18s ease, transform .18s ease, border-color .18s ease;
+  }
+  .feedback.show{opacity:1; transform:translate(-50%,-50%) scale(1);}
+  .feedback.ok{border-color:rgba(64,196,99,.7); color:#176a2f;}
+  .feedback.err{border-color:rgba(255,107,107,.7); color:#9f1d1d;}
+  .celebrate{
+    position:absolute; inset:0; pointer-events:none; opacity:0;
+    background:radial-gradient(circle at center, rgba(255,255,255,.85), rgba(255,255,255,.08) 60%, transparent 70%);
+    transition:opacity .25s ease;
+  }
+  .celebrate.show{opacity:1;}
+  .confetti{
+    position:absolute; width:10px; height:10px; border-radius:3px; opacity:0;
+    background:#7dd3fc;
+    animation:fall .8s ease forwards;
+  }
+  @keyframes fall{
+    0%{transform:translateY(-12px) rotate(0deg); opacity:1;}
+    100%{transform:translateY(80px) rotate(220deg); opacity:0;}
+  }
+  .shake{animation:shake .18s linear 2;}
+  @keyframes shake{
+    0%{transform:translateX(0);}
+    25%{transform:translateX(-5px);}
+    50%{transform:translateX(5px);}
+    75%{transform:translateX(-4px);}
+    100%{transform:translateX(0);}
+  }
+  @media (max-width: 1400px){
+    .app{grid-template-rows: 130px 1fr 118px;}
+    h1{font-size:42px}
+    .subtitle{font-size:20px}
+    .zone{grid-template-columns:120px 1fr; min-height:190px}
+    .zone-emoji{width:100px;height:100px;font-size:52px}
+    .zone h2{font-size:30px}
+    .zone p{font-size:18px}
+    .card{min-height:94px; grid-template-columns:72px 1fr}
+    .ico{width:58px;height:58px;font-size:30px}
+    .txt{font-size:18px}
+    button{height:74px;font-size:22px}
+  }
+</style>
+</head>
+<body>
+<div class="bg"></div>
+
+<audio id="audioOk" preload="auto" src="/asstests/aplausos.mp4"></audio>
+<audio id="audioErr" preload="auto" src="/asstests/ohh.mp4"></audio>
+
+<div class="app">
+  <div class="top">
+    <div class="mascot" aria-hidden="true">👀</div>
+    <div class="title-wrap">
+      <h1>OJO SANO / OJO CANSADO</h1>
+      <div class="subtitle">ARRASTRA CADA TARJETA AL OJO CORRECTO</div>
+    </div>
+    <div class="stickers">
+      <div class="sticker">VISTA 👓</div>
+      <div class="sticker">HÁBITOS ✨</div>
+    </div>
+  </div>
+
+  <div class="play">
+    <section class="zones-card">
+      <div class="zone sano" id="zone-sano" data-zone="sano">
+        <div class="zone-emoji">😊</div>
+        <div>
+          <h2>OJO SANO</h2>
+          <p>ACCIONES QUE AYUDAN A CUIDAR LA VISTA</p>
+          <div class="drop-list" id="drop-sano"></div>
+        </div>
+        <div class="celebrate" id="cele-sano"></div>
+      </div>
+
+      <div class="zone cansado" id="zone-cansado" data-zone="cansado">
+        <div class="zone-emoji">🥱</div>
+        <div>
+          <h2>OJO CANSADO</h2>
+          <p>ACCIONES QUE PUEDEN MOLESTAR O CANSAR LOS OJOS</p>
+          <div class="drop-list" id="drop-cansado"></div>
+        </div>
+        <div class="celebrate" id="cele-cansado"></div>
+      </div>
+    </section>
+
+    <section class="tray-card">
+      <div class="tray-head">
+        <h2>TARJETAS</h2>
+        <div class="counter-pill" id="pending-pill">PENDIENTES: 8</div>
+      </div>
+      <div class="tray-grid" id="tray"></div>
+    </section>
+  </div>
+
+  <div class="bottom">
+    <div class="progress-wrap">
+      <div class="progress-top">
+        <div>PROGRESO</div>
+        <div id="progressText">0 / 8</div>
+      </div>
+      <div class="bar"><span id="progressBar"></span></div>
+    </div>
+    <button class="primary" id="btnReset">REINICIAR</button>
+    <button class="secondary" id="btnBack">VOLVER</button>
+  </div>
+</div>
+
+<div class="feedback" id="feedback">¡MUY BIEN!</div>
+
+<script>
+(function(){
+  var data = [
+    { id:'t1', icon:'💡', label:'LEER CON LUZ', sub:'BUENA ILUMINACIÓN', zone:'sano' },
+    { id:'t2', icon:'😴', label:'DORMIR BIEN', sub:'DESCANSO', zone:'sano' },
+    { id:'t3', icon:'🍎', label:'COMER FRUTA', sub:'HÁBITO SALUDABLE', zone:'sano' },
+    { id:'t4', icon:'🧍', label:'DESCANSAR LA VISTA', sub:'PARAR UN POCO', zone:'sano' },
+    { id:'t5', icon:'📱', label:'PANTALLA MUY CERCA', sub:'DEMASIADO CERCA', zone:'cansado' },
+    { id:'t6', icon:'🫳', label:'FROTAR OJOS SUCIOS', sub:'NO ES BUENA IDEA', zone:'cansado' },
+    { id:'t7', icon:'🌙', label:'POCA LUZ PARA LEER', sub:'CUESTA VER', zone:'cansado' },
+    { id:'t8', icon:'⏰', label:'MUCHO TIEMPO SIN PARAR', sub:'SIN DESCANSOS', zone:'cansado' }
+  ];
+
+  var state = {
+    placed: {},
+    total: data.length
+  };
+
+  var tray = document.getElementById('tray');
+  var dropSano = document.getElementById('drop-sano');
+  var dropCansado = document.getElementById('drop-cansado');
+  var zoneEls = {
+    sano: document.getElementById('zone-sano'),
+    cansado: document.getElementById('zone-cansado')
+  };
+  var progressBar = document.getElementById('progressBar');
+  var progressText = document.getElementById('progressText');
+  var pendingPill = document.getElementById('pending-pill');
+  var feedback = document.getElementById('feedback');
+  var audioOk = document.getElementById('audioOk');
+  var audioErr = document.getElementById('audioErr');
+  var drag = null;
+
+  function playSound(audio){
+    try{
+      audio.pause();
+      audio.currentTime = 0;
+      var p = audio.play();
+      if (p && p.catch) { p.catch(function(){}); }
+    }catch(e){}
+  }
+
+  function showFeedback(text, kind){
+    feedback.textContent = text;
+    feedback.className = 'feedback ' + (kind === 'ok' ? 'ok' : 'err') + ' show';
+    clearTimeout(showFeedback.t);
+    showFeedback.t = setTimeout(function(){
+      feedback.className = 'feedback';
+    }, 700);
+  }
+
+  function flashZone(zoneKey, ok){
+    var el = zoneEls[zoneKey];
+    el.classList.remove('good','bad');
+    void el.offsetWidth;
+    el.classList.add(ok ? 'good' : 'bad');
+    if (ok){
+      burst(el);
+      var cel = document.getElementById(zoneKey === 'sano' ? 'cele-sano' : 'cele-cansado');
+      cel.classList.add('show');
+      setTimeout(function(){ cel.classList.remove('show'); }, 260);
+    } else {
+      el.classList.add('shake');
+      setTimeout(function(){ el.classList.remove('shake'); }, 420);
+    }
+  }
+
+  function burst(host){
+    var colors = ['#fcd34d','#86efac','#93c5fd','#f9a8d4','#fdba74'];
+    var i;
+    for (i = 0; i < 12; i++){
+      var s = document.createElement('span');
+      s.className = 'confetti';
+      s.style.left = (10 + Math.random()*80) + '%';
+      s.style.top = (10 + Math.random()*35) + '%';
+      s.style.background = colors[i % colors.length];
+      s.style.animationDelay = (Math.random()*0.08) + 's';
+      host.appendChild(s);
+      (function(node){
+        setTimeout(function(){ if (node.parentNode) { node.parentNode.removeChild(node); } }, 900);
+      })(s);
+    }
+  }
+
+  function updateProgress(){
+    var done = Object.keys(state.placed).length;
+    progressText.textContent = done + ' / ' + state.total;
+    progressBar.style.width = (done / state.total * 100) + '%';
+    pendingPill.textContent = 'PENDIENTES: ' + (state.total - done);
+
+    if (done === state.total){
+      setTimeout(function(){
+        showFeedback('¡GENIAL! ACTIVIDAD COMPLETADA', 'ok');
+        playSound(audioOk);
+      }, 150);
+    }
+  }
+
+  function createCard(item){
+    var card = document.createElement('div');
+    card.className = 'card';
+    card.setAttribute('data-id', item.id);
+    card.setAttribute('data-zone', item.zone);
+
+    var ico = document.createElement('div');
+    ico.className = 'ico';
+    ico.textContent = item.icon;
+
+    var txt = document.createElement('div');
+    txt.className = 'txt';
+    txt.innerHTML = item.label + '<small>' + item.sub + '</small>';
+
+    card.appendChild(ico);
+    card.appendChild(txt);
+
+    card.addEventListener('pointerdown', function(ev){
+      if (card.classList.contains('placed')) { return; }
+      startDrag(ev, card);
+    });
+
+    return card;
+  }
+
+  function render(){
+    tray.innerHTML = '';
+    dropSano.innerHTML = '';
+    dropCansado.innerHTML = '';
+    state.placed = {};
+
+    var shuffled = data.slice().sort(function(){ return Math.random() - 0.5; });
+    var i;
+    for (i = 0; i < shuffled.length; i++){
+      tray.appendChild(createCard(shuffled[i]));
+    }
+    updateProgress();
+  }
+
+  function startDrag(ev, el){
+    ev.preventDefault();
+    var rect = el.getBoundingClientRect();
+    drag = {
+      el: el,
+      startParent: el.parentElement,
+      startNext: el.nextSibling,
+      w: rect.width,
+      h: rect.height,
+      offsetX: ev.clientX - rect.left,
+      offsetY: ev.clientY - rect.top
+    };
+    el.classList.add('dragging');
+    el.style.position = 'fixed';
+    el.style.left = rect.left + 'px';
+    el.style.top = rect.top + 'px';
+    el.style.width = rect.width + 'px';
+    el.style.height = rect.height + 'px';
+    el.style.margin = '0';
+    el.style.zIndex = '999';
+    document.body.appendChild(el);
+    if (el.setPointerCapture) {
+      try { el.setPointerCapture(ev.pointerId); } catch(err){}
+    }
+    moveDrag(ev);
+    window.addEventListener('pointermove', moveDrag, {passive:false});
+    window.addEventListener('pointerup', endDrag, {passive:false});
+    highlightHover(ev.clientX, ev.clientY);
+  }
+
+  function moveDrag(ev){
+    if (!drag) { return; }
+    ev.preventDefault();
+    var x = ev.clientX - drag.offsetX;
+    var y = ev.clientY - drag.offsetY;
+    drag.el.style.left = x + 'px';
+    drag.el.style.top = y + 'px';
+    highlightHover(ev.clientX, ev.clientY);
+  }
+
+  function zoneAt(x, y){
+    var keys = ['sano','cansado'];
+    var i;
+    for (i = 0; i < keys.length; i++){
+      var key = keys[i];
+      var r = zoneEls[key].getBoundingClientRect();
+      if (x >= r.left && x <= r.right && y >= r.top && y <= r.bottom){
+        return key;
+      }
+    }
+    return null;
+  }
+
+  function highlightHover(x,y){
+    var target = zoneAt(x,y);
+    zoneEls.sano.classList.remove('hover');
+    zoneEls.cansado.classList.remove('hover');
+    if (target){
+      zoneEls[target].classList.add('hover');
+    }
+  }
+
+  function restoreToOrigin(el){
+    el.classList.remove('dragging');
+    el.style.position = '';
+    el.style.left = '';
+    el.style.top = '';
+    el.style.width = '';
+    el.style.height = '';
+    el.style.margin = '';
+    el.style.zIndex = '';
+    var parent = drag.startParent;
+    if (drag.startNext && drag.startNext.parentNode === parent){
+      parent.insertBefore(el, drag.startNext);
+    } else {
+      parent.appendChild(el);
+    }
+  }
+
+  function placeInto(el, zoneKey){
+    el.classList.remove('dragging');
+    el.classList.add('placed','okflash');
+    el.style.position = '';
+    el.style.left = '';
+    el.style.top = '';
+    el.style.width = '';
+    el.style.height = '';
+    el.style.margin = '';
+    el.style.zIndex = '';
+    el.style.touchAction = 'none';
+    el.style.cursor = 'default';
+    el.removeEventListener('pointerdown', function(){});
+    var targetList = zoneKey === 'sano' ? dropSano : dropCansado;
+    targetList.appendChild(el);
+    state.placed[el.getAttribute('data-id')] = zoneKey;
+    setTimeout(function(){ el.classList.remove('okflash'); }, 350);
+    updateProgress();
+  }
+
+  function endDrag(ev){
+    if (!drag) { return; }
+    ev.preventDefault();
+    var el = drag.el;
+    var expected = el.getAttribute('data-zone');
+    var target = zoneAt(ev.clientX, ev.clientY);
+
+    zoneEls.sano.classList.remove('hover');
+    zoneEls.cansado.classList.remove('hover');
+
+    if (target && target === expected){
+      placeInto(el, target);
+      flashZone(target, true);
+      showFeedback('¡MUY BIEN!', 'ok');
+      playSound(audioOk);
+    } else {
+      restoreToOrigin(el);
+      el.classList.add('badflash','shake');
+      setTimeout(function(){ el.classList.remove('badflash','shake'); }, 400);
+      if (target){ flashZone(target, false); }
+      showFeedback('PRUEBA OTRA VEZ', 'err');
+      playSound(audioErr);
+    }
+
+    drag = null;
+    window.removeEventListener('pointermove', moveDrag);
+    window.removeEventListener('pointerup', endDrag);
+  }
+
+  document.getElementById('btnReset').addEventListener('click', function(){
+    render();
+    showFeedback('ACTIVIDAD REINICIADA', 'ok');
+  });
+
+  document.getElementById('btnBack').addEventListener('click', function(){
+    if (window.history.length > 1){
+      window.history.back();
+    } else {
+      window.location.href = './';
+    }
+  });
+
+  render();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,886 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CORAZÓN: CAMINO DE LAS ARTERIAS</title>
+  <style>
+
+    :root{
+      --panel-bg: rgba(255,255,255,0.88);
+      --panel-border: rgba(255,255,255,0.9);
+      --shadow: 0 18px 45px rgba(0,0,0,0.18);
+      --shadow-soft: 0 10px 25px rgba(0,0,0,0.14);
+      --radius-xl: 28px;
+      --ink: #1f2a37;
+      --muted: #3b556f;
+      --accent: rgba(124,58,237,1);
+      --accent2: rgba(6,182,212,1);
+      --good: rgba(34,197,94,1);
+      --bad: rgba(239,68,68,1);
+      --bottom-h: 112px;
+    }
+
+    *{ box-sizing: border-box; }
+    html, body{
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      color: var(--ink);
+      overflow: hidden;
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: none;
+      background: #0b1220;
+    }
+
+    body::before{
+      content: "";
+      position: fixed;
+      inset: -40px;
+      background-image: url("assets/fondo_parque.webp");
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+      filter: blur(14px) saturate(1.2);
+      transform: scale(1.08);
+      z-index: -2;
+    }
+    body::after{
+      content: "";
+      position: fixed;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(255,255,255,0.12), rgba(255,255,255,0.05));
+      z-index: -1;
+    }
+
+    .stage{
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 18px;
+    }
+    .frame{
+      width: min(1920px, 100vw);
+      height: min(1080px, 100vh);
+      position: relative;
+      border-radius: 34px;
+      overflow: hidden;
+    }
+
+    .cloud{
+      position: absolute;
+      width: 280px;
+      height: 120px;
+      background: rgba(255,255,255,0.70);
+      border-radius: 999px;
+      box-shadow: var(--shadow-soft);
+      border: 2px solid rgba(255,255,255,0.6);
+      opacity: 0.9;
+      pointer-events: none;
+    }
+    .cloud::before, .cloud::after{
+      content: "";
+      position: absolute;
+      background: rgba(255,255,255,0.72);
+      border-radius: 999px;
+      border: 2px solid rgba(255,255,255,0.55);
+    }
+    .cloud::before{ width: 120px; height: 90px; left: 40px; top: -28px; }
+    .cloud::after { width: 150px; height: 105px; left: 120px; top: -38px; }
+    .cloud.c1{ left: 24px; top: 24px; transform: rotate(-2deg); }
+    .cloud.c2{ right: 24px; top: 56px; transform: rotate(3deg) scale(0.95); }
+
+    .sticker{
+      position: absolute;
+      width: 140px;
+      height: 140px;
+      border-radius: 30px;
+      background: rgba(255,255,255,0.62);
+      box-shadow: var(--shadow-soft);
+      border: 2px dashed rgba(255,255,255,0.65);
+      display: grid;
+      place-items: center;
+      font-size: 60px;
+      pointer-events: none;
+      opacity: 0.9;
+    }
+    .st1{ left: 32px; bottom: calc(var(--bottom-h) + 18px); transform: rotate(-8deg); }
+    .st2{ right: 38px; bottom: calc(var(--bottom-h) + 26px); transform: rotate(10deg); }
+    .st3{ left: 260px; top: 54px; transform: rotate(7deg) scale(0.85); opacity: 0.85; }
+
+    .header{
+      position: absolute;
+      left: 22px;
+      right: 22px;
+      top: 18px;
+      padding: 14px 16px;
+      border-radius: var(--radius-xl);
+      background: rgba(255,255,255,0.78);
+      border: 2px solid rgba(255,255,255,0.7);
+      box-shadow: var(--shadow-soft);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+    }
+    .title{
+      font-size: 42px;
+      font-weight: 1000;
+      letter-spacing: 1px;
+      line-height: 1.05;
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      white-space: nowrap;
+    }
+    .hint{
+      font-size: 20px;
+      font-weight: 950;
+      color: var(--muted);
+      text-transform: uppercase;
+      text-align: right;
+      line-height: 1.1;
+    }
+    .badge{
+      font-size: 18px;
+      font-weight: 1000;
+      padding: 9px 14px;
+      border-radius: 999px;
+      background: rgba(124,58,237,0.12);
+      border: 2px solid rgba(124,58,237,0.28);
+      color: #3b2a8f;
+      text-transform: uppercase;
+      white-space: nowrap;
+      min-width: 140px;
+      text-align: center;
+    }
+
+    .toast{
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      padding: 16px 20px;
+      border-radius: 22px;
+      background: rgba(255,255,255,0.92);
+      border: 2px solid rgba(0,0,0,0.08);
+      box-shadow: var(--shadow);
+      font-size: 34px;
+      font-weight: 1000;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 160ms ease, transform 160ms ease;
+      z-index: 60;
+      text-align: center;
+      max-width: 86%;
+    }
+    .toast.show{
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1.02);
+    }
+    .toast.good{ background: rgba(34,197,94,0.18); border-color: rgba(34,197,94,0.28); color: #14532d; }
+    .toast.bad{ background: rgba(239,68,68,0.18); border-color: rgba(239,68,68,0.28); color: #7f1d1d; }
+
+    .confetti{
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+      z-index: 55;
+    }
+    .confetti i{
+      position: absolute;
+      width: 14px;
+      height: 14px;
+      border-radius: 4px;
+      opacity: 0;
+      animation: fall 900ms ease-out forwards;
+    }
+    @keyframes fall{
+      0%{ transform: translateY(0) rotate(0deg) scale(0.9); opacity: 0; }
+      10%{ opacity: 1; }
+      100%{ transform: translateY(420px) rotate(360deg) scale(1.0); opacity: 0; }
+    }
+
+    .overlay{
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      background: rgba(255,255,255,0.35);
+      backdrop-filter: blur(6px);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 180ms ease;
+      z-index: 80;
+    }
+    .overlay.show{
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .modal{
+      width: min(980px, 92%);
+      border-radius: 30px;
+      background: rgba(255,255,255,0.92);
+      border: 2px solid rgba(0,0,0,0.08);
+      box-shadow: var(--shadow);
+      padding: 22px 22px 18px 22px;
+      text-align: center;
+    }
+    .modal h2{
+      margin: 0 0 10px 0;
+      font-size: 46px;
+      font-weight: 1000;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    .modal p{
+      margin: 0 0 16px 0;
+      font-size: 26px;
+      font-weight: 950;
+      text-transform: uppercase;
+      color: #334155;
+      line-height: 1.2;
+    }
+    .startBtn{
+      height: 94px;
+      width: 100%;
+      border-radius: 24px;
+      border: 2px solid rgba(0,0,0,0.08);
+      box-shadow: var(--shadow-soft);
+      background: rgba(124,58,237,0.14);
+      color: #2f1d78;
+      font-size: 34px;
+      font-weight: 1000;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      cursor: pointer;
+      touch-action: manipulation;
+    }
+    .startBtn:active{ transform: translateY(1px); }
+
+    .bottomBar{
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: var(--bottom-h);
+      padding: 14px 18px;
+      background: rgba(255,255,255,0.90);
+      border-top: 2px solid rgba(255,255,255,0.8);
+      box-shadow: 0 -18px 45px rgba(0,0,0,0.16);
+      display: grid;
+      grid-template-columns: 1fr 1fr 1.2fr;
+      gap: 14px;
+      align-items: center;
+    }
+    .btn{
+      height: 78px;
+      border-radius: 22px;
+      border: 2px solid rgba(0,0,0,0.08);
+      box-shadow: var(--shadow-soft);
+      background: rgba(255,255,255,0.92);
+      font-size: 28px;
+      font-weight: 1000;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #1f2a37;
+      cursor: pointer;
+      touch-action: manipulation;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      padding: 0 18px;
+    }
+    .btn:active{ transform: translateY(1px); }
+    .btn.primary{
+      background: rgba(124,58,237,0.14);
+      border-color: rgba(124,58,237,0.26);
+      color: #2f1d78;
+    }
+    .btn.secondary{
+      background: rgba(6,182,212,0.12);
+      border-color: rgba(6,182,212,0.22);
+      color: #0b5563;
+    }
+    .statusBox{
+      height: 78px;
+      border-radius: 22px;
+      border: 2px solid rgba(0,0,0,0.08);
+      box-shadow: var(--shadow-soft);
+      background: rgba(255,255,255,0.92);
+      display: grid;
+      grid-template-columns: 1fr;
+      align-items: center;
+      padding: 8px 14px;
+      gap: 6px;
+    }
+    .statusTop{
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      font-size: 18px;
+      font-weight: 1000;
+      text-transform: uppercase;
+      color: #334155;
+    }
+    .statusValue{
+      font-size: 26px;
+      font-weight: 1000;
+      text-transform: uppercase;
+      color: #111827;
+      letter-spacing: 0.6px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    @media (max-width: 1400px){
+      .title{ font-size: 34px; }
+      .hint{ font-size: 16px; }
+    }
+
+
+    .main{
+      position: absolute;
+      left: 22px;
+      right: 22px;
+      top: 112px;
+      bottom: calc(var(--bottom-h) + 18px);
+      display: grid;
+      grid-template-rows: auto 1fr;
+      gap: 14px;
+    }
+
+    .panel{
+      background: var(--panel-bg);
+      border: 2px solid var(--panel-border);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow);
+      padding: 16px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .instruction{
+      border-radius: 22px;
+      background: rgba(255,255,255,0.74);
+      border: 2px solid rgba(0,0,0,0.07);
+      box-shadow: var(--shadow-soft);
+      padding: 14px 16px;
+      display: grid;
+      align-content: center;
+      gap: 6px;
+      text-align: center;
+      min-height: 92px;
+    }
+    .instruction .big{
+      font-size: 34px;
+      font-weight: 1000;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: #22314a;
+      line-height: 1.1;
+    }
+    .instruction .small{
+      font-size: 18px;
+      font-weight: 950;
+      text-transform: uppercase;
+      color: #334155;
+      opacity: 0.94;
+      line-height: 1.15;
+    }
+
+    .play{
+      width: 100%;
+      height: 100%;
+      border-radius: 26px;
+      background: rgba(255,255,255,0.62);
+      border: 2px solid rgba(0,0,0,0.06);
+      box-shadow: inset 0 0 0 2px rgba(255,255,255,0.45);
+      overflow: hidden;
+      position: relative;
+      touch-action: none;
+    }
+
+    canvas{ width: 100%; height: 100%; display: block; }
+
+    .hintOverlay{
+      position: absolute;
+      left: 18px;
+      top: 18px;
+      right: 18px;
+      border-radius: 22px;
+      background: rgba(255,255,255,0.80);
+      border: 2px solid rgba(0,0,0,0.07);
+      box-shadow: var(--shadow-soft);
+      padding: 12px 14px;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 12px;
+      align-items: center;
+      z-index: 30;
+    }
+    .hintText{
+      font-size: 22px;
+      font-weight: 1000;
+      text-transform: uppercase;
+      color: #22314a;
+      line-height: 1.1;
+    }
+    .pill{
+      font-size: 18px;
+      font-weight: 1000;
+      text-transform: uppercase;
+      padding: 10px 12px;
+      border-radius: 999px;
+      background: rgba(6,182,212,0.12);
+      border: 2px solid rgba(6,182,212,0.22);
+      color: #0b5563;
+      white-space: nowrap;
+    }
+
+    .shake{ animation: shake 220ms ease-in-out; }
+    @keyframes shake{
+      0%{ transform: translateX(0); }
+      20%{ transform: translateX(-10px); }
+      40%{ transform: translateX(10px); }
+      60%{ transform: translateX(-8px); }
+      80%{ transform: translateX(8px); }
+      100%{ transform: translateX(0); }
+    }
+
+    @media (max-width: 1400px){
+      .hintText{ font-size: 18px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="stage">
+    <div class="frame" id="frame">
+      <div class="cloud c1"></div>
+      <div class="cloud c2"></div>
+      <div class="sticker st1">🩸</div>
+      <div class="sticker st2">🛣️</div>
+      <div class="sticker st3">☁️</div>
+
+      <header class="header">
+        <div class="title"><span style="font-size:46px">❤️</span> CORAZÓN: CAMINO</div>
+        <div class="hint">
+          SIGUE EL CAMINO CON EL DEDO
+          <div style="font-size:16px; font-weight:1000; opacity:0.9;">EMPIEZA EN EL CORAZÓN</div>
+        </div>
+        <div class="badge" id="badge">LISTO</div>
+      </header>
+
+      <main class="main">
+        <section class="panel">
+          <div class="instruction">
+            <div class="big" id="instBig">TOCA EMPEZAR</div>
+            <div class="small" id="instSmall">SIN SALIRTE DEL CAMINO</div>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="play" id="play">
+            <canvas id="cv"></canvas>
+            <div class="hintOverlay">
+              <div class="hintText" id="hintText">NIVEL 1: LLEVA LA SANGRE HASTA LA ESTRELLA</div>
+              <div class="pill" id="pill">NIVEL: 1</div>
+            </div>
+            <div class="confetti" id="confetti"></div>
+            <div class="toast" id="toast"></div>
+
+            <div class="overlay show" id="overlay">
+              <div class="modal">
+                <h2>¿LISTO?</h2>
+                <p>TOCA EL CORAZÓN Y SIGUE EL CAMINO HASTA LA META</p>
+                <button class="startBtn" id="btnStart">EMPEZAR</button>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <div class="bottomBar" aria-label="Barra inferior">
+        <button class="btn primary" id="btnReset">REINICIAR</button>
+        <button class="btn secondary" id="btnBack">VOLVER</button>
+        <div class="statusBox" role="status" aria-live="polite">
+          <div class="statusTop">
+            <span>ESTADO</span>
+            <span id="miniRight">NIVEL: 1</span>
+          </div>
+          <div class="statusValue" id="statusText">TOCA EMPEZAR</div>
+        </div>
+      </div>
+
+      <audio id="sndOk" src="/asstests/aplausos.mp4" preload="auto"></audio>
+      <audio id="sndBad" src="/asstests/ohh.mp4" preload="auto"></audio>
+    </div>
+  </div>
+
+  <script>
+    (function(){
+      "use strict";
+
+      var frame = document.getElementById("frame");
+      var overlay = document.getElementById("overlay");
+      var btnStart = document.getElementById("btnStart");
+      var btnReset = document.getElementById("btnReset");
+      var btnBack = document.getElementById("btnBack");
+
+      var instBig = document.getElementById("instBig");
+      var instSmall = document.getElementById("instSmall");
+      var badge = document.getElementById("badge");
+      var toast = document.getElementById("toast");
+      var confetti = document.getElementById("confetti");
+      var statusText = document.getElementById("statusText");
+      var miniRight = document.getElementById("miniRight");
+      var hintText = document.getElementById("hintText");
+      var pill = document.getElementById("pill");
+
+      var cv = document.getElementById("cv");
+      var ctx = cv.getContext("2d");
+
+      var sndOk = document.getElementById("sndOk");
+      var sndBad = document.getElementById("sndBad");
+
+      var started = false;
+      var active = false;
+      var level = 1;
+      var tolerance = 46;
+      var last = null;
+
+      var levels = [
+        { start: [220, 520], end: [1600, 520], points: [[220,520],[520,360],[820,520],[1120,680],[1400,520],[1600,520]] },
+        { start: [220, 720], end: [1600, 320], points: [[220,720],[420,560],[520,420],[760,360],[980,440],[1180,300],[1400,360],[1600,320]] },
+        { start: [220, 320], end: [1600, 720], points: [[220,320],[420,420],[620,300],[860,320],[980,520],[1160,760],[1380,620],[1600,720]] }
+      ];
+
+      function setStatus(t){ statusText.textContent = t; }
+
+      function showToast(text, kind){
+        toast.textContent = text;
+        toast.className = "toast show " + (kind || "");
+        window.clearTimeout(showToast._t);
+        showToast._t = window.setTimeout(function(){
+          toast.className = "toast";
+        }, 650);
+      }
+
+      function playSound(ok){
+        try{
+          var a = ok ? sndOk : sndBad;
+          a.currentTime = 0;
+          a.play();
+        }catch(e){}
+      }
+
+      function popConfetti(count){
+        confetti.innerHTML = "";
+        var n = count || 22;
+        var colors = [
+          "rgba(124,58,237,0.9)",
+          "rgba(6,182,212,0.9)",
+          "rgba(34,197,94,0.9)",
+          "rgba(251,191,36,0.9)",
+          "rgba(255,255,255,0.9)"
+        ];
+        var rect = frame.getBoundingClientRect();
+        for(var i=0;i<n;i++){
+          var piece = document.createElement("i");
+          var x = rect.width*0.5 + (Math.random()*260 - 130);
+          var y = rect.height*0.40 + (Math.random()*70 - 35);
+          piece.style.left = x + "px";
+          piece.style.top = y + "px";
+          piece.style.background = colors[Math.floor(Math.random()*colors.length)];
+          piece.style.transform = "translateY(0) rotate(" + (Math.random()*60) + "deg)";
+          piece.style.animationDelay = (Math.random()*120) + "ms";
+          confetti.appendChild(piece);
+        }
+        window.setTimeout(function(){ confetti.innerHTML = ""; }, 980);
+      }
+
+      function resize(){
+        var r = cv.getBoundingClientRect();
+        cv.width = Math.round(r.width * devicePixelRatio);
+        cv.height = Math.round(r.height * devicePixelRatio);
+        ctx.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0);
+        draw();
+      }
+
+      function getLevel(){
+        var i = Math.max(1, Math.min(level, levels.length)) - 1;
+        return levels[i];
+      }
+
+      function scalePoint(p, rect){
+        var bx = 1920;
+        var by = 760;
+        var x = (p[0] / bx) * rect.width;
+        var y = (p[1] / by) * rect.height;
+        return [x,y];
+      }
+
+      function drawBubble(x,y,emoji){
+        ctx.save();
+        ctx.beginPath();
+        ctx.fillStyle = "rgba(255,255,255,0.92)";
+        ctx.strokeStyle = "rgba(0,0,0,0.10)";
+        ctx.lineWidth = 3;
+        ctx.arc(x, y, 44, 0, Math.PI*2);
+        ctx.fill();
+        ctx.stroke();
+        ctx.font = "48px system-ui, Segoe UI, Arial";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillStyle = "#111827";
+        ctx.fillText(emoji, x, y+2);
+        ctx.restore();
+      }
+
+      function draw(){
+        var r = cv.getBoundingClientRect();
+        ctx.clearRect(0,0,r.width,r.height);
+
+        var L = getLevel();
+
+        ctx.lineCap = "round";
+        ctx.lineJoin = "round";
+
+        ctx.strokeStyle = "rgba(6,182,212,0.40)";
+        ctx.lineWidth = 70;
+        ctx.beginPath();
+        for(var i=0;i<L.points.length;i++){
+          var p = scalePoint(L.points[i], r);
+          if(i===0) ctx.moveTo(p[0], p[1]);
+          else ctx.lineTo(p[0], p[1]);
+        }
+        ctx.stroke();
+
+        ctx.strokeStyle = "rgba(255,255,255,0.85)";
+        ctx.lineWidth = 10;
+        ctx.beginPath();
+        for(var j=0;j<L.points.length;j++){
+          var q = scalePoint(L.points[j], r);
+          if(j===0) ctx.moveTo(q[0], q[1]);
+          else ctx.lineTo(q[0], q[1]);
+        }
+        ctx.stroke();
+
+        var s = scalePoint(L.start, r);
+        drawBubble(s[0], s[1], "❤️");
+
+        var e = scalePoint(L.end, r);
+        drawBubble(e[0], e[1], "⭐");
+
+        if(active && last){
+          drawBubble(last.x, last.y, "🩸");
+        }
+      }
+
+      function distancePointToSegment(px, py, ax, ay, bx, by){
+        var vx = bx - ax;
+        var vy = by - ay;
+        var wx = px - ax;
+        var wy = py - ay;
+        var c1 = vx*wx + vy*wy;
+        if(c1 <= 0) return Math.hypot(px-ax, py-ay);
+        var c2 = vx*vx + vy*vy;
+        if(c2 <= c1) return Math.hypot(px-bx, py-by);
+        var t = c1 / c2;
+        var ix = ax + t*vx;
+        var iy = ay + t*vy;
+        return Math.hypot(px-ix, py-iy);
+      }
+
+      function isOnPath(x,y){
+        var r = cv.getBoundingClientRect();
+        var L = getLevel();
+        var pts = [];
+        for(var i=0;i<L.points.length;i++){
+          pts.push(scalePoint(L.points[i], r));
+        }
+        for(var j=0;j<pts.length-1;j++){
+          var a = pts[j];
+          var b = pts[j+1];
+          var d = distancePointToSegment(x,y,a[0],a[1],b[0],b[1]);
+          if(d <= tolerance) return true;
+        }
+        return false;
+      }
+
+      function nearStart(x,y){
+        var r = cv.getBoundingClientRect();
+        var s = scalePoint(getLevel().start, r);
+        return Math.hypot(x-s[0], y-s[1]) <= 54;
+      }
+
+      function nearEnd(x,y){
+        var r = cv.getBoundingClientRect();
+        var e = scalePoint(getLevel().end, r);
+        return Math.hypot(x-e[0], y-e[1]) <= 58;
+      }
+
+      function shake(){
+        frame.classList.remove("shake");
+        void frame.offsetWidth;
+        frame.classList.add("shake");
+        window.setTimeout(function(){
+          frame.classList.remove("shake");
+        }, 240);
+      }
+
+      function updateLabels(){
+        pill.textContent = "NIVEL: " + level;
+        miniRight.textContent = "NIVEL: " + level;
+        hintText.textContent = "NIVEL " + level + ": LLEVA LA SANGRE HASTA LA ESTRELLA";
+      }
+
+      function begin(){
+        started = true;
+        overlay.classList.remove("show");
+        instBig.textContent = "SIGUE EL CAMINO";
+        instSmall.textContent = "TOCA EL CORAZÓN Y LLEGA A LA ESTRELLA";
+        badge.textContent = "LISTO";
+        setStatus("TOCA EL CORAZÓN");
+        updateLabels();
+        draw();
+      }
+
+      function resetLevel(){
+        active = false;
+        last = null;
+        badge.textContent = "LISTO";
+        setStatus("TOCA EL CORAZÓN");
+        draw();
+      }
+
+      function winLevel(){
+        active = false;
+        badge.textContent = "CORRECTO";
+        setStatus("¡GENIAL!");
+        playSound(true);
+        popConfetti(22);
+        showToast("¡BIEN!", "good");
+        level += 1;
+        if(level > levels.length) level = 1;
+        updateLabels();
+        window.setTimeout(function(){
+          resetLevel();
+        }, 850);
+      }
+
+      function fail(){
+        active = false;
+        badge.textContent = "UPS";
+        setStatus("PRUEBA OTRA VEZ");
+        playSound(false);
+        showToast("INTENTA OTRA VEZ", "bad");
+        shake();
+        window.setTimeout(function(){
+          resetLevel();
+        }, 650);
+      }
+
+      cv.addEventListener("pointerdown", function(ev){
+        if(!started) return;
+        ev.preventDefault();
+        var r = cv.getBoundingClientRect();
+        var x = ev.clientX - r.left;
+        var y = ev.clientY - r.top;
+
+        if(!active){
+          if(nearStart(x,y)){
+            active = true;
+            last = { x: x, y: y };
+            badge.textContent = "JUGANDO";
+            setStatus("SIGUE EL CAMINO");
+            cv.setPointerCapture(ev.pointerId);
+            draw();
+          }else{
+            showToast("TOCA EL CORAZÓN", "bad");
+            playSound(false);
+          }
+          return;
+        }
+      }, { passive: false });
+
+      cv.addEventListener("pointermove", function(ev){
+        if(!started || !active) return;
+        ev.preventDefault();
+        var r = cv.getBoundingClientRect();
+        var x = ev.clientX - r.left;
+        var y = ev.clientY - r.top;
+
+        last = { x: x, y: y };
+
+        if(!isOnPath(x,y)){
+          fail();
+          return;
+        }
+        if(nearEnd(x,y)){
+          winLevel();
+          return;
+        }
+        draw();
+      }, { passive: false });
+
+      cv.addEventListener("pointerup", function(ev){
+        if(!started || !active) return;
+        ev.preventDefault();
+        fail();
+      }, { passive: false });
+
+      cv.addEventListener("pointercancel", function(ev){
+        if(!started) return;
+        active = false;
+        last = null;
+        draw();
+      }, { passive: false });
+
+      function resetAll(){
+        started = false;
+        active = false;
+        last = null;
+        level = 1;
+        badge.textContent = "LISTO";
+        instBig.textContent = "TOCA EMPEZAR";
+        instSmall.textContent = "SIN SALIRTE DEL CAMINO";
+        setStatus("TOCA EMPEZAR");
+        updateLabels();
+        overlay.classList.add("show");
+        draw();
+      }
+
+      function goBack(){
+        var ok = false;
+        try{
+          if(document.referrer) ok = (new URL(document.referrer)).origin === location.origin;
+        }catch(e){ ok = false; }
+        if(ok) history.back();
+        else location.href = "index.html";
+      }
+
+      btnStart.addEventListener("click", function(){ begin(); });
+      btnReset.addEventListener("click", function(){ resetAll(); });
+      btnBack.addEventListener("click", function(){ goBack(); });
+
+      window.addEventListener("resize", function(){ resize(); });
+
+      updateLabels();
+      resize();
+      resetAll();
+    })();
+  </script>
+</body>
+</html>

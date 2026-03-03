@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>CORAZÓN</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <header class="top">
+    <div class="top-left">
+      <div class="badge">
+        <div class="badge-title">CORAZÓN</div>
+        <div class="badge-sub" id="counter">BUENAS: 0 DE 0</div>
+      </div>
+    </div>
+
+    <div class="top-center">
+      <div class="h1">ARRASTRA LO BUENO A BIEN</div>
+      <div class="h2">LO QUE NO AYUDA, A MAL</div>
+    </div>
+
+    <div class="top-right">
+      <button class="btn" id="btnReset" type="button">REINICIAR</button>
+      <a class="btn btn-ghost" href="index.html">VOLVER</a>
+    </div>
+  </header>
+
+  <main class="main" id="main">
+    <div class="bg-scene" aria-hidden="true"></div>
+    <div class="bg-overlay" aria-hidden="true"></div>
+    <div class="bg-animal" aria-hidden="true"></div>
+
+    <div class="decor decor-cloud cloud-1" aria-hidden="true"></div>
+    <div class="decor decor-cloud cloud-2" aria-hidden="true"></div>
+    <div class="decor decor-sticker s1" aria-hidden="true">💖</div>
+    <div class="decor decor-sticker s2" aria-hidden="true">⭐</div>
+    <div class="decor decor-sticker s3" aria-hidden="true">💙</div>
+
+    <section class="zones">
+      <div class="zone zone-good" id="goodZone" aria-label="BIEN">
+        <div class="zone-title">BIEN</div>
+        <div class="zone-big">❤️</div>
+        <div class="zone-hint">AQUÍ VAN LAS BUENAS</div>
+        <div class="drop-area" id="goodDrop"></div>
+      </div>
+
+      <div class="zone zone-bad" id="badZone" aria-label="MAL">
+        <div class="zone-title">MAL</div>
+        <div class="zone-big">❌</div>
+        <div class="zone-hint">AQUÍ VAN LAS QUE NO AYUDAN</div>
+        <div class="drop-area" id="badDrop"></div>
+      </div>
+    </section>
+
+    <section class="cards-panel" aria-label="TARJETAS">
+      <div class="cards-title">TARJETAS</div>
+      <div class="cards" id="cards"></div>
+    </section>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+    <div class="finish" id="finish" aria-hidden="true">
+      <div class="finish-card">
+        <div class="finish-title">¡GENIAL!</div>
+        <div class="finish-text">HAS CUIDADO EL CORAZÓN</div>
+        <div class="finish-actions">
+          <a class="btn btn-good" href="index.html">VOLVER AL MENÚ</a>
+          <button class="btn" id="btnAgain" type="button">JUGAR OTRA VEZ</button>
+        </div>
+      </div>
+    </div>
+
+    <audio id="sndClap" preload="auto" src="/asstests/aplausos.mp4"></audio>
+    <audio id="sndOhh" preload="auto" src="/asstests/ohh.mp4"></audio>
+  </main>
+
+  <script src="./game.js" defer></script>
+</body>
+</html>
