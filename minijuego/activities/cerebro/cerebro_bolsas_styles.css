@@ -1,0 +1,395 @@
+:root{
+  --text:#13233a;
+
+  --panel:#ffffffdd;
+  --panelBorder:#ffffff;
+
+  --shadow: 0 10px 25px rgba(0,0,0,0.12);
+  --radius: 20px;
+
+  --na:#ffe7a8;
+  --ne:#d8f7ff;
+  --ni:#e7d8ff;
+  --no:#d8ffe6;
+  --nu:#ffd8e9;
+
+  --good1:#e8fff1;
+  --good2:#bfffd9;
+  --goodBorder:#8ff0b8;
+
+  --bad1:#fff0f0;
+  --bad2:#ffd0d0;
+  --badBorder:#ff9a9a;
+}
+
+*{ box-sizing:border-box; }
+html, body{ height:100%; }
+body{
+  margin:0;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  color: var(--text);
+  overflow:hidden;
+  text-transform: uppercase;
+}
+
+.app{
+  height: 100%;
+  position: relative;
+}
+
+/* FONDO DIFUMINADO (SIEMPRE DESDE ASSETS) */
+.bg-scene{
+  position:absolute;
+  inset: -30px;
+  background-image: url("./assets/cerebro_bolsas/fondo_parque.webp");
+  background-size: cover;
+  background-position: center;
+  opacity: 0.62;
+  filter: blur(10px) saturate(1.05) contrast(1.02);
+  transform: scale(1.06);
+  pointer-events: none;
+}
+.bg-overlay{
+  position:absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(255,255,255,0.30), rgba(210,245,255,0.70));
+  pointer-events:none;
+}
+.bg-animal{
+  position:absolute;
+  left: -30px;
+  bottom: 86px;
+  width: 420px;
+  height: 420px;
+  background-image: url("./assets/cerebro_bolsas/animal.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: left bottom;
+  opacity: 0.28;
+  filter: drop-shadow(0 16px 26px rgba(0,0,0,0.12));
+  pointer-events:none;
+}
+
+/* DECOR */
+.decor{ position:absolute; pointer-events:none; }
+.cloud{
+  width: 260px; height: 120px;
+  background: #ffffffaa;
+  border: 3px solid #ffffff;
+  border-radius: 999px;
+  box-shadow: var(--shadow);
+  opacity: 0.45;
+}
+.c1{ top: 10px; left: -40px; }
+.c2{ top: 18px; right: -60px; width: 300px; opacity: 0.40; }
+
+.sticker{
+  font-size: 34px;
+  opacity: 0.74;
+  animation: floaty 4.6s ease-in-out infinite;
+}
+.s1{ right: 16px; bottom: 300px; }
+.s2{ left: 52%; bottom: 300px; animation-duration: 5.2s; }
+.s3{ left: 20px; bottom: 290px; animation-duration: 4.1s; }
+
+@keyframes floaty{
+  0%{ transform: translateY(0px) rotate(0deg); }
+  50%{ transform: translateY(-10px) rotate(6deg); }
+  100%{ transform: translateY(0px) rotate(0deg); }
+}
+
+/* CONTENIDO (ARRIBA PALABRAS, ABAJO BOLSAS) */
+.content{
+  position: relative;
+  z-index: 1;
+  height: calc(100% - 86px);
+  padding: 12px 12px 10px;
+  display:grid;
+  grid-template-rows: 0.9fr 1.1fr;
+  gap: 12px;
+}
+
+/* PANEL PALABRAS */
+.panel{
+  background: var(--panel);
+  border: 3px solid var(--panelBorder);
+  border-radius: 22px;
+  box-shadow: var(--shadow);
+  padding: 12px;
+  backdrop-filter: blur(2px);
+  overflow:hidden;
+}
+
+.panel-title{
+  font-weight: 1000;
+  letter-spacing: 0.6px;
+  margin-bottom: 10px;
+  font-size: 16px;
+}
+
+.words{
+  display:flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  height: calc(100% - 34px);
+  overflow:auto;
+  padding-right: 6px;
+}
+
+.words::-webkit-scrollbar{ width: 12px; }
+.words::-webkit-scrollbar-thumb{
+  background: rgba(0,0,0,0.15);
+  border-radius: 999px;
+}
+
+/* TARJETA PALABRA (MÁS GRANDE PARA TÁCTIL) */
+.word{
+  width: 240px;
+  min-height: 64px;
+  background: #ffffff;
+  border: 3px solid #d8ecff;
+  border-radius: 20px;
+  box-shadow: 0 10px 22px rgba(0,0,0,0.10);
+  padding: 14px 12px;
+  cursor: grab;
+  user-select:none;
+  touch-action:none;
+  font-weight: 1000;
+  font-size: 22px;
+  text-align:center;
+  letter-spacing: 0.8px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.word:active{ cursor: grabbing; }
+
+.word.dragging{
+  position: fixed;
+  z-index: 9999;
+  margin:0;
+  box-shadow: 0 18px 40px rgba(0,0,0,0.22);
+  transform: scale(1.03);
+}
+
+.word.locked{
+  cursor: default;
+  opacity: 0.98;
+}
+
+/* BOLSAS (MÁS GRANDES) */
+.bags{
+  display:flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
+  align-content: stretch;
+}
+
+.bag{
+  background: var(--panel);
+  border: 3px solid var(--panelBorder);
+  border-radius: 22px;
+  box-shadow: var(--shadow);
+  padding: 12px;
+  backdrop-filter: blur(2px);
+
+  flex: 1 1 320px;
+  max-width: 420px;
+  min-width: 300px;
+  min-height: 280px;
+
+  display:flex;
+  flex-direction: column;
+  overflow:hidden;
+}
+
+.bag-top{
+  display:flex;
+  align-items:center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.bag-title{
+  font-weight: 1000;
+  font-size: 34px;
+  letter-spacing: 2px;
+}
+
+.bag-emoji{
+  font-size: 28px;
+  opacity: 0.95;
+}
+
+.bag-drop{
+  flex: 1;
+  border-radius: 18px;
+  border: 5px dashed rgba(0,0,0,0.18);
+  background: rgba(255,255,255,0.62);
+  padding: 10px;
+  display:flex;
+  flex-direction: column;
+  gap: 10px;
+  overflow:auto;
+}
+
+.bag-drop::-webkit-scrollbar{ width: 12px; }
+.bag-drop::-webkit-scrollbar-thumb{
+  background: rgba(0,0,0,0.15);
+  border-radius: 999px;
+}
+
+.bag-na{ background: linear-gradient(180deg, var(--panel), var(--na)); }
+.bag-ne{ background: linear-gradient(180deg, var(--panel), var(--ne)); }
+.bag-ni{ background: linear-gradient(180deg, var(--panel), var(--ni)); }
+.bag-no{ background: linear-gradient(180deg, var(--panel), var(--no)); }
+.bag-nu{ background: linear-gradient(180deg, var(--panel), var(--nu)); }
+
+/* BARRA INFERIOR GRANDE (ZONA ALCANZABLE) */
+.bottomBar{
+  position:absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 86px;
+  padding: 10px 12px;
+  display:flex;
+  align-items:center;
+  justify-content: space-between;
+  gap: 10px;
+  z-index: 2;
+
+  background: rgba(255,255,255,0.65);
+  backdrop-filter: blur(6px);
+  border-top: 3px solid rgba(255,255,255,0.90);
+}
+
+.bb-left{
+  display:flex;
+  gap: 10px;
+  align-items:center;
+  flex-wrap: wrap;
+}
+
+.pill{
+  background: rgba(255,255,255,0.90);
+  border: 3px solid #ffffff;
+  border-radius: 999px;
+  padding: 10px 14px;
+  box-shadow: var(--shadow);
+  font-weight: 1000;
+  letter-spacing: 0.6px;
+}
+
+.bb-right{
+  display:flex;
+  gap: 10px;
+  align-items:center;
+}
+
+/* BOTONES GRANDES */
+.btn{
+  border: 0;
+  background: rgba(255,255,255,0.90);
+  border-radius: 999px;
+  padding: 12px 18px;
+  font-weight: 1000;
+  cursor:pointer;
+  box-shadow: var(--shadow);
+  text-decoration:none;
+  color: var(--text);
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  border: 3px solid #ffffff;
+  min-width: 140px;
+  font-size: 16px;
+}
+.btn:active{ transform: translateY(1px); }
+.btn-ghost{
+  background: transparent;
+  box-shadow: none;
+  border: 3px solid rgba(255,255,255,0.90);
+}
+
+.btn-good{
+  background: linear-gradient(180deg, var(--good1), var(--good2));
+  border-color: var(--goodBorder);
+}
+
+/* TOAST ABAJO, CERCA DE LOS NIÑOS */
+.toast{
+  position:absolute;
+  left: 50%;
+  bottom: 96px;
+  transform: translateX(-50%);
+  background: #ffffffee;
+  border: 3px solid #ffffff;
+  border-radius: 999px;
+  padding: 12px 18px;
+  font-weight: 1000;
+  font-size: 18px;
+  box-shadow: var(--shadow);
+  opacity: 0;
+  pointer-events:none;
+  transition: opacity 160ms ease;
+  z-index: 3;
+}
+.toast.on{ opacity: 1; }
+.toast.good{ background: linear-gradient(180deg, var(--good1), var(--good2)); border-color: var(--goodBorder); }
+.toast.bad{ background: linear-gradient(180deg, var(--bad1), var(--bad2)); border-color: var(--badBorder); }
+
+/* FIN */
+.finish{
+  position:absolute;
+  inset:0;
+  background: rgba(0,0,0,0.25);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding: 12px;
+  z-index: 4;
+}
+.finish.on{ display:flex; }
+
+.finish-card{
+  width: min(560px, 94vw);
+  background:#ffffffee;
+  border: 3px solid #ffffff;
+  border-radius: 22px;
+  box-shadow: 0 20px 55px rgba(0,0,0,0.20);
+  padding: 16px;
+  text-align:center;
+}
+.finish-title{ font-size: 28px; font-weight: 1000; }
+.finish-text{ margin-top: 6px; font-weight: 1000; opacity: 0.88; }
+.finish-actions{
+  margin-top: 14px;
+  display:flex;
+  gap: 10px;
+  justify-content:center;
+  flex-wrap: wrap;
+}
+
+/* RESPONSIVE */
+@media (max-width: 900px){
+  .content{
+    grid-template-rows: 1fr 1fr;
+  }
+  .word{
+    width: calc(50% - 6px);
+    min-width: 170px;
+    font-size: 20px;
+  }
+  .btn{
+    min-width: 120px;
+  }
+  .bottomBar{
+    height: 96px;
+  }
+  .toast{
+    bottom: 108px;
+  }
+}
