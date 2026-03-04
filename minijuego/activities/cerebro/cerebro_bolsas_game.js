@@ -142,35 +142,41 @@ function onPointerDown(ev) {
   ev.preventDefault();
 }
 
+// 1. En onPointerMove: detectar bolsa bajo el cursor y añadir clase drag-over
 function onPointerMove(ev) {
-  if (!active) return;
-  if (ev.pointerId !== activePointerId) return;
+  if (!active || ev.pointerId !== activePointerId) return;
+  active.style.left = (ev.clientX - offsetX) + "px";
+  active.style.top  = (ev.clientY - offsetY) + "px";
 
-  var x = ev.clientX - offsetX;
-  var y = ev.clientY - offsetY;
-
-  active.style.left = x + "px";
-  active.style.top = y + "px";
+  // highlight bolsa bajo cursor
+  var keys = ["NA","NE","NI","NO","NU"];
+  keys.forEach(function(k) {
+    var bagEl  = drops[k].parentElement;
+    var dropEl = drops[k];
+    var r = bagEl.getBoundingClientRect();
+    var over = ev.clientX>=r.left && ev.clientX<=r.right && ev.clientY>=r.top && ev.clientY<=r.bottom;
+    bagEl.classList.toggle("drag-over", over);
+    dropEl.classList.toggle("drag-over", over);
+  });
 }
 
+// 2. En onPointerUp: limpiar drag-over
 function onPointerUp(ev) {
-  if (!active) return;
-  if (ev.pointerId !== activePointerId) return;
-
+  if (!active || ev.pointerId !== activePointerId) return;
   var el = active;
-
-  try { el.releasePointerCapture(ev.pointerId); } catch (e) {}
-
+  try { el.releasePointerCapture(ev.pointerId); } catch(e) {}
   el.removeEventListener("pointermove", onPointerMove);
-  el.removeEventListener("pointerup", onPointerUp);
+  el.removeEventListener("pointerup",   onPointerUp);
   el.removeEventListener("pointercancel", onPointerUp);
 
-  var bag = detectBag(ev.clientX, ev.clientY);
-  if (!bag) {
-    returnToPlace(el);
-    return;
-  }
+  // limpiar highlights
+  ["NA","NE","NI","NO","NU"].forEach(function(k){
+    drops[k].parentElement.classList.remove("drag-over");
+    drops[k].classList.remove("drag-over");
+  });
 
+  var bag = detectBag(ev.clientX, ev.clientY);
+  if (!bag) { returnToPlace(el); return; }
   applyDrop(el, bag);
 }
 
@@ -260,8 +266,9 @@ function updateCounter() {
 function finishGame() {
   markCompleted(PART_ID);
   showFinish();
-  showToast("¡ACTIVIDAD COMPLETADA! 👏", "good", 1400);
+  showToast("¡ACTIVIDAD COMPLETADA! 🌟", "good", 1800);
   playSound(sndClap);
+  spawnConfettiBurst();
 }
 
 function showFinish() {
@@ -374,5 +381,48 @@ function markCompleted(partId) {
   if (p.completed.indexOf(partId) === -1) {
     p.completed.push(partId);
     saveProgress(p);
+  }
+}
+
+var CONFETTI_COLORS = ["#fbbf24","#34d399","#60a5fa","#f472b6","#a78bfa","#fb923c"];
+function spawnConfetti(n) {
+  var container = document.getElementById("confettiContainer");
+  if (!container) return;
+  for (var i=0; i<n; i++) {
+    (function(delay) {
+      setTimeout(function() {
+        var el = document.createElement("div");
+        el.className = "confetti-piece";
+        el.style.left = (20 + Math.random()*60) + "%";
+        el.style.background = CONFETTI_COLORS[Math.floor(Math.random()*CONFETTI_COLORS.length)];
+        el.style.width  = (8 + Math.random()*10) + "px";
+        el.style.height = (8 + Math.random()*10) + "px";
+        el.style.borderRadius = Math.random()>0.5 ? "50%" : "3px";
+        el.style.animationDuration = (1.2 + Math.random()*0.8) + "s";
+        container.appendChild(el);
+        setTimeout(function(){ el.remove(); }, 2000);
+      }, delay);
+    })(i * 80);
+  }
+}
+
+function spawnConfettiBurst() {
+  for (var i=0; i<65; i++) {
+    (function(delay) {
+      setTimeout(function() {
+        var container = document.getElementById("confettiContainer");
+        if (!container) return;
+        var el = document.createElement("div");
+        el.className = "confetti-piece";
+        el.style.left = (3 + Math.random()*94) + "%";
+        el.style.background = CONFETTI_COLORS[Math.floor(Math.random()*CONFETTI_COLORS.length)];
+        el.style.width  = (8 + Math.random()*14) + "px";
+        el.style.height = (8 + Math.random()*14) + "px";
+        el.style.borderRadius = Math.random()>0.5 ? "50%" : "3px";
+        el.style.animationDuration = (1.5 + Math.random()*1.5) + "s";
+        container.appendChild(el);
+        setTimeout(function(){ el.remove(); }, 3000);
+      }, delay);
+    })(i * 38);
   }
 }
