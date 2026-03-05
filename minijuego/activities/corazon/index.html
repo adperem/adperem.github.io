@@ -5,24 +5,18 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>CORAZÓN</title>
   <style>
-    :root{
+    :root {
       --panel-bg: rgba(255,255,255,0.88);
-      --panel-border: rgba(255,255,255,0.9);
       --shadow: 0 18px 45px rgba(0,0,0,0.18);
       --shadow-soft: 0 10px 25px rgba(0,0,0,0.14);
       --radius-xl: 28px;
       --ink: #1f2a37;
-      --muted: #3b556f;
-      --accent: rgba(124,58,237,1);
-      --accent2: rgba(6,182,212,1);
       --bottom-h: 112px;
     }
 
-    *{ box-sizing: border-box; }
-    html, body{
-      width: 100%;
-      height: 100%;
-      margin: 0;
+    * { box-sizing: border-box; }
+    html, body {
+      width: 100%; height: 100%; margin: 0;
       font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
       color: var(--ink);
       overflow: hidden;
@@ -32,509 +26,501 @@
       background: #0b1220;
     }
 
-    body::before{
+    /* FONDO */
+    body::before {
       content: "";
-      position: fixed;
-      inset: -40px;
+      position: fixed; inset: -40px;
       background-image: url("../../assets/fondo_parque.webp");
-      background-size: cover;
-      background-position: center;
-      background-attachment: fixed;
+      background-size: cover; background-position: center;
       filter: blur(14px) saturate(1.2);
       transform: scale(1.08);
       z-index: -2;
     }
-    body::after{
+    body::after {
       content: "";
-      position: fixed;
-      inset: 0;
+      position: fixed; inset: 0;
       background: linear-gradient(180deg, rgba(255,255,255,0.12), rgba(255,255,255,0.05));
       z-index: -1;
     }
 
-    .stage{
-      width: 100vw;
-      height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
+    .stage {
+      width: 100vw; height: 100vh;
+      display: flex; justify-content: center; align-items: center;
       padding: 18px;
     }
-    .frame{
-      width: min(1920px, 100vw);
-      height: min(1080px, 100vh);
-      position: relative;
-      border-radius: 34px;
-      overflow: hidden;
+    .frame {
+      width: min(1920px,100vw); height: min(1080px,100vh);
+      position: relative; border-radius: 34px; overflow: hidden;
     }
 
-    .header{
-      position: absolute;
-      left: 22px;
-      right: 22px;
-      top: 18px;
-      padding: 14px 16px;
+    /* HEADER */
+    .header {
+      position: absolute; left: 22px; right: 22px; top: 18px;
+      padding: 14px 20px;
       border-radius: var(--radius-xl);
-      background: rgba(255,255,255,0.78);
-      border: 2px solid rgba(255,255,255,0.7);
+      background: rgba(255,255,255,0.82);
+      border: 2px solid rgba(255,255,255,0.75);
       box-shadow: var(--shadow-soft);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 14px;
+      display: flex; align-items: center;
+      justify-content: space-between; gap: 14px;
     }
-    .title{
-      font-size: 42px;
-      font-weight: 1000;
-      letter-spacing: 1px;
-      line-height: 1.05;
-      text-transform: uppercase;
-      display: flex;
-      align-items: center;
-      gap: 12px;
+    .title {
+      font-size: 40px; font-weight: 1000;
+      letter-spacing: 1px; text-transform: uppercase;
+      display: flex; align-items: center; gap: 12px;
       white-space: nowrap;
+      animation: titlePulse 2.5s ease-in-out infinite;
     }
-    .hint{
-      font-size: 18px;
-      font-weight: 950;
-      color: var(--muted);
-      text-transform: uppercase;
-      text-align: right;
-      line-height: 1.1;
+    @keyframes titlePulse {
+      0%,100% { filter: drop-shadow(0 0 0px rgba(239,68,68,0)); }
+      50%      { filter: drop-shadow(0 0 12px rgba(239,68,68,0.4)); }
     }
-    .badge{
-      font-size: 18px;
-      font-weight: 1000;
-      padding: 9px 14px;
-      border-radius: 999px;
+    .hint {
+      font-size: 17px; font-weight: 900; color: #3b556f;
+      text-transform: uppercase; text-align: right; line-height: 1.2;
+    }
+    .badge {
+      font-size: 17px; font-weight: 1000;
+      padding: 9px 16px; border-radius: 999px;
       background: rgba(124,58,237,0.12);
       border: 2px solid rgba(124,58,237,0.28);
       color: #3b2a8f;
-      text-transform: uppercase;
-      white-space: nowrap;
-      min-width: 140px;
-      text-align: center;
+      text-transform: uppercase; white-space: nowrap;
+      min-width: 130px; text-align: center;
+      transition: background 0.3s, color 0.3s;
     }
 
-    .main{
-      position: absolute;
-      left: 22px;
-      right: 22px;
-      top: 112px;
-      bottom: calc(var(--bottom-h) + 18px);
-      display: grid;
-      grid-template-rows: 1fr;
+    /* MAIN */
+    .main {
+      position: absolute; left: 22px; right: 22px;
+      top: 112px; bottom: calc(var(--bottom-h) + 18px);
+      display: grid; grid-template-rows: 1fr;
     }
-
-    .panel{
+    .panel {
       background: var(--panel-bg);
-      border: 2px solid var(--panel-border);
+      border: 2px solid rgba(255,255,255,0.8);
       border-radius: 34px;
       box-shadow: var(--shadow);
       padding: 16px;
-      position: relative;
-      overflow: hidden;
+      position: relative; overflow: hidden;
     }
 
-    .videoBox, .menuBox{
-      width: 100%;
-      height: 100%;
+    /* VIDEO BOX */
+    .videoBox, .menuBox {
+      width: 100%; height: 100%;
       border-radius: 26px;
       background: rgba(255,255,255,0.62);
       border: 2px solid rgba(0,0,0,0.06);
-      box-shadow: inset 0 0 0 2px rgba(255,255,255,0.45);
-      overflow: hidden;
-      position: relative;
+      overflow: hidden; position: relative;
     }
-
-    .video{
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
-      background: rgba(0,0,0,0.12);
+    .video {
+      width: 100%; height: 100%;
+      object-fit: contain; background: rgba(0,0,0,0.12);
     }
-
-    .overlay{
-      position: absolute;
-      inset: 0;
-      display: grid;
-      place-items: center;
-      background: rgba(255,255,255,0.25);
+    .overlay {
+      position: absolute; inset: 0;
+      display: grid; place-items: center;
+      background: rgba(255,255,255,0.28);
       backdrop-filter: blur(6px);
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 160ms ease;
+      opacity: 0; pointer-events: none;
+      transition: opacity 180ms ease;
     }
-    .overlay.show{
-      opacity: 1;
-      pointer-events: auto;
-    }
+    .overlay.show { opacity: 1; pointer-events: auto; }
 
-    .bigButton{
-      width: min(720px, 92%);
-      height: 110px;
+    /* PLAY BUTTON */
+    .bigButton {
+      width: min(680px, 92%); height: 110px;
       border-radius: 28px;
-      border: 2px solid rgba(0,0,0,0.08);
+      border: 3px solid rgba(255,255,255,0.9);
       box-shadow: var(--shadow-soft);
-      background: rgba(255,255,255,0.92);
-      font-size: 34px;
-      font-weight: 1000;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      color: #1f2a37;
-      cursor: pointer;
-      touch-action: manipulation;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 14px;
-      padding: 0 18px;
+      background: linear-gradient(145deg, #fff9f0, #fef3c7);
+      font-size: 32px; font-weight: 1000;
+      text-transform: uppercase; letter-spacing: 1px;
+      color: #92400e; cursor: pointer; touch-action: manipulation;
+      display: flex; align-items: center;
+      justify-content: center; gap: 14px; padding: 0 20px;
+      transition: transform 0.15s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.15s;
+      animation: playPulse 2s ease-in-out infinite;
     }
-    .bigButton:active{ transform: translateY(1px); }
+    @keyframes playPulse {
+      0%,100% { box-shadow: var(--shadow-soft), 0 0 0 0 rgba(251,191,36,0); }
+      50%      { box-shadow: var(--shadow-soft), 0 0 0 12px rgba(251,191,36,0.25); }
+    }
+    .bigButton:hover  { transform: scale(1.04); box-shadow: 0 20px 45px rgba(0,0,0,0.18); }
+    .bigButton:active { transform: scale(0.96); }
 
-    .skipRow{
-      position: absolute;
-      left: 16px;
-      right: 16px;
-      bottom: 16px;
-      display: flex;
-      gap: 12px;
-      justify-content: space-between;
+    .skipRow {
+      position: absolute; left: 16px; right: 16px; bottom: 16px;
+      display: flex; gap: 12px; justify-content: space-between;
       pointer-events: none;
     }
-    .miniBtn{
+    .miniBtn {
       pointer-events: auto;
-      height: 78px;
-      border-radius: 22px;
-      border: 2px solid rgba(0,0,0,0.08);
+      height: 72px; border-radius: 20px;
+      border: 2px solid rgba(255,255,255,0.85);
       box-shadow: var(--shadow-soft);
-      background: rgba(255,255,255,0.92);
-      font-size: 26px;
-      font-weight: 1000;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      color: #1f2a37;
-      cursor: pointer;
-      touch-action: manipulation;
+      background: rgba(255,255,255,0.90);
+      font-size: 24px; font-weight: 1000;
+      text-transform: uppercase; letter-spacing: 1px;
+      color: #1f2a37; cursor: pointer; touch-action: manipulation;
       padding: 0 18px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 12px;
+      display: flex; align-items: center;
+      justify-content: center; gap: 10px;
+      transition: transform 0.12s;
     }
-    .miniBtn:active{ transform: translateY(1px); }
+    .miniBtn:hover  { transform: translateY(-2px); }
+    .miniBtn:active { transform: translateY(1px); }
 
-    .menuTop{
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
+    /* MENU BOX */
+    .menuTop {
+      display: flex; align-items: center;
+      justify-content: space-between; gap: 12px;
       margin-bottom: 14px;
     }
-    .menuTitle{
-      font-size: 30px;
-      font-weight: 1100;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      color: #111827;
+    .menuTitle {
+      font-size: 28px; font-weight: 1100;
+      text-transform: uppercase; letter-spacing: 1px; color: #111827;
     }
 
-    .grid{
-      width: 100%;
-      height: calc(100% - 64px);
-      display: grid;
-      gap: 14px;
+    .grid {
+      width: 100%; height: calc(100% - 64px);
+      display: grid; gap: 14px;
       grid-template-columns: repeat(3, 1fr);
-      grid-auto-rows: 1fr;
-      overflow: hidden;
+      grid-auto-rows: 1fr; overflow: hidden;
     }
-    .card{
+
+    /* ACTIVITY CARDS */
+    .card {
       border-radius: 28px;
       background: rgba(255,255,255,0.95);
-      border: 2px solid rgba(0,0,0,0.08);
-      box-shadow: 0 16px 34px rgba(0,0,0,0.14);
-      display: grid;
-      place-items: center;
-      padding: 14px;
-      cursor: pointer;
-      touch-action: manipulation;
-      position: relative;
-      overflow: hidden;
+      border: 3px solid rgba(255,255,255,0.9);
+      box-shadow: 0 16px 34px rgba(0,0,0,0.13);
+      display: grid; place-items: center;
+      padding: 16px; cursor: pointer; touch-action: manipulation;
+      position: relative; overflow: hidden;
+      transition: transform 0.2s cubic-bezier(0.34,1.56,0.64,1),
+                  box-shadow 0.2s, border-color 0.2s;
+      animation: cardIn 0.4s cubic-bezier(0.34,1.56,0.64,1) backwards;
     }
-    .card:active{ transform: translateY(1px); }
-    .emoji{
-      font-size: 84px;
-      line-height: 1;
+    @keyframes cardIn {
+      0%   { transform: scale(0.7) translateY(20px); opacity: 0; }
+      100% { transform: scale(1)   translateY(0);    opacity: 1; }
+    }
+    /* Brillito interior */
+    .card::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0;
+      height: 50%; border-radius: 28px 28px 0 0;
+      background: linear-gradient(180deg, rgba(255,255,255,0.6), transparent);
+      pointer-events: none;
+    }
+    .card:hover {
+      transform: translateY(-6px) scale(1.04);
+      box-shadow: 0 26px 50px rgba(0,0,0,0.18);
+      border-color: rgba(124,58,237,0.3);
+    }
+    .card:active { transform: scale(0.96); }
+
+    .emoji {
+      font-size: 82px; line-height: 1;
       filter: drop-shadow(0 12px 14px rgba(0,0,0,0.10));
+      transition: transform 0.2s cubic-bezier(0.34,1.56,0.64,1);
     }
-    .label{
-      margin-top: 10px;
-      font-size: 22px;
-      font-weight: 1100;
-      text-transform: uppercase;
-      letter-spacing: 0.8px;
-      color: #22314a;
-      text-align: center;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      max-width: 95%;
+    .card:hover .emoji { transform: scale(1.15) rotate(8deg); }
+
+    .label {
+      margin-top: 10px; font-size: 22px; font-weight: 1100;
+      text-transform: uppercase; letter-spacing: 0.8px;
+      color: #22314a; text-align: center;
+    }
+    .label-sub {
+      margin-top: 4px; font-size: 13px; font-weight: 800;
+      opacity: 0.55; text-transform: uppercase; letter-spacing: 0.5px;
     }
 
-    .bottomBar{
-      position: absolute;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      height: var(--bottom-h);
-      padding: 14px 18px;
-      background: rgba(255,255,255,0.90);
-      border-top: 2px solid rgba(255,255,255,0.8);
-      box-shadow: 0 -18px 45px rgba(0,0,0,0.16);
-      display: grid;
-      grid-template-columns: 1fr 1fr 1.2fr;
-      gap: 14px;
-      align-items: center;
-    }
-    .btn{
-      height: 78px;
-      border-radius: 22px;
-      border: 2px solid rgba(0,0,0,0.08);
-      box-shadow: var(--shadow-soft);
-      background: rgba(255,255,255,0.92);
-      font-size: 28px;
-      font-weight: 1000;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      color: #1f2a37;
-      cursor: pointer;
-      touch-action: manipulation;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 12px;
-      padding: 0 18px;
-    }
-    .btn:active{ transform: translateY(1px); }
-    .btn.primary{
-      background: rgba(124,58,237,0.14);
-      border-color: rgba(124,58,237,0.26);
-      color: #2f1d78;
-    }
-    .btn.secondary{
-      background: rgba(6,182,212,0.12);
-      border-color: rgba(6,182,212,0.22);
-      color: #0b5563;
-    }
-    .statusBox{
-      height: 78px;
-      border-radius: 22px;
-      border: 2px solid rgba(0,0,0,0.08);
-      box-shadow: var(--shadow-soft);
-      background: rgba(255,255,255,0.92);
-      display: grid;
-      grid-template-columns: 1fr;
-      align-items: center;
-      padding: 8px 14px;
-      gap: 6px;
-    }
-    .statusTop{
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-      font-size: 18px;
-      font-weight: 1000;
-      text-transform: uppercase;
-      color: #334155;
-    }
-    .statusValue{
+    /* COMPLETED BADGE */
+    .card.done::after {
+      content: '✅';
+      position: absolute; top: 10px; right: 12px;
       font-size: 24px;
-      font-weight: 1100;
-      text-transform: uppercase;
-      color: #111827;
-      letter-spacing: 0.6px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+      animation: doneIn 0.4s cubic-bezier(0.34,1.56,0.64,1);
+    }
+    @keyframes doneIn {
+      0%   { transform: scale(0) rotate(-180deg); opacity: 0; }
+      100% { transform: scale(1) rotate(0deg); opacity: 1; }
+    }
+    .card.done {
+      background: linear-gradient(145deg, rgba(255,255,255,0.95), rgba(220,252,231,0.85));
+      border-color: rgba(134,239,172,0.7);
     }
 
-    @media (max-width: 1400px){
-      .grid{ grid-template-columns: repeat(2, 1fr); }
-      .emoji{ font-size: 74px; }
-      .label{ font-size: 20px; }
-      .title{ font-size: 36px; }
+    /* BOTTOM BAR */
+    .bottomBar {
+      position: absolute; left: 0; right: 0; bottom: 0;
+      height: var(--bottom-h); padding: 14px 18px;
+      background: rgba(255,255,255,0.88);
+      border-top: 2px solid rgba(255,255,255,0.85);
+      box-shadow: 0 -18px 45px rgba(0,0,0,0.14);
+      display: grid;
+      grid-template-columns: 1fr 1fr 1.4fr;
+      gap: 14px; align-items: center;
+    }
+    .btn {
+      height: 78px; border-radius: 22px;
+      border: 2px solid rgba(0,0,0,0.08);
+      box-shadow: var(--shadow-soft);
+      background: rgba(255,255,255,0.92);
+      font-size: 26px; font-weight: 1000;
+      text-transform: uppercase; letter-spacing: 1px;
+      color: #1f2a37; cursor: pointer; touch-action: manipulation;
+      display: flex; align-items: center;
+      justify-content: center; gap: 10px; padding: 0 18px;
+      transition: transform 0.12s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.12s;
+    }
+    .btn:hover  { transform: translateY(-2px); box-shadow: 0 14px 30px rgba(0,0,0,0.14); }
+    .btn:active { transform: translateY(1px) scale(0.97); }
+    .btn.primary {
+      background: linear-gradient(145deg, rgba(124,58,237,0.12), rgba(124,58,237,0.18));
+      border-color: rgba(124,58,237,0.26); color: #2f1d78;
+    }
+    .btn.secondary {
+      background: linear-gradient(145deg, rgba(6,182,212,0.10), rgba(6,182,212,0.16));
+      border-color: rgba(6,182,212,0.22); color: #0b5563;
+    }
+
+    /* STATUS BOX */
+    .statusBox {
+      height: 78px; border-radius: 22px;
+      border: 2px solid rgba(0,0,0,0.08);
+      box-shadow: var(--shadow-soft);
+      background: rgba(255,255,255,0.92);
+      display: flex; flex-direction: column;
+      justify-content: center; padding: 8px 16px; gap: 4px;
+    }
+    .statusTop {
+      display: flex; align-items: center;
+      justify-content: space-between;
+      font-size: 16px; font-weight: 1000;
+      text-transform: uppercase; color: #334155;
+    }
+    .statusValue {
+      font-size: 22px; font-weight: 1100;
+      text-transform: uppercase; color: #111827;
+      letter-spacing: 0.5px;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+
+    /* PROGRESS TRACK en status */
+    .statusProgress {
+      height: 6px; background: rgba(0,0,0,0.08);
+      border-radius: 999px; overflow: hidden; margin-top: 2px;
+    }
+    .statusProgressFill {
+      height: 100%;
+      background: linear-gradient(90deg, #a78bfa, #7c3aed);
+      border-radius: 999px;
+      transition: width 0.5s cubic-bezier(0.34,1.56,0.64,1);
+    }
+
+    @media (max-width: 1400px) {
+      .grid { grid-template-columns: repeat(2, 1fr); }
+      .emoji { font-size: 72px; }
+      .label { font-size: 20px; }
+      .title { font-size: 34px; }
     }
   </style>
 </head>
 <body>
-  <div class="stage">
-    <div class="frame" id="frame">
-      <header class="header">
-        <div class="title">❤️ CORAZÓN</div>
-        <div class="hint">LATE</div>
-        <div class="badge" id="badge">VIDEO</div>
-      </header>
+<div class="stage">
+  <div class="frame" id="frame">
 
-      <main class="main">
-        <section class="panel">
-          <div class="videoBox" id="videoBox">
-            <video class="video" id="introVideo" playsinline preload="auto">
-              <source src="intro.mp4" type="video/mp4" />
-              <source src="intro.webm" type="video/webm" />
-            </video>
+    <header class="header">
+      <div class="title">❤️ CORAZÓN</div>
+      <div class="hint">APRENDE CÓMO<br>CUIDAR TU CORAZÓN</div>
+      <div class="badge" id="badge">VIDEO</div>
+    </header>
 
-            <div class="overlay show" id="tapOverlay">
-              <button class="bigButton" id="btnPlay" type="button">TOCA PARA VER EL VIDEO</button>
-            </div>
+    <main class="main">
+      <section class="panel">
 
-            <div class="skipRow">
-              <button class="miniBtn" id="btnSkip" type="button">SALTAR</button>
-              <button class="miniBtn" id="btnRepeat" type="button">REPETIR</button>
-            </div>
+        <!-- VIDEO -->
+        <div class="videoBox" id="videoBox">
+          <video class="video" id="introVideo" playsinline preload="auto">
+            <source src="intro.mp4" type="video/mp4" />
+            <source src="intro.webm" type="video/webm" />
+          </video>
+          <div class="overlay show" id="tapOverlay">
+            <button class="bigButton" id="btnPlay" type="button">
+              ▶ TOCA PARA VER EL VIDEO
+            </button>
           </div>
-
-          <div class="menuBox" id="menuBox" style="display:none;">
-            <div class="menuTop">
-              <div class="menuTitle">ACTIVIDADES</div>
-              <button class="miniBtn" id="btnWatch" type="button">VER VIDEO</button>
-            </div>
-
-            <div class="grid" id="grid"></div>
+          <div class="skipRow">
+            <button class="miniBtn" id="btnSkip"   type="button">⏭ SALTAR</button>
+            <button class="miniBtn" id="btnRepeat" type="button">🔄 REPETIR</button>
           </div>
-        </section>
-      </main>
+        </div>
 
-      <div class="bottomBar">
-        <button class="btn primary" id="btnReset">REINICIAR</button>
-        <button class="btn secondary" id="btnBack">VOLVER</button>
-        <div class="statusBox" role="status" aria-live="polite">
-          <div class="statusTop">
-            <span>ESTADO</span>
-            <span id="miniRight">LISTO</span>
+        <!-- MENÚ ACTIVIDADES -->
+        <div class="menuBox" id="menuBox" style="display:none;">
+          <div class="menuTop">
+            <div class="menuTitle">🎮 ACTIVIDADES</div>
+            <button class="miniBtn" id="btnWatch" type="button">▶ VER VIDEO</button>
           </div>
-          <div class="statusValue" id="statusText">TOCA PARA EMPEZAR</div>
+          <div class="grid" id="grid"></div>
+        </div>
+
+      </section>
+    </main>
+
+    <div class="bottomBar">
+      <button class="btn primary"   id="btnReset">🔄 REINICIAR</button>
+      <button class="btn secondary" id="btnBack" >🏠 VOLVER</button>
+      <div class="statusBox" role="status" aria-live="polite">
+        <div class="statusTop">
+          <span>ESTADO</span>
+          <span id="miniRight">LISTO</span>
+        </div>
+        <div class="statusValue"    id="statusText">TOCA PARA EMPEZAR</div>
+        <div class="statusProgress">
+          <div class="statusProgressFill" id="statusProgress" style="width:0%"></div>
         </div>
       </div>
     </div>
+
   </div>
+</div>
 
-  <script>
-    (function(){
-      "use strict";
+<script>
+(function () {
+  "use strict";
 
-      var ORGAN = {"id": "corazon", "name": "CORAZÓN", "activities": [{"label": "CAMINO", "icon": "🛣️", "file": "corazon_camino_arterias.html"}, {"label": "RAPIDO", "icon": "🚦", "file": "corazon_semaforo.html"}, {"label": "JUEGO", "icon": "❤️", "file": "corazon_juego.html"}]};
+  var ORGAN = {
+    id: "corazon",
+    name: "CORAZÓN",
+    activities: [
+      { label:"CAMINO",  sub:"ARTERIAS", icon:"🛣️", file:"corazon_camino_arterias.html" },
+      { label:"RÁPIDO",  sub:"SEMÁFORO", icon:"🚦", file:"corazon_semaforo.html" },
+      { label:"JUEGO",   sub:"ARRASTRAR", icon:"❤️", file:"corazon_juego.html" }
+    ]
+  };
 
-      var introVideo = document.getElementById("introVideo");
-      var videoBox = document.getElementById("videoBox");
-      var menuBox = document.getElementById("menuBox");
-      var grid = document.getElementById("grid");
+  var introVideo     = document.getElementById("introVideo");
+  var videoBox       = document.getElementById("videoBox");
+  var menuBox        = document.getElementById("menuBox");
+  var grid           = document.getElementById("grid");
+  var tapOverlay     = document.getElementById("tapOverlay");
+  var btnPlay        = document.getElementById("btnPlay");
+  var btnSkip        = document.getElementById("btnSkip");
+  var btnRepeat      = document.getElementById("btnRepeat");
+  var btnWatch       = document.getElementById("btnWatch");
+  var btnReset       = document.getElementById("btnReset");
+  var btnBack        = document.getElementById("btnBack");
+  var badge          = document.getElementById("badge");
+  var statusText     = document.getElementById("statusText");
+  var miniRight      = document.getElementById("miniRight");
+  var statusProgress = document.getElementById("statusProgress");
 
-      var tapOverlay = document.getElementById("tapOverlay");
-      var btnPlay = document.getElementById("btnPlay");
-      var btnSkip = document.getElementById("btnSkip");
-      var btnRepeat = document.getElementById("btnRepeat");
-      var btnWatch = document.getElementById("btnWatch");
+  // ── PROGRESO ──
+  function getCompleted() {
+    try {
+      for (var i = 0; i < localStorage.length; i++) {
+        var k = localStorage.key(i);
+        var o = JSON.parse(localStorage.getItem(k));
+        if (o && Array.isArray(o.completed)) return o.completed;
+      }
+    } catch(e) {}
+    return [];
+  }
 
-      var btnReset = document.getElementById("btnReset");
-      var btnBack = document.getElementById("btnBack");
+  function refreshCards() {
+    var done = getCompleted();
+    var cards = grid.querySelectorAll(".card");
+    var count = 0;
+    cards.forEach(function(c) {
+      var file = c.dataset.file;
+      var completed = done.some(function(id){ return file && file.indexOf(id) !== -1; });
+      c.classList.toggle("done", completed);
+      if (completed) count++;
+    });
+    // Barra de progreso
+    var pct = ORGAN.activities.length > 0 ? (count / ORGAN.activities.length) * 100 : 0;
+    statusProgress.style.width = pct + "%";
+    setStatus(count + " DE " + ORGAN.activities.length + " COMPLETADAS");
+    miniRight.textContent = count + "/" + ORGAN.activities.length;
+  }
 
-      var badge = document.getElementById("badge");
-      var statusText = document.getElementById("statusText");
-      var miniRight = document.getElementById("miniRight");
+  // ── VISTAS ──
+  function setStatus(t) { statusText.textContent = t; }
+  function setBadge(t)  { badge.textContent = t; }
 
-      function setStatus(t){ statusText.textContent = t; }
-      function setBadge(t){ badge.textContent = t; }
+  function showVideo() {
+    menuBox.style.display = "none";
+    videoBox.style.display = "block";
+    setBadge("VIDEO");
+    miniRight.textContent = "VIDEO";
+    tapOverlay.classList.add("show");
+    setStatus("TOCA PARA VER EL VIDEO");
+  }
 
-      function showVideo(){
-        menuBox.style.display = "none";
-        videoBox.style.display = "block";
-        setBadge("VIDEO");
-        setStatus("TOCA PARA VER EL VIDEO");
-        miniRight.textContent = "VIDEO";
+  function showMenu() {
+    videoBox.style.display = "none";
+    menuBox.style.display  = "block";
+    setBadge("JUEGOS");
+    refreshCards();
+  }
+
+  function tryPlay() {
+    tapOverlay.classList.remove("show");
+    setStatus("VIENDO VIDEO…");
+    miniRight.textContent = "▶ VIDEO";
+    try {
+      var p = introVideo.play();
+      if (p && p.catch) p.catch(function() {
         tapOverlay.classList.add("show");
-      }
-
-      function showMenu(){
-        videoBox.style.display = "none";
-        menuBox.style.display = "block";
-        setBadge("JUEGOS");
-        setStatus("ELIGE UNA ACTIVIDAD");
-        miniRight.textContent = "MENU";
-      }
-
-      function tryPlay(){
-        tapOverlay.classList.remove("show");
-        setStatus("VIENDO VIDEO");
-        miniRight.textContent = "VIDEO";
-        try{
-          var p = introVideo.play();
-          if(p && typeof p.catch === "function") p.catch(function(){
-            tapOverlay.classList.add("show");
-            setStatus("TOCA PARA VER EL VIDEO");
-            miniRight.textContent = "VIDEO";
-          });
-        }catch(e){
-          tapOverlay.classList.add("show");
-        }
-      }
-
-      function repeat(){
-        try{ introVideo.currentTime = 0; }catch(e){}
-        showVideo();
-        tryPlay();
-      }
-
-      function skip(){
-        try{ introVideo.pause(); }catch(e){}
-        showMenu();
-      }
-
-      function goBackHome(){
-        location.href = "../../index.html";
-      }
-
-      function reset(){
-        // REINICIAR: VUELVE AL VIDEO
-        try{ introVideo.pause(); introVideo.currentTime = 0; }catch(e){}
-        showVideo();
-      }
-
-      function buildGrid(){
-        grid.innerHTML = "";
-        (ORGAN.activities || []).forEach(function(a){
-          var btn = document.createElement("button");
-          btn.type = "button";
-          btn.className = "card";
-          btn.innerHTML = '<div class="emoji">' + a.icon + '</div><div class="label">' + a.label + '</div>';
-          btn.addEventListener("pointerdown", function(ev){
-            ev.preventDefault();
-            location.href = a.file;
-          }, { passive: false });
-          grid.appendChild(btn);
-        });
-      }
-
-      // VIDEO EVENTS
-      introVideo.addEventListener("ended", function(){
-        showMenu();
+        setStatus("TOCA PARA VER EL VIDEO");
       });
-      introVideo.addEventListener("error", function(){
-        // SI NO HAY VIDEO, ENTRA DIRECTO AL MENU
-        showMenu();
-      });
+    } catch(e) { tapOverlay.classList.add("show"); }
+  }
 
-      btnPlay.addEventListener("click", function(){ tryPlay(); });
-      btnSkip.addEventListener("click", function(){ skip(); });
-      btnRepeat.addEventListener("click", function(){ repeat(); });
-      btnWatch.addEventListener("click", function(){ repeat(); });
+  // ── EVENTOS ──
+  introVideo.addEventListener("ended",  function() { showMenu(); });
+  introVideo.addEventListener("error",  function() { showMenu(); });
 
-      btnReset.addEventListener("click", function(){ reset(); });
-      btnBack.addEventListener("click", function(){ goBackHome(); });
+  btnPlay.addEventListener("click",   function() { tryPlay(); });
+  btnSkip.addEventListener("click",   function() { try{ introVideo.pause(); }catch(e){} showMenu(); });
+  btnRepeat.addEventListener("click", function() { try{ introVideo.currentTime=0; }catch(e){} showVideo(); tryPlay(); });
+  btnWatch.addEventListener("click",  function() { try{ introVideo.currentTime=0; }catch(e){} showVideo(); tryPlay(); });
 
-      buildGrid();
-      showVideo();
-    })();
-  </script>
+  btnReset.addEventListener("click", function() {
+    try{ introVideo.pause(); introVideo.currentTime=0; }catch(e){}
+    showVideo();
+  });
+  btnBack.addEventListener("click", function() { location.href="../../index.html"; });
+
+  // ── BUILD GRID ──
+  function buildGrid() {
+    grid.innerHTML = "";
+    ORGAN.activities.forEach(function(a, i) {
+      var btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "card";
+      btn.dataset.file = a.file;
+      btn.style.animationDelay = (i * 0.1) + "s";
+      btn.innerHTML =
+        '<div class="emoji">'     + a.icon  + '</div>' +
+        '<div class="label">'     + a.label + '</div>' +
+        '<div class="label-sub">' + (a.sub||"") + '</div>';
+      btn.addEventListener("pointerdown", function(ev) {
+        ev.preventDefault();
+        location.href = a.file;
+      }, { passive: false });
+      grid.appendChild(btn);
+    });
+  }
+
+  buildGrid();
+  showVideo();
+})();
+</script>
 </body>
 </html>

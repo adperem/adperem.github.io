@@ -5,32 +5,143 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>CORAZÓN</title>
   <link rel="stylesheet" href="./styles.css" />
+  <style>
+    /* ── MEJORAS CORAZÓN ── */
+
+    /* Tarjeta arrastrada más vistosa */
+    .card.dragging {
+      box-shadow: 0 24px 55px rgba(0,0,0,0.26) !important;
+      transform: scale(1.07) rotate(2deg) !important;
+      border-color: #93c5fd !important;
+      background: linear-gradient(145deg, #f0f9ff, #dbeafe) !important;
+    }
+
+    /* Entrada de tarjetas escalonada */
+    .card {
+      animation: cardIn 0.35s cubic-bezier(0.34,1.56,0.64,1) backwards;
+    }
+    @keyframes cardIn {
+      0%   { transform: scale(0.6) translateY(18px); opacity: 0; }
+      100% { transform: scale(1)   translateY(0);    opacity: 1; }
+    }
+
+    /* Pop al aterrizar en zona */
+    .card.locked {
+      animation: cardLand 0.4s cubic-bezier(0.34,1.56,0.64,1) !important;
+    }
+    @keyframes cardLand {
+      0%   { transform: scale(1.25) rotate(-3deg); }
+      60%  { transform: scale(0.94); }
+      100% { transform: scale(1); }
+    }
+
+    /* Zonas: efecto hover al arrastrar */
+    .zone {
+      transition: transform 0.2s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.2s;
+    }
+    .zone.drag-over {
+      transform: scale(1.025);
+    }
+    .zone-good.drag-over {
+      box-shadow: 0 0 0 4px #86efac, 0 18px 40px rgba(134,239,172,0.35) !important;
+    }
+    .zone-bad.drag-over {
+      box-shadow: 0 0 0 4px #fca5a5, 0 18px 40px rgba(252,165,165,0.35) !important;
+    }
+    .drop-area.drag-over {
+      border-style: solid !important;
+      background: rgba(255,255,255,0.85) !important;
+    }
+    .zone-good .drop-area.drag-over { border-color: #86efac !important; background: rgba(220,252,231,0.75) !important; }
+    .zone-bad  .drop-area.drag-over { border-color: #fca5a5 !important; background: rgba(254,226,226,0.75) !important; }
+
+    /* Zona-big late cuando completas */
+    .zone-good .zone-big { transition: transform 0.2s; }
+    .zone-good.beat .zone-big { animation: heartbeat 0.45s ease; }
+    @keyframes heartbeat {
+      0%  { transform: scale(1); }
+      30% { transform: scale(1.35); }
+      60% { transform: scale(0.92); }
+      100%{ transform: scale(1); }
+    }
+
+    /* Toast slide-in */
+    .toast {
+      transform: translateX(-50%) translateY(-16px) !important;
+      transition: opacity 0.22s ease, transform 0.3s cubic-bezier(0.34,1.56,0.64,1) !important;
+      font-size: 17px !important;
+    }
+    .toast.on { transform: translateX(-50%) translateY(0) !important; }
+
+    /* Barra de progreso buenas */
+    .progress-bar-wrap {
+      position: absolute;
+      bottom: 10px; left: 12px; right: 12px;
+      height: 10px;
+      background: rgba(255,255,255,0.55);
+      border-radius: 999px;
+      border: 2px solid rgba(255,255,255,0.9);
+      overflow: hidden;
+      z-index: 2;
+    }
+    .progress-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #86efac, #4ade80, #22c55e);
+      border-radius: 999px;
+      transition: width 0.5s cubic-bezier(0.34,1.56,0.64,1);
+    }
+
+    /* Confeti */
+    .confetti-layer { position:fixed; inset:0; pointer-events:none; z-index:300; overflow:hidden; }
+    .cp {
+      position: absolute;
+      animation: cpFall linear forwards;
+    }
+    @keyframes cpFall {
+      0%  { opacity:1; transform: translateY(-20px) rotate(0deg); }
+      85% { opacity:1; }
+      100%{ opacity:0; transform: translateY(110vh) rotate(720deg); }
+    }
+
+    /* Finish mejorado */
+    .finish { backdrop-filter: blur(5px); }
+    .finish-card {
+      background: linear-gradient(150deg, #fff9f0, #f0fff9) !important;
+      animation: finishPop 0.5s cubic-bezier(0.34,1.56,0.64,1);
+    }
+    @keyframes finishPop {
+      0%  { transform: scale(0.4) rotate(-8deg); opacity: 0; }
+      100%{ transform: scale(1) rotate(0deg); opacity: 1; }
+    }
+    .finish-stars { font-size: 52px; display: block; margin-bottom: 10px; animation: starSpin 0.65s cubic-bezier(0.34,1.56,0.64,1); }
+    @keyframes starSpin {
+      0%  { transform: scale(0) rotate(-200deg); }
+      100%{ transform: scale(1) rotate(0deg); }
+    }
+  </style>
 </head>
 <body>
   <header class="top">
     <div class="top-left">
       <div class="badge">
-        <div class="badge-title">CORAZÓN</div>
+        <div class="badge-title">❤️ CORAZÓN</div>
         <div class="badge-sub" id="counter">BUENAS: 0 DE 0</div>
       </div>
     </div>
-
     <div class="top-center">
       <div class="h1">ARRASTRA LO BUENO A BIEN</div>
       <div class="h2">LO QUE NO AYUDA, A MAL</div>
     </div>
-
     <div class="top-right">
-      <button class="btn" id="btnReset" type="button">REINICIAR</button>
-      <a class="btn btn-ghost" href="index.html">VOLVER</a>
+      <button class="btn" id="btnReset" type="button">🔄 REINICIAR</button>
+      <a class="btn btn-ghost" href="index.html">← VOLVER</a>
     </div>
   </header>
 
   <main class="main" id="main">
-    <div class="bg-scene" aria-hidden="true"></div>
+    <div class="bg-scene"   aria-hidden="true"></div>
     <div class="bg-overlay" aria-hidden="true"></div>
-    <div class="bg-animal" aria-hidden="true"></div>
-
+    <div class="bg-animal"  aria-hidden="true"></div>
     <div class="decor decor-cloud cloud-1" aria-hidden="true"></div>
     <div class="decor decor-cloud cloud-2" aria-hidden="true"></div>
     <div class="decor decor-sticker s1" aria-hidden="true">💖</div>
@@ -39,41 +150,48 @@
 
     <section class="zones">
       <div class="zone zone-good" id="goodZone" aria-label="BIEN">
-        <div class="zone-title">BIEN</div>
+        <div class="zone-title">✅ BIEN</div>
         <div class="zone-big">❤️</div>
         <div class="zone-hint">AQUÍ VAN LAS BUENAS</div>
         <div class="drop-area" id="goodDrop"></div>
       </div>
-
       <div class="zone zone-bad" id="badZone" aria-label="MAL">
-        <div class="zone-title">MAL</div>
-        <div class="zone-big">❌</div>
+        <div class="zone-title">❌ MAL</div>
+        <div class="zone-big">🚫</div>
         <div class="zone-hint">AQUÍ VAN LAS QUE NO AYUDAN</div>
         <div class="drop-area" id="badDrop"></div>
       </div>
     </section>
 
     <section class="cards-panel" aria-label="TARJETAS">
-      <div class="cards-title">TARJETAS</div>
+      <div class="cards-title">ARRASTRA LAS TARJETAS</div>
       <div class="cards" id="cards"></div>
+      <!-- barra de progreso buenas -->
+      <div class="progress-bar-wrap">
+        <div class="progress-bar-fill" id="progressBar" style="width:0%"></div>
+      </div>
     </section>
 
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
     <div class="finish" id="finish" aria-hidden="true">
       <div class="finish-card">
+        <span class="finish-stars">🌟❤️🌟</span>
         <div class="finish-title">¡GENIAL!</div>
         <div class="finish-text">HAS CUIDADO EL CORAZÓN</div>
         <div class="finish-actions">
-          <a class="btn btn-good" href="index.html">VOLVER AL MENÚ</a>
-          <button class="btn" id="btnAgain" type="button">JUGAR OTRA VEZ</button>
+          <a class="btn btn-good" href="index.html">🏠 MENÚ</a>
+          <button class="btn" id="btnAgain" type="button">🔄 OTRA VEZ</button>
         </div>
       </div>
     </div>
 
-    <audio id="sndClap" preload="none" data-src="/asstests/aplausos.mp4" ></audio>
-    <audio id="sndOhh" preload="none" data-src="/asstests/ohh.mp4" ></audio>
+    <audio id="sndClap" preload="none" data-src="/asstests/aplausos.mp4"></audio>
+    <audio id="sndOhh"  preload="none" data-src="/asstests/ohh.mp4"></audio>
   </main>
+
+  <!-- capa de confeti global -->
+  <div class="confetti-layer" id="confettiLayer"></div>
 
   <script src="./game.js" defer></script>
 </body>
