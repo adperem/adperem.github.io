@@ -56,18 +56,21 @@ document.addEventListener("DOMContentLoaded", function () {
 
 function buildItems() {
   items = [
-    { word: "LIMONERO",   bag: "NE" },
-    { word: "CONEJO",     bag: "NE" },
-    { word: "CARNE",      bag: "NE" },
     { word: "PANADERO",   bag: "NA" },
-    { word: "NOCHE",      bag: "NO" },
-    { word: "CAMINO",     bag: "NO" },
     { word: "NARANJA",    bag: "NA" },
     { word: "CARNAVAL",   bag: "NA" },
-    { word: "NATURALEZA", bag: "NA" },
-    { word: "NOTA",       bag: "NO" },
+    { word: "LIMONERO",   bag: "NE" },
+    { word: "CONEJO",     bag: "NE" },
     { word: "TENEDOR",    bag: "NE" },
-    { word: "CENIZA",     bag: "NI" }
+    { word: "CENIZA",     bag: "NI" },
+    { word: "ANILLO",     bag: "NI" },
+    { word: "BONITO",     bag: "NI" },
+    { word: "NOCHE",      bag: "NO" },
+    { word: "CAMINO",     bag: "NO" },
+    { word: "NOTA",       bag: "NO" },
+    { word: "NUBE",       bag: "NU" },
+    { word: "NUEZ",       bag: "NU" },
+    { word: "NUDO",       bag: "NU" }
   ];
   total = items.length;
 }
@@ -200,6 +203,7 @@ function applyDrop(el, bag) {
     updateCounter();
     showToast("¡BIEN! 👏", "good", 900);
     playSound(sndClap);
+    spawnConfetti(7);
 
     if (placed >= total) {
       finishGame();

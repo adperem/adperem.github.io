@@ -390,7 +390,7 @@ body{
     grid-template-columns: repeat(2, 1fr);
   }
 
-  .pic{ width: 240px; height: 200px; }
+  .pic{ width: 340px; height: 260px; }
   .emoji{ font-size: 104px; }
 
   .bg-animal{ width: 280px; height: 280px; opacity: 0.24; }
@@ -402,12 +402,5 @@ body{
   .opt{
     font-size: 32px;
     padding: 18px 12px;
-  }
-}
-
-@media (max-width: 900px){
-  .pic{
-    width: 340px;
-    height: 260px;
   }
 }
