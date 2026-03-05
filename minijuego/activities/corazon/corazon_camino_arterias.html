@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>CORAZÓN: SEMÁFORO</title>
+  <title>CORAZÓN: CAMINO DE LAS ARTERIAS</title>
   <style>
     :root{
       --shadow: 0 18px 45px rgba(0,0,0,0.18);
@@ -35,7 +35,6 @@
     .stage{ width:100vw; height:100vh; display:flex; justify-content:center; align-items:center; padding:18px; }
     .frame{ width:min(1920px,100vw); height:min(1080px,100vh); position:relative; border-radius:34px; overflow:hidden; }
 
-    /* NUBES */
     .cloud{ position:absolute; width:280px; height:120px;
       background:rgba(255,255,255,0.70); border-radius:999px;
       box-shadow:var(--shadow-soft); border:2px solid rgba(255,255,255,0.6);
@@ -50,7 +49,6 @@
     .cloud.c1{ left:24px; top:24px; transform:rotate(-2deg); }
     .cloud.c2{ right:24px; top:56px; transform:rotate(3deg) scale(0.95); }
 
-    /* STICKERS */
     .sticker{ position:absolute; width:140px; height:140px; border-radius:30px;
       background:rgba(255,255,255,0.62); box-shadow:var(--shadow-soft);
       border:2px dashed rgba(255,255,255,0.65);
@@ -58,15 +56,11 @@
       pointer-events:none; opacity:0.9;
       animation:floaty 4s ease-in-out infinite;
     }
-    @keyframes floaty{
-      0%,100%{ transform:rotate(-8deg) translateY(0); }
-      50%{ transform:rotate(-8deg) translateY(-10px); }
-    }
-    .st1{ left:32px; bottom:calc(var(--bottom-h)+18px); }
-    .st2{ right:38px; bottom:calc(var(--bottom-h)+26px); animation-duration:5s; animation-delay:-2s; }
-    .st3{ left:260px; top:54px; transform:rotate(7deg) scale(0.85); opacity:0.85; animation-duration:4.5s; }
+    @keyframes floaty{ 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(-10px); } }
+    .st1{ left:32px; bottom:calc(var(--bottom-h)+18px); transform:rotate(-8deg); animation-duration:4.5s; }
+    .st2{ right:38px; bottom:calc(var(--bottom-h)+26px); transform:rotate(10deg); animation-duration:5.2s; }
+    .st3{ left:260px; top:54px; transform:rotate(7deg) scale(0.85); opacity:0.85; animation-duration:3.8s; }
 
-    /* HEADER */
     .header{ position:absolute; left:22px; right:22px; top:18px;
       padding:14px 16px; border-radius:var(--radius-xl);
       background:rgba(255,255,255,0.82); border:2px solid rgba(255,255,255,0.75);
@@ -85,10 +79,9 @@
       min-width:140px; text-align:center;
       transition:background 0.3s, color 0.3s, border-color 0.3s;
     }
-    .badge.ok{ background:rgba(34,197,94,0.18); border-color:rgba(34,197,94,0.35); color:#14532d; }
+    .badge.ok { background:rgba(34,197,94,0.18); border-color:rgba(34,197,94,0.35); color:#14532d; }
     .badge.bad{ background:rgba(239,68,68,0.18); border-color:rgba(239,68,68,0.35); color:#7f1d1d; }
 
-    /* MAIN */
     .main{ position:absolute; left:22px; right:22px;
       top:112px; bottom:calc(var(--bottom-h)+18px);
       display:grid; grid-template-rows:auto 1fr; gap:14px;
@@ -98,7 +91,6 @@
       box-shadow:var(--shadow); padding:16px; position:relative; overflow:hidden;
     }
 
-    /* INSTRUCCIÓN */
     .instruction{ border-radius:22px; background:rgba(255,255,255,0.74);
       border:2px solid rgba(0,0,0,0.07); box-shadow:var(--shadow-soft);
       padding:14px 16px; display:grid; align-content:center; gap:6px;
@@ -107,101 +99,46 @@
     .instruction .big{ font-size:30px; font-weight:1000; text-transform:uppercase;
       letter-spacing:0.8px; color:#22314a; line-height:1.1;
     }
-    .instruction .small{ font-size:17px; font-weight:950; text-transform:uppercase;
-      color:#334155; opacity:0.92;
+    .instruction .small{ font-size:17px; font-weight:950;
+      text-transform:uppercase; color:#334155; opacity:0.92;
     }
 
-    /* LAYOUT JUEGO */
-    .center{ width:100%; height:100%; border-radius:26px;
+    .play{ width:100%; height:100%; border-radius:26px;
       background:rgba(255,255,255,0.62); border:2px solid rgba(0,0,0,0.06);
-      overflow:hidden; position:relative; padding:14px;
-      display:grid; grid-template-columns:1.1fr 0.9fr; gap:14px;
+      overflow:hidden; position:relative; touch-action:none;
+    }
+    canvas{ width:100%; height:100%; display:block; }
+
+    /* BARRA DE NIVEL */
+    .levelBar{ position:absolute; bottom:14px; left:18px; right:18px;
+      height:10px; background:rgba(0,0,0,0.08); border-radius:999px; z-index:30;
+    }
+    .levelFill{ height:100%;
+      background:linear-gradient(90deg,#a78bfa,#7c3aed);
+      border-radius:999px;
+      transition:width 0.5s cubic-bezier(0.34,1.56,0.64,1);
     }
 
-    /* ESCENA */
-    .scene{ border-radius:28px; background:rgba(255,255,255,0.95);
-      border:2px solid rgba(0,0,0,0.08); box-shadow:0 16px 34px rgba(0,0,0,0.16);
-      padding:18px; display:grid; grid-template-rows:auto 1fr auto; gap:14px; overflow:hidden;
+    .hintOverlay{ position:absolute; left:18px; top:18px; right:18px;
+      border-radius:22px; background:rgba(255,255,255,0.82);
+      border:2px solid rgba(0,0,0,0.07); box-shadow:var(--shadow-soft);
+      padding:12px 14px; display:grid; grid-template-columns:1fr auto;
+      gap:12px; align-items:center; z-index:30;
     }
-    .sceneTitle{ font-size:26px; font-weight:1000; text-transform:uppercase;
-      color:#22314a; letter-spacing:0.8px; text-align:center;
+    .hintText{ font-size:20px; font-weight:1000; text-transform:uppercase;
+      color:#22314a; line-height:1.1;
     }
-    .sceneEmoji{ font-size:140px; display:grid; place-items:center;
-      filter:drop-shadow(0 12px 18px rgba(0,0,0,0.12));
-    }
-    .sceneEmoji.pop{ animation:emojiPop 0.45s cubic-bezier(0.34,1.56,0.64,1); }
-    @keyframes emojiPop{
-      0%{ transform:scale(0.3) rotate(-15deg); opacity:0; }
-      100%{ transform:scale(1) rotate(0deg); opacity:1; }
-    }
-    .sceneHint{ font-size:19px; font-weight:950; text-transform:uppercase;
-      color:#334155; text-align:center; opacity:0.92; line-height:1.2;
+    .pill{ font-size:17px; font-weight:1000; text-transform:uppercase;
+      padding:10px 14px; border-radius:999px;
+      background:rgba(124,58,237,0.12); border:2px solid rgba(124,58,237,0.22);
+      color:#3b2a8f; white-space:nowrap;
     }
 
-    /* BOTONES */
-    .buttons{ border-radius:28px; background:rgba(255,255,255,0.95);
-      border:2px solid rgba(0,0,0,0.08); box-shadow:0 16px 34px rgba(0,0,0,0.16);
-      padding:18px; display:grid; grid-template-rows:auto 1fr 1fr auto; gap:14px; align-items:center;
-    }
-    .question{ font-size:24px; font-weight:1000; text-transform:uppercase;
-      text-align:center; color:#111827; letter-spacing:0.8px; line-height:1.1;
-      padding:12px; border-radius:20px;
-      background:rgba(124,58,237,0.08); border:2px solid rgba(124,58,237,0.14);
-    }
-    .bigBtn{ height:120px; width:100%; border-radius:26px;
-      border:3px solid rgba(0,0,0,0.08); box-shadow:var(--shadow-soft);
-      font-size:32px; font-weight:1000; text-transform:uppercase;
-      letter-spacing:1px; cursor:pointer; touch-action:manipulation;
-      display:flex; align-items:center; justify-content:center; gap:14px; padding:0 18px;
-      transition:transform 0.15s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.15s, filter 0.15s;
-    }
-    .bigBtn:hover{ transform:translateY(-4px) scale(1.03); box-shadow:0 20px 45px rgba(0,0,0,0.18); }
-    .bigBtn:active{ transform:scale(0.95); }
-    .bigBtn.fast{
-      background:linear-gradient(145deg, rgba(239,68,68,0.12), rgba(239,68,68,0.22));
-      border-color:rgba(239,68,68,0.35); color:#7f1d1d;
-    }
-    .bigBtn.slow{
-      background:linear-gradient(145deg, rgba(34,197,94,0.12), rgba(34,197,94,0.22));
-      border-color:rgba(34,197,94,0.35); color:#14532d;
-    }
-    .bigBtn.correct{ animation:correctPop 0.4s cubic-bezier(0.34,1.56,0.64,1); }
-    @keyframes correctPop{
-      0%{ transform:scale(1); }
-      40%{ transform:scale(1.12) rotate(2deg); }
-      100%{ transform:scale(1); }
-    }
-    .bigBtn.wrong{ animation:wrongShake 0.3s ease-in-out; }
-    @keyframes wrongShake{
-      0%,100%{ transform:translateX(0); }
-      25%{ transform:translateX(-10px); }
-      75%{ transform:translateX(10px); }
-    }
-
-    /* LATIDO */
-    .heartBeat{ height:92px; border-radius:22px;
-      background:rgba(255,255,255,0.85); border:2px solid rgba(0,0,0,0.08);
-      box-shadow:var(--shadow-soft);
-      display:grid; grid-template-columns:100px 1fr; align-items:center; gap:12px; padding:10px 14px;
-      transition:background 0.4s, border-color 0.4s;
-    }
-    .heartBeat.modeFast{ background:rgba(239,68,68,0.10); border-color:rgba(239,68,68,0.25); }
-    .heartBeat.modeSlow{ background:rgba(34,197,94,0.10); border-color:rgba(34,197,94,0.25); }
-    .heartBeat .heart{ font-size:52px; display:grid; place-items:center; }
-    .heartBeat .text{ font-size:20px; font-weight:1000; text-transform:uppercase; color:#22314a; }
-    .pulseFast .heart{ animation:pulse 380ms ease-in-out infinite; }
-    .pulseSlow .heart{ animation:pulse 900ms ease-in-out infinite; }
-    @keyframes pulse{
-      0%,100%{ transform:scale(1); }
-      50%{ transform:scale(1.28); filter:drop-shadow(0 0 10px rgba(239,68,68,0.6)); }
-    }
-
-    /* TOAST */
     .toast{ position:absolute; left:50%; top:50%;
       transform:translate(-50%,-50%) scale(0.8);
       padding:16px 24px; border-radius:22px;
       background:rgba(255,255,255,0.92); border:2px solid rgba(0,0,0,0.08);
-      box-shadow:var(--shadow); font-size:34px; font-weight:1000;
+      box-shadow:var(--shadow); font-size:32px; font-weight:1000;
       text-transform:uppercase; letter-spacing:1px;
       opacity:0; pointer-events:none;
       transition:opacity 0.2s ease, transform 0.3s cubic-bezier(0.34,1.56,0.64,1);
@@ -209,30 +146,26 @@
     }
     .toast.show{ opacity:1; transform:translate(-50%,-50%) scale(1); }
     .toast.good{ background:rgba(34,197,94,0.18); border-color:rgba(34,197,94,0.30); color:#14532d; }
-    .toast.bad{ background:rgba(239,68,68,0.18); border-color:rgba(239,68,68,0.30); color:#7f1d1d; }
+    .toast.bad { background:rgba(239,68,68,0.18); border-color:rgba(239,68,68,0.30); color:#7f1d1d; }
 
-    /* CONFETI */
     .confetti{ position:absolute; inset:0; pointer-events:none; overflow:hidden; z-index:55; }
     .confetti i{ position:absolute; width:14px; height:14px; border-radius:4px;
       opacity:0; animation:fall 900ms ease-out forwards;
     }
     @keyframes fall{
-      0%{ transform:translateY(0) rotate(0deg) scale(0.9); opacity:0; }
+      0%{ transform:translateY(0) rotate(0deg); opacity:0; }
       10%{ opacity:1; }
-      100%{ transform:translateY(440px) rotate(400deg) scale(1); opacity:0; }
+      100%{ transform:translateY(440px) rotate(400deg); opacity:0; }
     }
 
-    /* OVERLAY / MODAL */
     .overlay{ position:absolute; inset:0; display:grid; place-items:center;
       background:rgba(255,255,255,0.35); backdrop-filter:blur(6px);
-      opacity:0; pointer-events:none;
-      transition:opacity 180ms ease; z-index:80;
+      opacity:0; pointer-events:none; transition:opacity 180ms ease; z-index:80;
     }
     .overlay.show{ opacity:1; pointer-events:auto; }
     .modal{ width:min(940px,92%); border-radius:30px;
       background:rgba(255,255,255,0.94); border:3px solid rgba(255,255,255,0.9);
-      box-shadow:var(--shadow); padding:26px 24px 22px;
-      text-align:center;
+      box-shadow:var(--shadow); padding:26px 24px 22px; text-align:center;
       animation:modalPop 0.45s cubic-bezier(0.34,1.56,0.64,1);
     }
     @keyframes modalPop{
@@ -247,11 +180,11 @@
     }
     .startBtn{ height:94px; width:100%; border-radius:24px;
       border:3px solid rgba(124,58,237,0.28); box-shadow:var(--shadow-soft);
-      background:linear-gradient(145deg, rgba(124,58,237,0.14), rgba(124,58,237,0.22));
+      background:linear-gradient(145deg,rgba(124,58,237,0.14),rgba(124,58,237,0.22));
       color:#2f1d78; font-size:32px; font-weight:1000;
       text-transform:uppercase; letter-spacing:1px;
       cursor:pointer; touch-action:manipulation;
-      transition:transform 0.15s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.15s;
+      transition:transform 0.15s cubic-bezier(0.34,1.56,0.64,1);
       animation:startPulse 2s ease-in-out infinite;
     }
     @keyframes startPulse{
@@ -261,15 +194,15 @@
     .startBtn:hover{ transform:translateY(-3px) scale(1.02); }
     .startBtn:active{ transform:scale(0.96); }
 
-    /* ACIERTOS STREAK */
-    .streakRow{ display:flex; gap:6px; justify-content:center; flex-wrap:wrap; margin-top:4px; min-height:28px; }
-    .streakDot{ width:22px; height:22px; border-radius:50%;
-      background:rgba(34,197,94,0.85); border:2px solid rgba(34,197,94,0.5);
-      animation:dotIn 0.35s cubic-bezier(0.34,1.56,0.64,1);
+    .shake{ animation:shake 220ms ease-in-out; }
+    @keyframes shake{
+      0%,100%{ transform:translateX(0); }
+      20%{ transform:translateX(-10px); }
+      40%{ transform:translateX(10px); }
+      60%{ transform:translateX(-8px); }
+      80%{ transform:translateX(8px); }
     }
-    @keyframes dotIn{ 0%{ transform:scale(0); } 100%{ transform:scale(1); } }
 
-    /* BOTTOM BAR */
     .bottomBar{ position:absolute; left:0; right:0; bottom:0;
       height:var(--bottom-h); padding:14px 18px;
       background:rgba(255,255,255,0.90); border-top:2px solid rgba(255,255,255,0.8);
@@ -295,13 +228,12 @@
       font-size:16px; font-weight:1000; text-transform:uppercase; color:#334155;
     }
     .statusValue{ font-size:22px; font-weight:1000; text-transform:uppercase;
-      color:#111827; letter-spacing:0.5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+      color:#111827; letter-spacing:0.5px;
     }
 
     @media (max-width:1400px){
       .title{ font-size:32px; }
-      .sceneEmoji{ font-size:110px; }
-      .bigBtn{ font-size:26px; height:108px; }
+      .hintText{ font-size:17px; }
     }
   </style>
 </head>
@@ -309,13 +241,13 @@
 <div class="stage"><div class="frame" id="frame">
   <div class="cloud c1"></div>
   <div class="cloud c2"></div>
-  <div class="sticker st1">❤️</div>
-  <div class="sticker st2">🚦</div>
+  <div class="sticker st1">🩸</div>
+  <div class="sticker st2">🛣️</div>
   <div class="sticker st3">☁️</div>
 
   <header class="header">
-    <div class="title"><span style="font-size:44px">❤️</span> CORAZÓN: SEMÁFORO</div>
-    <div class="hint">¿LATE RÁPIDO O LENTO?<div style="font-size:15px;font-weight:1000;opacity:0.9;margin-top:3px">TOCA EL BOTÓN CORRECTO</div></div>
+    <div class="title"><span style="font-size:44px">❤️</span> CORAZÓN: CAMINO</div>
+    <div class="hint">SIGUE EL CAMINO CON EL DEDO<div style="font-size:15px;font-weight:1000;opacity:0.9;margin-top:3px">EMPIEZA EN EL CORAZÓN ❤️</div></div>
     <div class="badge" id="badge">LISTO</div>
   </header>
 
@@ -323,38 +255,24 @@
     <section class="panel">
       <div class="instruction">
         <div class="big" id="instBig">TOCA EMPEZAR</div>
-        <div class="small" id="instSmall">ELIGE RÁPIDO O LENTO SEGÚN LA ACCIÓN</div>
+        <div class="small" id="instSmall">SIN SALIRTE DEL CAMINO · LLEGA A LA ESTRELLA ⭐</div>
       </div>
     </section>
 
     <section class="panel">
-      <div class="center">
-        <div class="scene">
-          <div class="sceneTitle" id="sceneTitle">CORRER</div>
-          <div class="sceneEmoji" id="sceneEmoji">🏃‍♂️</div>
-          <div class="sceneHint"  id="sceneHint">CUANDO CORREMOS, EL CORAZÓN VA MÁS...</div>
+      <div class="play" id="play">
+        <canvas id="cv"></canvas>
+        <div class="hintOverlay">
+          <div class="hintText" id="hintText">NIVEL 1: LLEVA LA SANGRE HASTA LA ESTRELLA ⭐</div>
+          <div class="pill" id="pill">NIVEL 1 / 3</div>
         </div>
-
-        <div class="buttons">
-          <div class="question">¿CÓMO LATE EL CORAZÓN?</div>
-          <button class="bigBtn fast" id="btnFast">💨 RÁPIDO</button>
-          <button class="bigBtn slow" id="btnSlow">🌙 LENTO</button>
-          <div class="heartBeat pulseSlow" id="beatBox">
-            <div class="heart" id="heart">❤️</div>
-            <div>
-              <div class="text" id="beatText">LATIDO: LENTO</div>
-              <div class="streakRow" id="streakRow"></div>
-            </div>
-          </div>
-        </div>
-
+        <div class="levelBar"><div class="levelFill" id="levelFill" style="width:33%"></div></div>
         <div class="confetti" id="confetti"></div>
-        <div class="toast"    id="toast"></div>
-
+        <div class="toast"   id="toast"></div>
         <div class="overlay show" id="overlay">
           <div class="modal">
-            <h2>🚦 ¿LISTO?</h2>
-            <p>MIRA LA ACCIÓN Y ELIGE SI EL CORAZÓN<br>LATE RÁPIDO 💨 O LENTO 🌙</p>
+            <h2>🩸 ¿LISTO?</h2>
+            <p>TOCA EL CORAZÓN ❤️ Y SIGUE<br>EL CAMINO HASTA LA ESTRELLA ⭐</p>
             <button class="startBtn" id="btnStart">▶ EMPEZAR</button>
           </div>
         </div>
@@ -366,7 +284,7 @@
     <button class="btn primary"   id="btnReset">🔄 REINICIAR</button>
     <button class="btn secondary" id="btnBack" >🏠 VOLVER</button>
     <div class="statusBox" role="status" aria-live="polite">
-      <div class="statusTop"><span>ESTADO</span><span id="miniRight">ACIERTOS: 0</span></div>
+      <div class="statusTop"><span>ESTADO</span><span id="miniRight">NIVEL: 1 / 3</span></div>
       <div class="statusValue" id="statusText">TOCA EMPEZAR</div>
     </div>
   </div>
@@ -378,12 +296,12 @@
 <script>
 (function(){
   "use strict";
+
+  var frame     = document.getElementById("frame");
   var overlay   = document.getElementById("overlay");
   var btnStart  = document.getElementById("btnStart");
   var btnReset  = document.getElementById("btnReset");
   var btnBack   = document.getElementById("btnBack");
-  var btnFast   = document.getElementById("btnFast");
-  var btnSlow   = document.getElementById("btnSlow");
   var instBig   = document.getElementById("instBig");
   var instSmall = document.getElementById("instSmall");
   var badge     = document.getElementById("badge");
@@ -391,28 +309,27 @@
   var confettiEl= document.getElementById("confetti");
   var statusText= document.getElementById("statusText");
   var miniRight = document.getElementById("miniRight");
-  var sceneTitle= document.getElementById("sceneTitle");
-  var sceneEmoji= document.getElementById("sceneEmoji");
-  var sceneHint = document.getElementById("sceneHint");
-  var beatBox   = document.getElementById("beatBox");
-  var beatText  = document.getElementById("beatText");
-  var streakRow = document.getElementById("streakRow");
+  var hintText  = document.getElementById("hintText");
+  var pill      = document.getElementById("pill");
+  var levelFill = document.getElementById("levelFill");
+  var cv        = document.getElementById("cv");
+  var ctx       = cv.getContext("2d");
   var sndOk     = document.getElementById("sndOk");
   var sndBad    = document.getElementById("sndBad");
 
   var COLORS = ["rgba(124,58,237,0.9)","rgba(6,182,212,0.9)","rgba(34,197,94,0.9)","rgba(251,191,36,0.9)","rgba(239,68,68,0.9)"];
 
-  var started = false, allow = false, correct = 0, current = null;
+  var started = false, active = false, level = 1, tolerance = 48, last = null;
+  // Estela de la gota
+  var trail = [];
 
-  var scenes = [
-    { id:"CORRER",             emoji:"🏃‍♂️", hint:"CUANDO CORREMOS, EL CORAZÓN VA MÁS...",         answer:"RAPIDO" },
-    { id:"DORMIR",             emoji:"😴",  hint:"CUANDO DORMIMOS, EL CORAZÓN VA MÁS...",          answer:"LENTO"  },
-    { id:"SUBIR ESCALERAS",    emoji:"🪜",  hint:"CUANDO SUBIMOS ESCALERAS, EL CORAZÓN VA MÁS...", answer:"RAPIDO" },
-    { id:"VER LA TV",          emoji:"📺",  hint:"CUANDO DESCANSAMOS, EL CORAZÓN VA MÁS...",       answer:"LENTO"  },
-    { id:"SALTAR",             emoji:"🤸",  hint:"CUANDO SALTAMOS, EL CORAZÓN VA MÁS...",          answer:"RAPIDO" },
-    { id:"RESPIRAR TRANQUILO", emoji:"🌬️", hint:"CUANDO ESTAMOS TRANQUILOS, VA MÁS...",            answer:"LENTO"  },
-    { id:"BAILAR",             emoji:"💃",  hint:"CUANDO BAILAMOS, EL CORAZÓN VA MÁS...",          answer:"RAPIDO" },
-    { id:"LEER UN LIBRO",      emoji:"📖",  hint:"CUANDO LEEMOS TRANQUILOS, VA MÁS...",            answer:"LENTO"  }
+  var levels = [
+    { start:[220,520], end:[1600,520],
+      points:[[220,520],[520,360],[820,520],[1120,680],[1400,520],[1600,520]] },
+    { start:[220,720], end:[1600,320],
+      points:[[220,720],[420,560],[520,420],[760,360],[980,440],[1180,300],[1400,360],[1600,320]] },
+    { start:[220,320], end:[1600,720],
+      points:[[220,320],[420,420],[620,300],[860,320],[980,520],[1160,760],[1380,620],[1600,720]] }
   ];
 
   function setStatus(t){ statusText.textContent = t; }
@@ -420,7 +337,7 @@
   function playSound(ok){
     try{
       var a = ok ? sndOk : sndBad;
-      if(!a.src){ var ds = a.getAttribute("data-src"); if(ds) a.src = ds; }
+      if(!a.src){ var ds = a.getAttribute("data-src"); if(ds) a.src=ds; }
       a.currentTime = 0; a.play();
     }catch(e){}
   }
@@ -429,130 +346,276 @@
     toast.textContent = text;
     toast.className = "toast show " + (kind||"");
     clearTimeout(showToast._t);
-    showToast._t = setTimeout(function(){ toast.className = "toast"; }, 700);
+    showToast._t = setTimeout(function(){ toast.className="toast"; }, 700);
   }
 
   function popConfetti(n){
     confettiEl.innerHTML = "";
-    var rect = document.getElementById("frame").getBoundingClientRect();
-    for(var i=0;i<(n||18);i++){
+    var rect = frame.getBoundingClientRect();
+    for(var i=0;i<(n||22);i++){
       var p = document.createElement("i");
       p.style.left = (rect.width*0.5 + Math.random()*300-150) + "px";
       p.style.top  = (rect.height*0.40 + Math.random()*80-40) + "px";
       p.style.background = COLORS[Math.floor(Math.random()*COLORS.length)];
-      p.style.animationDelay = (Math.random()*140) + "ms";
+      p.style.animationDelay = (Math.random()*120) + "ms";
       p.style.borderRadius = Math.random()>0.5 ? "50%" : "4px";
       confettiEl.appendChild(p);
     }
     setTimeout(function(){ confettiEl.innerHTML=""; }, 1100);
   }
 
-  function updateBeat(mode){
-    beatBox.classList.remove("pulseFast","pulseSlow","modeFast","modeSlow");
-    if(mode==="RAPIDO"){
-      beatBox.classList.add("pulseFast","modeFast");
-      beatText.textContent = "LATIDO: RÁPIDO 💨";
-    } else {
-      beatBox.classList.add("pulseSlow","modeSlow");
-      beatText.textContent = "LATIDO: LENTO 🌙";
+  function resize(){
+    var r = cv.getBoundingClientRect();
+    cv.width  = Math.round(r.width  * devicePixelRatio);
+    cv.height = Math.round(r.height * devicePixelRatio);
+    ctx.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0);
+    draw();
+  }
+
+  function getLevel(){ return levels[Math.max(1,Math.min(level,levels.length))-1]; }
+
+  function scalePoint(p, r){
+    return [ (p[0]/1920)*r.width, (p[1]/760)*r.height ];
+  }
+
+  function drawBubble(x, y, emoji, size, glow){
+    ctx.save();
+    if(glow){
+      ctx.shadowColor = glow;
+      ctx.shadowBlur  = 22;
+    }
+    ctx.beginPath();
+    ctx.fillStyle   = "rgba(255,255,255,0.95)";
+    ctx.strokeStyle = glow || "rgba(0,0,0,0.12)";
+    ctx.lineWidth   = 4;
+    ctx.arc(x, y, size||44, 0, Math.PI*2);
+    ctx.fill(); ctx.stroke();
+    ctx.shadowBlur = 0;
+    ctx.font = (size ? Math.round(size*1.05) : 46) + "px system-ui,Segoe UI,Arial";
+    ctx.textAlign    = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillStyle = "#111827";
+    ctx.fillText(emoji, x, y+2);
+    ctx.restore();
+  }
+
+  function draw(){
+    var r = cv.getBoundingClientRect();
+    ctx.clearRect(0, 0, r.width, r.height);
+    var L = getLevel();
+
+    ctx.lineCap = "round"; ctx.lineJoin = "round";
+
+    // Sombra del camino
+    ctx.strokeStyle = "rgba(0,0,0,0.08)";
+    ctx.lineWidth   = 78;
+    ctx.beginPath();
+    L.points.forEach(function(p,i){
+      var sp = scalePoint(p, r);
+      if(i===0) ctx.moveTo(sp[0],sp[1]); else ctx.lineTo(sp[0],sp[1]);
+    });
+    ctx.stroke();
+
+    // Camino principal con gradiente
+    var grad = ctx.createLinearGradient(
+      scalePoint(L.points[0],r)[0], 0,
+      scalePoint(L.points[L.points.length-1],r)[0], 0
+    );
+    grad.addColorStop(0,   "rgba(239,68,68,0.70)");
+    grad.addColorStop(0.5, "rgba(251,113,133,0.65)");
+    grad.addColorStop(1,   "rgba(248,113,113,0.55)");
+    ctx.strokeStyle = grad;
+    ctx.lineWidth   = 64;
+    ctx.beginPath();
+    L.points.forEach(function(p,i){
+      var sp = scalePoint(p, r);
+      if(i===0) ctx.moveTo(sp[0],sp[1]); else ctx.lineTo(sp[0],sp[1]);
+    });
+    ctx.stroke();
+
+    // Línea central blanca
+    ctx.strokeStyle = "rgba(255,255,255,0.55)";
+    ctx.lineWidth   = 8;
+    ctx.setLineDash([20, 18]);
+    ctx.beginPath();
+    L.points.forEach(function(p,i){
+      var sp = scalePoint(p, r);
+      if(i===0) ctx.moveTo(sp[0],sp[1]); else ctx.lineTo(sp[0],sp[1]);
+    });
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Nodos del camino
+    L.points.forEach(function(p, i){
+      if(i===0 || i===L.points.length-1) return;
+      var sp = scalePoint(p, r);
+      ctx.beginPath();
+      ctx.fillStyle = "rgba(255,255,255,0.30)";
+      ctx.arc(sp[0], sp[1], 8, 0, Math.PI*2);
+      ctx.fill();
+    });
+
+    // Inicio (corazón) y fin (estrella)
+    var s = scalePoint(L.start, r);
+    var e = scalePoint(L.end,   r);
+    drawBubble(s[0], s[1], "❤️", 48, "rgba(239,68,68,0.8)");
+    drawBubble(e[0], e[1], "⭐", 48, "rgba(251,191,36,0.9)");
+
+    // Estela + gota activa
+    if(active && last){
+      trail.forEach(function(t, i){
+        var alpha = (i / trail.length) * 0.45;
+        var size  = 8 + (i/trail.length)*14;
+        ctx.beginPath();
+        ctx.fillStyle = "rgba(239,68,68," + alpha + ")";
+        ctx.arc(t.x, t.y, size, 0, Math.PI*2);
+        ctx.fill();
+      });
+      drawBubble(last.x, last.y, "🩸", 40, "rgba(239,68,68,0.9)");
     }
   }
 
-  function addStreakDot(){
-    var d = document.createElement("div");
-    d.className = "streakDot";
-    streakRow.appendChild(d);
+  function distToSegment(px,py,ax,ay,bx,by){
+    var vx=bx-ax,vy=by-ay,wx=px-ax,wy=py-ay;
+    var c1=vx*wx+vy*wy;
+    if(c1<=0) return Math.hypot(px-ax,py-ay);
+    var c2=vx*vx+vy*vy;
+    if(c2<=c1) return Math.hypot(px-bx,py-by);
+    var t=c1/c2;
+    return Math.hypot(px-(ax+t*vx), py-(ay+t*vy));
   }
 
-  function pickNew(){
-    current = scenes[Math.floor(Math.random()*scenes.length)];
-    sceneTitle.textContent = current.id;
-    sceneHint.textContent  = current.hint;
-    // Emoji con animación
-    sceneEmoji.classList.remove("pop");
-    void sceneEmoji.offsetWidth;
-    sceneEmoji.textContent = current.emoji;
-    sceneEmoji.classList.add("pop");
-
-    badge.className = "badge";
-    badge.textContent = "LISTO";
-    allow = true;
-    setStatus("ELIGE RÁPIDO O LENTO");
-    updateBeat("LENTO");
-    btnFast.disabled = false;
-    btnSlow.disabled = false;
-  }
-
-  function answer(choice){
-    if(!started || !allow || !current) return;
-    allow = false;
-    btnFast.disabled = true;
-    btnSlow.disabled = true;
-    updateBeat(choice);
-
-    if(choice === current.answer){
-      correct++;
-      miniRight.textContent = "ACIERTOS: " + correct;
-      addStreakDot();
-      playSound(true);
-      popConfetti(22);
-      showToast("¡BIEN! 🎉", "good");
-      badge.className = "badge ok";
-      badge.textContent = "✅ CORRECTO";
-      setStatus("¡GENIAL!");
-      // Animación botón correcto
-      var btn = (choice==="RAPIDO") ? btnFast : btnSlow;
-      btn.classList.add("correct");
-      setTimeout(function(){ btn.classList.remove("correct"); }, 500);
-      setTimeout(function(){ pickNew(); }, 900);
-    } else {
-      playSound(false);
-      showToast("INTÉNTALO OTRA VEZ 😅", "bad");
-      badge.className = "badge bad";
-      badge.textContent = "❌ UPS";
-      setStatus("PRUEBA DE NUEVO");
-      var wrongBtn = (choice==="RAPIDO") ? btnFast : btnSlow;
-      wrongBtn.classList.add("wrong");
-      setTimeout(function(){
-        wrongBtn.classList.remove("wrong");
-        btnFast.disabled = false;
-        btnSlow.disabled = false;
-        allow = true;
-      }, 450);
+  function isOnPath(x,y){
+    var r = cv.getBoundingClientRect();
+    var pts = getLevel().points.map(function(p){ return scalePoint(p,r); });
+    for(var j=0;j<pts.length-1;j++){
+      if(distToSegment(x,y,pts[j][0],pts[j][1],pts[j+1][0],pts[j+1][1]) <= tolerance) return true;
     }
+    return false;
   }
 
-  function reset(){
-    started = false; allow = false; correct = 0;
-    miniRight.textContent = "ACIERTOS: 0";
-    streakRow.innerHTML = "";
-    badge.className = "badge";
-    badge.textContent = "LISTO";
-    instBig.textContent   = "TOCA EMPEZAR";
-    instSmall.textContent = "ELIGE RÁPIDO O LENTO SEGÚN LA ACCIÓN";
-    setStatus("TOCA EMPEZAR");
-    updateBeat("LENTO");
-    overlay.classList.add("show");
+  function nearPoint(x,y,p,radius){
+    var r  = cv.getBoundingClientRect();
+    var sp = scalePoint(p, r);
+    return Math.hypot(x-sp[0], y-sp[1]) <= radius;
   }
 
-  btnStart.addEventListener("click", function(){
-    overlay.classList.remove("show");
+  function doShake(){
+    frame.classList.remove("shake");
+    void frame.offsetWidth;
+    frame.classList.add("shake");
+    setTimeout(function(){ frame.classList.remove("shake"); }, 240);
+  }
+
+  function updateLabels(){
+    var total = levels.length;
+    pill.textContent      = "NIVEL " + level + " / " + total;
+    miniRight.textContent = "NIVEL: " + level + " / " + total;
+    hintText.textContent  = "NIVEL " + level + ": LLEVA LA SANGRE HASTA LA ESTRELLA ⭐";
+    levelFill.style.width = ((level / total) * 100) + "%";
+  }
+
+  function begin(){
     started = true;
-    instBig.textContent   = "¿CÓMO LATE?";
-    instSmall.textContent = "ELIGE EL BOTÓN CORRECTO";
-    pickNew();
-  });
+    overlay.classList.remove("show");
+    instBig.textContent   = "SIGUE EL CAMINO";
+    instSmall.textContent = "TOCA EL CORAZÓN ❤️ Y LLEGA A LA ESTRELLA ⭐";
+    badge.textContent = "LISTO";
+    setStatus("TOCA EL CORAZÓN ❤️");
+    updateLabels(); draw();
+  }
 
-  btnFast.addEventListener("click",  function(){ answer("RAPIDO"); });
-  btnSlow.addEventListener("click",  function(){ answer("LENTO"); });
-  btnReset.addEventListener("click", function(){ reset(); });
+  function resetLevel(){
+    active = false; last = null; trail = [];
+    badge.className = "badge";
+    badge.textContent = "LISTO";
+    setStatus("TOCA EL CORAZÓN ❤️");
+    draw();
+  }
+
+  function winLevel(){
+    active = false; trail = [];
+    badge.className = "badge ok";
+    badge.textContent = "✅ CORRECTO";
+    setStatus("¡GENIAL! PASAS AL SIGUIENTE");
+    playSound(true);
+    popConfetti(28);
+    showToast("¡BIEN! 🎉", "good");
+    level = (level >= levels.length) ? 1 : level + 1;
+    updateLabels();
+    setTimeout(function(){ resetLevel(); }, 950);
+  }
+
+  function fail(){
+    active = false; trail = [];
+    badge.className = "badge bad";
+    badge.textContent = "❌ UPS";
+    setStatus("PRUEBA OTRA VEZ");
+    playSound(false);
+    showToast("¡FUERA DEL CAMINO! 😅", "bad");
+    doShake();
+    setTimeout(function(){ resetLevel(); }, 700);
+  }
+
+  cv.addEventListener("pointerdown", function(ev){
+    if(!started) return;
+    ev.preventDefault();
+    var r = cv.getBoundingClientRect();
+    var x = ev.clientX - r.left;
+    var y = ev.clientY - r.top;
+    if(!active){
+      if(nearPoint(x, y, getLevel().start, 56)){
+        active = true; last = {x:x,y:y}; trail = [];
+        badge.className = "badge";
+        badge.textContent = "JUGANDO 🩸";
+        setStatus("SIGUE EL CAMINO");
+        cv.setPointerCapture(ev.pointerId);
+        draw();
+      } else {
+        showToast("TOCA EL CORAZÓN ❤️", "bad");
+        playSound(false);
+      }
+    }
+  }, {passive:false});
+
+  cv.addEventListener("pointermove", function(ev){
+    if(!started || !active) return;
+    ev.preventDefault();
+    var r = cv.getBoundingClientRect();
+    var x = ev.clientX - r.left;
+    var y = ev.clientY - r.top;
+    trail.push({x:x, y:y});
+    if(trail.length > 18) trail.shift();
+    last = {x:x, y:y};
+    if(!isOnPath(x,y)){ fail(); return; }
+    if(nearPoint(x, y, getLevel().end, 60)){ winLevel(); return; }
+    draw();
+  }, {passive:false});
+
+  cv.addEventListener("pointerup",     function(ev){ if(!started||!active) return; ev.preventDefault(); fail(); }, {passive:false});
+  cv.addEventListener("pointercancel", function(ev){ if(!started) return; active=false; last=null; trail=[]; draw(); }, {passive:false});
+
+  function resetAll(){
+    started=false; active=false; last=null; trail=[]; level=1;
+    badge.className = "badge"; badge.textContent = "LISTO";
+    instBig.textContent   = "TOCA EMPEZAR";
+    instSmall.textContent = "SIN SALIRTE DEL CAMINO · LLEGA A LA ESTRELLA ⭐";
+    setStatus("TOCA EMPEZAR");
+    updateLabels();
+    overlay.classList.add("show");
+    draw();
+  }
+
+  btnStart.addEventListener("click", function(){ begin(); });
+  btnReset.addEventListener("click", function(){ resetAll(); });
   btnBack.addEventListener("click",  function(){
     var ok=false;
     try{ if(document.referrer) ok=(new URL(document.referrer)).origin===location.origin; }catch(e){}
     if(ok) history.back(); else location.href="index.html";
   });
 
-  reset();
+  window.addEventListener("resize", function(){ resize(); });
+  updateLabels(); resize(); resetAll();
 })();
 </script>
 </body>
