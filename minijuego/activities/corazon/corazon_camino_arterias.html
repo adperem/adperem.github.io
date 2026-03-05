@@ -586,7 +586,7 @@
     var y = ev.clientY - r.top;
     trail.push({x:x, y:y});
     if(trail.length > 18) trail.shift();
-    last = {x:x, y:y};
+    last = {x:x, y:y}; 
     if(!isOnPath(x,y)){ fail(); return; }
     if(nearPoint(x, y, getLevel().end, 60)){ winLevel(); return; }
     draw();
