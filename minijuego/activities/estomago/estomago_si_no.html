@@ -11,641 +11,373 @@
       --shadow: 0 18px 45px rgba(0,0,0,0.18);
       --shadow-soft: 0 10px 25px rgba(0,0,0,0.14);
       --radius-xl: 28px;
-      --radius-lg: 22px;
-      --radius-md: 16px;
       --ink: #1f2a37;
       --muted: #3b556f;
       --good: #16a34a;
       --bad: #ef4444;
-      --accent: #7c3aed;
-      --accent2: #06b6d4;
-      --card: rgba(255,255,255,0.92);
-      --stroke: rgba(0,0,0,0.08);
-      --glow: 0 0 0 6px rgba(124, 58, 237, 0.18);
-      --focus: 0 0 0 6px rgba(6, 182, 212, 0.20);
-      --bottom-h: 124px;
+      --bottom-h: min(112px, 13vh);
     }
 
     *{ box-sizing: border-box; }
     html, body{
-      width: 100%;
-      height: 100%;
-      margin: 0;
+      width: 100%; height: 100%; margin: 0;
       font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-      color: var(--ink);
-      overflow: hidden;
-      user-select: none;
-      -webkit-user-select: none;
-      touch-action: none;
-      background: #0b1220;
+      color: var(--ink); overflow: hidden;
+      user-select: none; -webkit-user-select: none;
+      touch-action: none; background: #0b1220;
     }
 
-    /* FONDO FIJO, SIEMPRE DIFUMINADO */
     body::before{
-      content: "";
-      position: fixed;
-      inset: -40px;
+      content: ""; position: fixed; inset: -40px;
       background-image: url("assets/fondo_parque.webp");
-      background-size: cover;
-      background-position: center;
+      background-size: cover; background-position: center;
       background-attachment: fixed;
-      filter: blur(14px) saturate(1.2);
-      transform: scale(1.08);
-      z-index: -2;
+      filter: blur(14px) saturate(1.2); transform: scale(1.08); z-index: -2;
     }
     body::after{
-      content: "";
-      position: fixed;
-      inset: 0;
+      content: ""; position: fixed; inset: 0;
       background: linear-gradient(180deg, rgba(255,255,255,0.12), rgba(255,255,255,0.05));
       z-index: -1;
     }
 
-    /* CONTENEDOR 16:9, PRIORIDAD 1920x1080 */
     .stage{
-      width: 100vw;
-      height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 18px;
+      width: 100vw; height: 100vh;
+      display: flex; justify-content: center; align-items: center;
+      padding: min(18px, 1.5vw);
     }
     .frame{
-      width: min(1920px, 100vw);
-      height: min(1080px, 100vh);
-      position: relative;
-      border-radius: 34px;
-      overflow: hidden;
+      width: min(1920px, 100vw); height: min(1080px, 100vh);
+      position: relative; border-radius: 34px; overflow: hidden;
     }
 
-    /* DECORACIÓN SUAVE */
+    /* DECORACIÓN */
     .cloud{
-      position: absolute;
-      width: 280px;
-      height: 120px;
-      background: rgba(255,255,255,0.70);
-      border-radius: 999px;
-      filter: blur(0px);
-      box-shadow: var(--shadow-soft);
-      border: 2px solid rgba(255,255,255,0.6);
-      opacity: 0.9;
-      pointer-events: none;
+      position: absolute; width: clamp(140px,18vw,280px); height: clamp(60px,9vw,120px);
+      background: rgba(255,255,255,0.70); border-radius: 999px;
+      box-shadow: var(--shadow-soft); border: 2px solid rgba(255,255,255,0.6);
+      opacity: 0.9; pointer-events: none;
     }
-    .cloud::before, .cloud::after{
-      content: "";
-      position: absolute;
-      background: rgba(255,255,255,0.72);
-      border-radius: 999px;
+    .cloud::before,.cloud::after{ content: ""; position: absolute;
+      background: rgba(255,255,255,0.72); border-radius: 999px;
       border: 2px solid rgba(255,255,255,0.55);
     }
-    .cloud::before{ width: 120px; height: 90px; left: 40px; top: -28px; }
-    .cloud::after { width: 150px; height: 105px; left: 120px; top: -38px; }
+    .cloud::before{ width: clamp(60px,9vw,120px); height: clamp(45px,7vw,90px); left: 20px; top: -14px; }
+    .cloud::after { width: clamp(75px,11vw,150px); height: clamp(52px,8vw,105px); left: 60px; top: -19px; }
     .cloud.c1{ left: 24px; top: 24px; transform: rotate(-2deg); }
     .cloud.c2{ right: 24px; top: 56px; transform: rotate(3deg) scale(0.95); }
+
     .sticker{
-      position: absolute;
-      width: 140px;
-      height: 140px;
-      border-radius: 30px;
-      background: rgba(255,255,255,0.62);
-      box-shadow: var(--shadow-soft);
+      position: absolute; width: clamp(70px,9vw,130px); height: clamp(70px,9vw,130px);
+      border-radius: 30px; background: rgba(255,255,255,0.62); box-shadow: var(--shadow-soft);
       border: 2px dashed rgba(255,255,255,0.65);
-      display: grid;
-      place-items: center;
-      font-size: 60px;
-      pointer-events: none;
-      opacity: 0.9;
+      display: grid; place-items: center; font-size: clamp(32px,4.5vw,60px);
+      pointer-events: none; opacity: 0.9;
+      animation: floaty 4s ease-in-out infinite;
     }
-    .st1{ left: 32px; bottom: calc(var(--bottom-h) + 24px); transform: rotate(-8deg); }
-    .st2{ right: 38px; bottom: calc(var(--bottom-h) + 34px); transform: rotate(10deg); }
-    .st3{ left: 260px; top: 54px; transform: rotate(7deg) scale(0.85); opacity: 0.85; }
+    @keyframes floaty{ 0%,100%{ transform: rotate(-8deg) translateY(0); } 50%{ transform: rotate(-8deg) translateY(-8px); } }
+    .st1{ left: 32px; bottom: calc(var(--bottom-h) + 18px); }
+    .st2{ right: 38px; bottom: calc(var(--bottom-h) + 26px); animation-duration: 5s; animation-delay: -2s; }
+    .st3{ left: 260px; top: 54px; opacity: 0.85; animation-duration: 4.5s; }
 
     /* HEADER */
     .header{
-      position: absolute;
-      left: 22px;
-      right: 22px;
-      top: 18px;
-      padding: 16px 18px;
+      position: absolute; left: min(22px,1.5vw); right: min(22px,1.5vw); top: min(18px,1.5vh);
+      padding: clamp(8px,1.2vh,14px) clamp(10px,1.2vw,16px);
       border-radius: var(--radius-xl);
-      background: rgba(255,255,255,0.78);
-      border: 2px solid rgba(255,255,255,0.7);
+      background: rgba(255,255,255,0.82); border: 2px solid rgba(255,255,255,0.75);
       box-shadow: var(--shadow-soft);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 16px;
+      display: flex; align-items: center; justify-content: space-between; gap: clamp(8px,1vw,14px);
     }
     .title{
-      font-size: 44px;
-      font-weight: 900;
-      letter-spacing: 1px;
-      line-height: 1.05;
-      text-transform: uppercase;
-      display: flex;
-      align-items: center;
-      gap: 12px;
+      font-size: clamp(16px,2.6vw,38px); font-weight: 1000; letter-spacing: 1px;
+      line-height: 1.05; text-transform: uppercase;
+      display: flex; align-items: center; gap: 8px;
     }
+    .title span{ font-size: clamp(22px,3.2vw,44px) !important; }
     .badge{
-      font-size: 20px;
-      font-weight: 900;
-      padding: 10px 14px;
-      border-radius: 999px;
-      background: rgba(124,58,237,0.12);
-      border: 2px solid rgba(124,58,237,0.28);
-      color: #3b2a8f;
-      text-transform: uppercase;
-      white-space: nowrap;
+      font-size: clamp(12px,1.3vw,17px); font-weight: 1000; padding: 7px 12px; border-radius: 999px;
+      background: rgba(124,58,237,0.12); border: 2px solid rgba(124,58,237,0.28);
+      color: #3b2a8f; text-transform: uppercase; white-space: nowrap; text-align: center;
+      transition: background 0.3s, color 0.3s, border-color 0.3s;
     }
+    .badge.ok { background: rgba(34,197,94,0.18); border-color: rgba(34,197,94,0.35); color: #14532d; }
+    .badge.bad{ background: rgba(239,68,68,0.18); border-color: rgba(239,68,68,0.35); color: #7f1d1d; }
     .hint{
-      font-size: 22px;
-      font-weight: 800;
-      color: var(--muted);
-      text-transform: uppercase;
-      text-align: right;
-      line-height: 1.15;
+      font-size: clamp(12px,1.4vw,18px); font-weight: 950; color: var(--muted);
+      text-transform: uppercase; text-align: right; line-height: 1.15;
     }
 
     /* MAIN */
     .main{
-      position: absolute;
-      left: 22px;
-      right: 22px;
-      top: 120px;
-      bottom: calc(var(--bottom-h) + 18px + 220px + 18px);
-      display: grid;
-      grid-template-columns: 1fr 1.15fr 1fr;
-      gap: 18px;
+      position: absolute; left: min(22px,1.5vw); right: min(22px,1.5vw);
+      top: clamp(80px,10vh,112px);
+      bottom: calc(var(--bottom-h) + min(18px,1.5vh) + clamp(170px,22vh,220px) + min(18px,1.5vh));
+      display: grid; grid-template-columns: 1fr 1.15fr 1fr; gap: clamp(10px,1.2vw,18px);
     }
 
     .panel{
-      background: var(--panel-bg);
-      border: 2px solid var(--panel-border);
-      border-radius: var(--radius-xl);
-      box-shadow: var(--shadow);
-      padding: 18px;
-      position: relative;
-      overflow: hidden;
+      background: var(--panel-bg); border: 2px solid var(--panel-border);
+      border-radius: var(--radius-xl); box-shadow: var(--shadow);
+      padding: clamp(10px,1.4vh,18px); position: relative; overflow: hidden;
     }
     .panel h2{
-      margin: 0 0 12px 0;
-      font-size: 34px;
-      font-weight: 950;
-      text-transform: uppercase;
-      letter-spacing: 0.8px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
+      margin: 0 0 10px 0; font-size: clamp(16px,2vh,28px); font-weight: 950;
+      text-transform: uppercase; letter-spacing: 0.8px;
+      display: flex; align-items: center; gap: 8px;
     }
 
     .dropzone{
-      height: calc(100% - 56px);
-      border-radius: 22px;
-      border: 3px dashed rgba(0,0,0,0.12);
-      background: rgba(255,255,255,0.70);
+      height: calc(100% - 52px); border-radius: 22px;
+      border: 3px dashed rgba(0,0,0,0.12); background: rgba(255,255,255,0.70);
       box-shadow: inset 0 0 0 2px rgba(255,255,255,0.5);
-      padding: 14px;
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      grid-auto-rows: 110px;
-      gap: 12px;
-      align-content: start;
-      position: relative;
+      padding: clamp(8px,1vw,14px);
+      display: grid; grid-template-columns: repeat(2, minmax(0,1fr));
+      grid-auto-rows: clamp(80px,10vh,110px); gap: clamp(8px,1vw,12px);
+      align-content: start; position: relative;
+      transition: border-color 0.15s, box-shadow 0.15s;
     }
-    .dropzone.good{ outline: 0; }
-    .dropzone.bad{ outline: 0; }
-
     .dropzone.highlight{
       border-color: rgba(6,182,212,0.55);
-      box-shadow: inset 0 0 0 2px rgba(6,182,212,0.22), var(--focus);
+      box-shadow: inset 0 0 0 2px rgba(6,182,212,0.22), 0 0 0 6px rgba(6,182,212,0.20);
     }
 
     .zone-label{
-      position: absolute;
-      right: 14px;
-      top: 14px;
-      font-size: 18px;
-      font-weight: 950;
-      text-transform: uppercase;
-      padding: 8px 10px;
-      border-radius: 999px;
-      background: rgba(255,255,255,0.85);
-      border: 2px solid rgba(0,0,0,0.08);
-      opacity: 0.9;
+      position: absolute; right: 14px; top: 14px;
+      font-size: clamp(12px,1.3vw,17px); font-weight: 950; text-transform: uppercase;
+      padding: 6px 10px; border-radius: 999px;
+      background: rgba(255,255,255,0.85); border: 2px solid rgba(0,0,0,0.08); opacity: 0.9;
     }
     .zone-good{ color: #14532d; background: rgba(34,197,94,0.12); border-color: rgba(34,197,94,0.25); }
     .zone-bad { color: #7f1d1d; background: rgba(239,68,68,0.12); border-color: rgba(239,68,68,0.25); }
 
     /* CENTRO: ESTÓMAGO */
-    .center{
-      display: flex;
-      flex-direction: column;
-      gap: 18px;
-    }
+    .center{ display: flex; flex-direction: column; gap: clamp(10px,1.2vh,18px); }
     .stomachCard{
-      flex: 1;
-      display: grid;
-      grid-template-rows: auto 1fr auto;
-      gap: 14px;
+      flex: 1; display: grid; grid-template-rows: auto 1fr auto; gap: clamp(8px,1vh,14px);
     }
     .instruction{
-      font-size: 28px;
-      font-weight: 950;
-      text-transform: uppercase;
-      text-align: center;
-      color: #22314a;
-      padding: 12px 14px;
-      border-radius: 18px;
-      background: rgba(124,58,237,0.10);
-      border: 2px solid rgba(124,58,237,0.20);
+      font-size: clamp(14px,1.8vh,24px); font-weight: 950; text-transform: uppercase;
+      text-align: center; color: #22314a;
+      padding: clamp(8px,1vh,12px) clamp(10px,1.2vw,14px); border-radius: 18px;
+      background: rgba(124,58,237,0.10); border: 2px solid rgba(124,58,237,0.20);
     }
 
     .stomachWrap{
-      display: grid;
-      place-items: center;
-      position: relative;
-      border-radius: 26px;
-      background: rgba(255,255,255,0.55);
-      border: 2px solid rgba(0,0,0,0.06);
-      overflow: hidden;
-      min-height: 320px;
+      display: grid; place-items: center; position: relative; border-radius: 26px;
+      background: rgba(255,255,255,0.55); border: 2px solid rgba(0,0,0,0.06);
+      overflow: hidden; min-height: clamp(200px,28vh,320px);
     }
 
     .stomach{
-      width: min(520px, 95%);
-      aspect-ratio: 1.08 / 1;
+      width: min(440px, 90%); aspect-ratio: 1.08 / 1;
       border-radius: 50% 44% 52% 48% / 58% 50% 50% 42%;
       background: radial-gradient(circle at 30% 25%, rgba(255,255,255,0.85), rgba(255,255,255,0) 55%),
                   linear-gradient(180deg, rgba(255,150,170,0.95), rgba(255,110,140,0.95));
       box-shadow: 0 18px 40px rgba(0,0,0,0.22);
       border: 3px solid rgba(255,255,255,0.75);
-      position: relative;
-      transform: rotate(-10deg) scale(0.82);
+      position: relative; transform: rotate(-10deg) scale(0.82);
     }
     .stomach::before{
-      content:"";
-      position:absolute;
-      inset: 14px;
-      border-radius: inherit;
-      border: 2px solid rgba(0,0,0,0.07);
-      opacity: 0.8;
+      content:""; position:absolute; inset: 14px; border-radius: inherit;
+      border: 2px solid rgba(0,0,0,0.07); opacity: 0.8;
     }
 
     .face{
-      position: absolute;
-      left: 50%;
-      top: 46%;
+      position: absolute; left: 50%; top: 46%;
       transform: translate(-50%, -50%) rotate(10deg);
-      width: 58%;
-      height: 52%;
-      display: grid;
-      grid-template-rows: 1fr auto;
-      gap: 14px;
-      align-items: center;
-      justify-items: center;
+      width: 58%; height: 52%;
+      display: grid; grid-template-rows: 1fr auto; gap: 14px;
+      align-items: center; justify-items: center;
     }
     .eyes{
-      width: 100%;
-      display: flex;
-      justify-content: space-between;
-      padding: 0 14px;
+      width: 100%; display: flex; justify-content: space-between; padding: 0 14px;
     }
     .eye{
-      width: 84px;
-      height: 84px;
-      background: rgba(255,255,255,0.95);
-      border: 3px solid rgba(0,0,0,0.08);
-      border-radius: 999px;
-      box-shadow: 0 10px 18px rgba(0,0,0,0.12);
-      position: relative;
-      overflow: hidden;
+      width: clamp(52px,8vh,84px); height: clamp(52px,8vh,84px);
+      background: rgba(255,255,255,0.95); border: 3px solid rgba(0,0,0,0.08);
+      border-radius: 999px; box-shadow: 0 10px 18px rgba(0,0,0,0.12);
+      position: relative; overflow: hidden;
     }
     .pupil{
-      width: 28px;
-      height: 28px;
-      background: rgba(25,25,35,0.92);
-      border-radius: 999px;
-      position: absolute;
-      left: 28px;
-      top: 30px;
-      box-shadow: 0 0 0 8px rgba(0,0,0,0.05);
+      width: clamp(18px,3vh,28px); height: clamp(18px,3vh,28px);
+      background: rgba(25,25,35,0.92); border-radius: 999px;
+      position: absolute; left: calc(50% - 8px); top: calc(50% - 4px);
     }
     .mouth{
-      width: 140px;
-      height: 60px;
+      width: clamp(90px,14vh,140px); height: clamp(38px,6vh,60px);
       border-radius: 0 0 999px 999px;
-      background: rgba(0,0,0,0.08);
-      position: relative;
-      overflow: hidden;
-      border: 3px solid rgba(0,0,0,0.08);
+      background: rgba(0,0,0,0.08); position: relative; overflow: hidden;
+      border: 3px solid rgba(0,0,0,0.08); transition: all 0.25s ease;
     }
     .tongue{
-      position: absolute;
-      left: 50%;
-      bottom: -14px;
-      transform: translateX(-50%);
-      width: 90px;
-      height: 54px;
-      border-radius: 999px;
-      background: rgba(255,110,140,0.85);
+      position: absolute; left: 50%; bottom: -14px; transform: translateX(-50%);
+      width: clamp(56px,9vh,90px); height: clamp(34px,5.5vh,54px);
+      border-radius: 999px; background: rgba(255,110,140,0.85);
       border: 3px solid rgba(0,0,0,0.06);
     }
     .cheek{
-      position: absolute;
-      width: 62px;
-      height: 34px;
-      background: rgba(255,255,255,0.45);
-      border-radius: 999px;
-      top: 60%;
-      filter: blur(0.2px);
-      opacity: 0.8;
+      position: absolute; width: 62px; height: 34px;
+      background: rgba(255,255,255,0.45); border-radius: 999px; top: 60%; opacity: 0.8;
     }
     .cheek.left{ left: 10%; transform: rotate(-10deg) scale(0.82); }
     .cheek.right{ right: 10%; transform: rotate(10deg); }
 
     .bubble{
-      position: absolute;
-      width: 24px;
-      height: 24px;
-      border-radius: 999px;
-      border: 2px solid rgba(255,255,255,0.7);
-      background: rgba(255,255,255,0.35);
-      box-shadow: 0 10px 20px rgba(0,0,0,0.08);
-      opacity: 0;
-      pointer-events: none;
+      position: absolute; width: 24px; height: 24px;
+      border-radius: 999px; border: 2px solid rgba(255,255,255,0.7);
+      background: rgba(255,255,255,0.35); box-shadow: 0 10px 20px rgba(0,0,0,0.08);
+      opacity: 0; pointer-events: none; transition: opacity 0.2s;
     }
 
     .stomachState{
-      font-size: 26px;
-      font-weight: 950;
-      text-transform: uppercase;
-      text-align: center;
-      padding: 12px 14px;
-      border-radius: 18px;
-      border: 2px solid rgba(0,0,0,0.08);
-      background: rgba(255,255,255,0.70);
-      color: #1f2a37;
+      font-size: clamp(14px,1.8vh,22px); font-weight: 950; text-transform: uppercase;
+      text-align: center; padding: clamp(8px,1vh,12px) clamp(10px,1.2vw,14px);
+      border-radius: 18px; border: 2px solid rgba(0,0,0,0.08);
+      background: rgba(255,255,255,0.70); color: #1f2a37;
+      transition: background 0.25s, border-color 0.25s, color 0.25s;
     }
     .stomachState.good{ background: rgba(34,197,94,0.14); border-color: rgba(34,197,94,0.25); color: #14532d; }
     .stomachState.bad{ background: rgba(239,68,68,0.14); border-color: rgba(239,68,68,0.25); color: #7f1d1d; }
 
     /* BANDEJA DE COMIDAS */
     .tray{
-      position: absolute;
-      left: 22px;
-      right: 22px;
-      bottom: calc(var(--bottom-h) + 18px);
-      height: 220px;
-      background: rgba(255,255,255,0.80);
-      border: 2px solid rgba(255,255,255,0.7);
-      border-radius: var(--radius-xl);
-      box-shadow: var(--shadow);
-      padding: 14px 14px 16px 14px;
-      overflow: hidden;
+      position: absolute; left: min(22px,1.5vw); right: min(22px,1.5vw);
+      bottom: calc(var(--bottom-h) + min(18px,1.5vh));
+      height: clamp(170px,22vh,220px);
+      background: rgba(255,255,255,0.80); border: 2px solid rgba(255,255,255,0.7);
+      border-radius: var(--radius-xl); box-shadow: var(--shadow);
+      padding: clamp(10px,1.2vh,14px); overflow: hidden;
     }
     .trayTitle{
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      padding: 0 6px 10px 6px;
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 12px; padding: 0 6px clamp(6px,1vh,10px) 6px;
     }
     .trayTitle h3{
-      margin: 0;
-      font-size: 28px;
-      font-weight: 950;
-      text-transform: uppercase;
-      letter-spacing: 0.8px;
+      margin: 0; font-size: clamp(16px,2vw,24px); font-weight: 950; text-transform: uppercase; letter-spacing: 0.8px;
     }
     .pill{
-      font-size: 18px;
-      font-weight: 950;
-      text-transform: uppercase;
-      padding: 8px 12px;
-      border-radius: 999px;
-      background: rgba(6,182,212,0.12);
-      border: 2px solid rgba(6,182,212,0.22);
-      color: #0b5563;
-      white-space: nowrap;
+      font-size: clamp(12px,1.4vw,16px); font-weight: 950; text-transform: uppercase;
+      padding: 6px 10px; border-radius: 999px;
+      background: rgba(6,182,212,0.12); border: 2px solid rgba(6,182,212,0.22);
+      color: #0b5563; white-space: nowrap;
     }
 
     .foodRow{
-      height: calc(100% - 46px);
-      display: grid;
-      grid-template-columns: repeat(10, minmax(0, 1fr));
-      gap: 12px;
-      align-items: center;
-      padding: 0 6px;
+      height: calc(100% - clamp(32px,4.5vh,46px));
+      display: grid; grid-template-columns: repeat(10, minmax(0, 1fr));
+      gap: clamp(8px,1vw,12px); align-items: center; padding: 0 6px;
     }
 
     .food{
-      height: 150px;
-      border-radius: 24px;
-      background: var(--card);
-      border: 2px solid rgba(0,0,0,0.08);
+      height: clamp(110px,16vh,150px); border-radius: clamp(16px,2vw,24px);
+      background: rgba(255,255,255,0.95); border: 2px solid rgba(0,0,0,0.08);
       box-shadow: 0 12px 26px rgba(0,0,0,0.14);
-      display: grid;
-      grid-template-rows: 1fr auto;
-      align-items: center;
-      justify-items: center;
-      padding: 10px;
-      cursor: grab;
-      touch-action: none;
-      position: relative;
-      transform: translate3d(0,0,0);
+      display: grid; grid-template-rows: 1fr auto; align-items: center; justify-items: center;
+      padding: 8px; cursor: grab; touch-action: none; position: relative;
+      transform: translate3d(0,0,0); transition: box-shadow 0.15s, border-color 0.15s;
     }
     .food:active{ cursor: grabbing; }
     .food .emoji{
-      font-size: 62px;
-      line-height: 1;
-      filter: drop-shadow(0 10px 12px rgba(0,0,0,0.10));
-    }
-    .food .label{
-      width: 100%;
-      text-align: center;
-      font-size: 18px;
-      font-weight: 950;
-      text-transform: uppercase;
-      letter-spacing: 0.6px;
-      color: #243244;
-      padding: 8px 6px;
-      border-radius: 14px;
-      background: rgba(124,58,237,0.08);
-      border: 2px solid rgba(124,58,237,0.14);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-    .food.disabled{
-      opacity: 0.55;
-      filter: grayscale(0.2);
-      cursor: default;
-    }
-
-    .food.dragging{
-      z-index: 30;
-      box-shadow: 0 20px 50px rgba(0,0,0,0.28);
-      border-color: rgba(6,182,212,0.35);
-      outline: none;
-    }
-
-    /* COMIDA COLOCADA EN ZONA */
-    .placed{
-      height: 110px;
-      border-radius: 18px;
-      background: rgba(255,255,255,0.92);
-      border: 2px solid rgba(0,0,0,0.08);
-      box-shadow: 0 12px 22px rgba(0,0,0,0.10);
-      display: grid;
-      grid-template-columns: 90px 1fr;
-      align-items: center;
-      gap: 10px;
-      padding: 10px 12px;
-    }
-    .placed .emoji{
-      font-size: 56px;
-      text-align: center;
+      font-size: clamp(40px,6vh,62px); line-height: 1;
       filter: drop-shadow(0 8px 10px rgba(0,0,0,0.10));
     }
-    .placed .label{
-      font-size: 22px;
-      font-weight: 950;
-      text-transform: uppercase;
-      color: #243244;
-      padding: 10px 12px;
-      border-radius: 16px;
-      background: rgba(0,0,0,0.06);
-      border: 2px solid rgba(0,0,0,0.06);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+    .food .label{
+      width: 100%; text-align: center; font-size: clamp(12px,1.4vw,16px); font-weight: 950;
+      text-transform: uppercase; letter-spacing: 0.6px; color: #243244;
+      padding: 5px 4px; border-radius: 12px;
+      background: rgba(124,58,237,0.08); border: 2px solid rgba(124,58,237,0.14);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .food.disabled{ opacity: 0.55; filter: grayscale(0.2); cursor: default; }
+    .food.dragging{
+      z-index: 30; box-shadow: 0 20px 50px rgba(0,0,0,0.28);
+      border-color: rgba(6,182,212,0.35);
     }
 
-    /* BARRA INFERIOR OBLIGATORIA */
+    /* COMIDA COLOCADA */
+    .placed{
+      height: clamp(80px,10.5vh,110px); border-radius: 18px;
+      background: rgba(255,255,255,0.92); border: 2px solid rgba(0,0,0,0.08);
+      box-shadow: 0 12px 22px rgba(0,0,0,0.10);
+      display: grid; grid-template-columns: clamp(60px,9vh,90px) 1fr;
+      align-items: center; gap: 8px; padding: 8px 10px;
+    }
+    .placed .emoji{
+      font-size: clamp(38px,6vh,56px); text-align: center;
+      filter: drop-shadow(0 6px 8px rgba(0,0,0,0.10));
+    }
+    .placed .label{
+      font-size: clamp(14px,1.8vh,20px); font-weight: 950; text-transform: uppercase;
+      color: #243244; padding: 8px 10px; border-radius: 14px;
+      background: rgba(0,0,0,0.06); border: 2px solid rgba(0,0,0,0.06);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+
+    /* BARRA INFERIOR */
     .bottomBar{
-      position: absolute;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      height: var(--bottom-h);
-      padding: 16px 22px;
-      background: rgba(255,255,255,0.90);
-      border-top: 2px solid rgba(255,255,255,0.8);
+      position: absolute; left: 0; right: 0; bottom: 0;
+      height: var(--bottom-h); padding: clamp(8px,1vh,14px) clamp(10px,1.2vw,18px);
+      background: rgba(255,255,255,0.90); border-top: 2px solid rgba(255,255,255,0.8);
       box-shadow: 0 -18px 45px rgba(0,0,0,0.16);
-      display: grid;
-      grid-template-columns: 1fr 1fr 1.2fr;
-      gap: 16px;
-      align-items: center;
+      display: grid; grid-template-columns: 1fr 1fr 1.2fr; gap: clamp(8px,1vw,14px); align-items: center;
     }
 
     .btn{
-      height: 88px;
-      border-radius: 22px;
-      border: 2px solid rgba(0,0,0,0.08);
+      height: min(78px,9.5vh); border-radius: 22px; border: 2px solid rgba(0,0,0,0.08);
       box-shadow: var(--shadow-soft);
-      background: rgba(255,255,255,0.92);
-      font-size: 30px;
-      font-weight: 1000;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      color: #1f2a37;
-      cursor: pointer;
-      touch-action: manipulation;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 12px;
-      padding: 0 18px;
+      font-size: clamp(14px,1.8vw,26px); font-weight: 1000; text-transform: uppercase;
+      letter-spacing: 1px; color: #1f2a37; cursor: pointer; touch-action: manipulation;
+      display: flex; align-items: center; justify-content: center; gap: 8px; padding: 0 clamp(10px,1.2vw,18px);
+      transition: transform 0.12s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.12s;
     }
-    .btn:active{ transform: translateY(1px); }
+    .btn:hover{ transform: translateY(-2px); box-shadow: 0 14px 30px rgba(0,0,0,0.14); }
+    .btn:active{ transform: scale(0.96); }
     .btn.primary{
-      background: rgba(124,58,237,0.14);
-      border-color: rgba(124,58,237,0.26);
-      color: #2f1d78;
+      background: linear-gradient(145deg, rgba(124,58,237,0.12), rgba(124,58,237,0.18));
+      border-color: rgba(124,58,237,0.26); color: #2f1d78;
     }
     .btn.secondary{
-      background: rgba(6,182,212,0.12);
-      border-color: rgba(6,182,212,0.22);
-      color: #0b5563;
+      background: linear-gradient(145deg, rgba(6,182,212,0.10), rgba(6,182,212,0.16));
+      border-color: rgba(6,182,212,0.22); color: #0b5563;
     }
 
     .statusBox{
-      height: 88px;
-      border-radius: 22px;
-      border: 2px solid rgba(0,0,0,0.08);
-      box-shadow: var(--shadow-soft);
-      background: rgba(255,255,255,0.92);
-      display: grid;
-      grid-template-columns: 1fr;
-      align-items: center;
-      padding: 8px 16px;
-      gap: 6px;
+      height: min(78px,9.5vh); border-radius: 22px; border: 2px solid rgba(0,0,0,0.08);
+      box-shadow: var(--shadow-soft); background: rgba(255,255,255,0.92);
+      display: flex; flex-direction: column; justify-content: center;
+      padding: 6px clamp(10px,1.2vw,16px); gap: 4px;
     }
     .statusTop{
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-      font-size: 18px;
-      font-weight: 950;
-      text-transform: uppercase;
-      color: #334155;
+      display: flex; align-items: center; justify-content: space-between; gap: 10px;
+      font-size: clamp(11px,1.4vh,16px); font-weight: 1000; text-transform: uppercase; color: #334155;
     }
     .statusValue{
-      font-size: 30px;
-      font-weight: 1000;
-      text-transform: uppercase;
-      color: #111827;
-      letter-spacing: 0.6px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+      font-size: clamp(14px,1.8vh,22px); font-weight: 1000; text-transform: uppercase;
+      color: #111827; letter-spacing: 0.5px;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     }
 
     /* TOAST */
     .toast{
-      position: absolute;
-      left: 50%;
-      top: 50%;
-      transform: translate(-50%, -50%);
-      padding: 18px 22px;
-      border-radius: 22px;
-      background: rgba(255,255,255,0.92);
-      border: 2px solid rgba(0,0,0,0.08);
-      box-shadow: var(--shadow);
-      font-size: 34px;
-      font-weight: 1000;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 160ms ease, transform 160ms ease;
-      z-index: 50;
-      text-align: center;
-      max-width: 86%;
+      position: absolute; left: 50%; top: 50%;
+      transform: translate(-50%, -50%) scale(0.8);
+      padding: clamp(10px,1.5vh,18px) clamp(14px,2vw,22px); border-radius: 22px;
+      background: rgba(255,255,255,0.92); border: 2px solid rgba(0,0,0,0.08);
+      box-shadow: var(--shadow); font-size: clamp(18px,2.8vh,34px); font-weight: 1000;
+      text-transform: uppercase; letter-spacing: 1px;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.2s ease, transform 0.3s cubic-bezier(0.34,1.56,0.64,1);
+      z-index: 50; text-align: center; max-width: 86%;
     }
-    .toast.show{
-      opacity: 1;
-      transform: translate(-50%, -50%) scale(1.02);
-    }
+    .toast.show{ opacity: 1; transform: translate(-50%, -50%) scale(1); }
     .toast.good{ background: rgba(34,197,94,0.18); border-color: rgba(34,197,94,0.28); color: #14532d; }
     .toast.bad{ background: rgba(239,68,68,0.18); border-color: rgba(239,68,68,0.28); color: #7f1d1d; }
 
-    /* CONFETI SIMPLE */
-    .confetti{
-      position: absolute;
-      inset: 0;
-      pointer-events: none;
-      overflow: hidden;
-      z-index: 40;
-    }
+    /* CONFETI */
+    .confetti{ position: absolute; inset: 0; pointer-events: none; overflow: hidden; z-index: 40; }
     .confetti i{
-      position: absolute;
-      width: 14px;
-      height: 14px;
-      border-radius: 4px;
-      opacity: 0;
-      animation: pop 900ms ease-out forwards;
+      position: absolute; width: 14px; height: 14px; border-radius: 4px;
+      opacity: 0; animation: pop 900ms ease-out forwards;
     }
     @keyframes pop{
       0%{ transform: translateY(0) rotate(0deg) scale(0.9); opacity: 0; }
@@ -653,103 +385,20 @@
       100%{ transform: translateY(420px) rotate(360deg) scale(1.0); opacity: 0; }
     }
 
-    /* RESPONSIVE: MANTENER TODO EN PANTALLA SIN CORTES */
-    @media (max-width: 1400px){
-      .title{ font-size: 36px; }
-      .hint{ font-size: 18px; }
-      .foodRow{ grid-template-columns: repeat(5, minmax(0, 1fr)); grid-auto-rows: 150px; overflow: hidden; }
-      .tray{ height: 320px; }
-      .main{ bottom: calc(var(--bottom-h) + 356px); }
+    @media (max-width: 1200px){
+      .main{ grid-template-columns: 1fr 1.1fr 1fr; }
+      .foodRow{ grid-template-columns: repeat(5, minmax(0,1fr)); grid-auto-rows: clamp(110px,16vh,150px); overflow: hidden; }
+      .tray{ height: clamp(220px,28vh,280px); }
+      .main{ bottom: calc(var(--bottom-h) + min(18px,1.5vh) + clamp(220px,28vh,280px) + min(18px,1.5vh)); }
     }
-  
-
-    /* ESCALA GLOBAL: TODO MÁS PEQUEÑO (SIN ROMPER LAYOUT) */
-    :root{
-      --S: 0.88;
-      --bottom-h: 110px; /* override */
+    @media (max-width: 900px){
+      .st1,.st2,.st3,.cloud{ display: none; }
     }
-    .header{ padding: 12px 14px; }
-    .title{ font-size: 38px; }
-    .hint{ font-size: 18px; }
-    .badge{ font-size: 18px; padding: 8px 12px; }
-
-    .main{
-      top: 112px;
-      gap: 14px;
-      bottom: calc(var(--bottom-h) + 18px + 190px + 18px);
+    @media (max-height: 700px){
+      .stomachWrap{ min-height: 160px; }
+      .sticker{ display: none; }
     }
-
-    .panel{ padding: 14px; }
-    .panel h2{ font-size: 28px; margin-bottom: 10px; }
-
-    .dropzone{
-      padding: 12px;
-      grid-auto-rows: 96px;
-      gap: 10px;
-    }
-    .zone-label{ font-size: 16px; padding: 7px 10px; }
-
-    .instruction{ font-size: 24px; padding: 10px 12px; }
-    .stomachWrap{ min-height: 280px; }
-    .stomach{ width: min(440px, 92%); }
-    .eye{ width: 74px; height: 74px; }
-    .mouth{ width: 128px; height: 54px; }
-
-    .stomachState{ font-size: 22px; padding: 10px 12px; }
-
-    .tray{
-      height: 190px;
-      padding: 12px 12px 14px 12px;
-    }
-    .trayTitle h3{ font-size: 24px; }
-    .pill{ font-size: 16px; padding: 7px 10px; }
-
-    .foodRow{
-      gap: 10px;
-      height: calc(100% - 42px);
-    }
-    .food{
-      height: 130px;
-      border-radius: 20px;
-      padding: 8px;
-    }
-    .food .emoji{ font-size: 54px; }
-    .food .label{ font-size: 16px; padding: 6px 6px; border-radius: 12px; }
-
-    .placed{
-      height: 96px;
-      border-radius: 16px;
-      grid-template-columns: 78px 1fr;
-      padding: 8px 10px;
-      gap: 10px;
-    }
-    .placed .emoji{ font-size: 48px; }
-    .placed .label{ font-size: 20px; padding: 8px 10px; border-radius: 14px; }
-
-    .bottomBar{
-      height: var(--bottom-h);
-      padding: 14px 18px;
-      gap: 14px;
-    }
-    .btn{
-      height: 76px;
-      font-size: 26px;
-      border-radius: 20px;
-    }
-    .statusBox{
-      height: 76px;
-      border-radius: 20px;
-      padding: 6px 14px;
-    }
-    .statusValue{ font-size: 26px; }
-
-    /* RESPONSIVE */
-    @media (max-width: 1400px){
-      .tray{ height: 280px; }
-      .main{ bottom: calc(var(--bottom-h) + 18px + 280px + 18px); }
-    }
-
-</style>
+  </style>
 </head>
 <body>
   <div class="stage">
@@ -762,12 +411,12 @@
 
       <header class="header">
         <div class="title">
-          <span style="font-size:46px">🫶</span>
+          <span>🫶</span>
           EL ESTÓMAGO: SÍ / NO
         </div>
         <div class="hint">
           ARRASTRA CADA COMIDA A SU BANDEJA
-          <div style="font-size:18px; font-weight:900; opacity:0.9;">(TOCA Y ARRASTRA CON EL DEDO)</div>
+          <div style="font-size:clamp(10px,1.1vw,14px);font-weight:1000;opacity:0.9;margin-top:3px">(TOCA Y ARRASTRA CON EL DEDO)</div>
         </div>
         <div class="badge" id="badge">LISTO</div>
       </header>
@@ -817,14 +466,12 @@
           <h3>COMIDAS</h3>
           <div class="pill" id="remainingPill">QUEDAN: 10</div>
         </div>
-        <div class="foodRow" id="foodRow">
-          <!-- COMIDAS GENERADAS POR JS -->
-        </div>
+        <div class="foodRow" id="foodRow"></div>
       </section>
 
       <div class="bottomBar" aria-label="Barra inferior">
-        <button class="btn primary" id="btnReset">REINICIAR</button>
-        <button class="btn secondary" id="btnBack">VOLVER</button>
+        <button class="btn primary"   id="btnReset">🔄 REINICIAR</button>
+        <button class="btn secondary" id="btnBack" >🏠 VOLVER</button>
         <div class="statusBox" role="status" aria-live="polite">
           <div class="statusTop">
             <span>ESTADO</span>
@@ -837,8 +484,8 @@
       <div class="toast" id="toast"></div>
       <div class="confetti" id="confetti"></div>
 
-      <audio id="sndOk" data-src="/asstests/aplausos.mp4" preload="none"></audio>
-      <audio id="sndBad" data-src="/asstests/ohh.mp4" preload="none"></audio>
+      <audio id="sndOk"  data-src="/asstests/aplausos.mp4" preload="none"></audio>
+      <audio id="sndBad" data-src="/asstests/ohh.mp4"     preload="none"></audio>
     </div>
   </div>
 
@@ -847,66 +494,53 @@
       "use strict";
 
       const foods = [
-        { id: "manzana",  label: "MANZANA",   emoji: "🍎", correct: "yes" },
-        { id: "agua",     label: "AGUA",      emoji: "💧", correct: "yes" },
-        { id: "pan",      label: "PAN",       emoji: "🍞", correct: "yes" },
-        { id: "verduras", label: "VERDURAS",  emoji: "🥦", correct: "yes" },
-        { id: "yogur",    label: "YOGUR",     emoji: "🥛", correct: "yes" },
-        { id: "pescado",  label: "PESCADO",   emoji: "🐟", correct: "yes" },
-
-        { id: "refresco", label: "REFRESCO",  emoji: "🥤", correct: "no" },
-        { id: "caramelos",label: "CARAMELOS", emoji: "🍬", correct: "no" },
-        { id: "patatas",  label: "PATATAS",   emoji: "🍟", correct: "no" },
-        { id: "tarta",    label: "TARTA",     emoji: "🍰", correct: "no" }
+        { id: "manzana",   label: "MANZANA",   emoji: "🍎", correct: "yes" },
+        { id: "agua",      label: "AGUA",       emoji: "💧", correct: "yes" },
+        { id: "pan",       label: "PAN",        emoji: "🍞", correct: "yes" },
+        { id: "verduras",  label: "VERDURAS",   emoji: "🥦", correct: "yes" },
+        { id: "yogur",     label: "YOGUR",      emoji: "🥛", correct: "yes" },
+        { id: "pescado",   label: "PESCADO",    emoji: "🐟", correct: "yes" },
+        { id: "refresco",  label: "REFRESCO",   emoji: "🥤", correct: "no"  },
+        { id: "caramelos", label: "CARAMELOS",  emoji: "🍬", correct: "no"  },
+        { id: "patatas",   label: "PATATAS",    emoji: "🍟", correct: "no"  },
+        { id: "tarta",     label: "TARTA",      emoji: "🍰", correct: "no"  }
       ];
 
-      const frame = document.getElementById("frame");
-      const foodRow = document.getElementById("foodRow");
-      const zoneYes = document.getElementById("zoneYes");
-      const zoneNo = document.getElementById("zoneNo");
-      const toast = document.getElementById("toast");
-      const confetti = document.getElementById("confetti");
-      const statusText = document.getElementById("statusText");
-      const scoreMini = document.getElementById("scoreMini");
-      const badge = document.getElementById("badge");
+      const frame        = document.getElementById("frame");
+      const foodRow      = document.getElementById("foodRow");
+      const zoneYes      = document.getElementById("zoneYes");
+      const zoneNo       = document.getElementById("zoneNo");
+      const toast        = document.getElementById("toast");
+      const confetti     = document.getElementById("confetti");
+      const statusText   = document.getElementById("statusText");
+      const scoreMini    = document.getElementById("scoreMini");
+      const badge        = document.getElementById("badge");
       const remainingPill = document.getElementById("remainingPill");
-
       const stomachState = document.getElementById("stomachState");
-      const mouth = document.getElementById("mouth");
-      const p1 = document.getElementById("p1");
-      const p2 = document.getElementById("p2");
-      const b1 = document.getElementById("b1");
-      const b2 = document.getElementById("b2");
-      const b3 = document.getElementById("b3");
-
-      const sndOk = document.getElementById("sndOk");
-      const sndBad = document.getElementById("sndBad");
+      const mouth        = document.getElementById("mouth");
+      const p1           = document.getElementById("p1");
+      const p2           = document.getElementById("p2");
+      const b1           = document.getElementById("b1");
+      const b2           = document.getElementById("b2");
+      const b3           = document.getElementById("b3");
+      const sndOk        = document.getElementById("sndOk");
+      const sndBad       = document.getElementById("sndBad");
 
       let solved = 0;
-      let total = foods.length;
+      const total = foods.length;
 
-      let drag = {
-        el: null,
-        id: null,
-        startX: 0,
-        startY: 0,
-        baseLeft: 0,
-        baseTop: 0,
-        pointerId: null
-      };
+      let drag = { el: null, id: null, startX: 0, startY: 0, baseLeft: 0, baseTop: 0, pointerId: null };
 
       function shuffle(arr){
         const a = arr.slice();
-        for(let i=a.length-1;i>0;i--){
-          const j = Math.floor(Math.random()*(i+1));
+        for(let i = a.length - 1; i > 0; i--){
+          const j = Math.floor(Math.random() * (i + 1));
           [a[i], a[j]] = [a[j], a[i]];
         }
         return a;
       }
 
-      function setStatus(text){
-        statusText.textContent = text;
-      }
+      function setStatus(text){ statusText.textContent = text; }
 
       function updateCounters(){
         scoreMini.textContent = solved + " / " + total;
@@ -916,37 +550,30 @@
       function showToast(text, kind){
         toast.textContent = text;
         toast.className = "toast show " + (kind || "");
-        window.clearTimeout(showToast._t);
-        showToast._t = window.setTimeout(() => {
-          toast.className = "toast";
-        }, 700);
+        clearTimeout(showToast._t);
+        showToast._t = setTimeout(() => { toast.className = "toast"; }, 700);
       }
 
-      
       function _ensureOptionalAudio(a){
         if(!a) return false;
         if(a.getAttribute("data-disabled") === "1") return false;
         if(!a.src || a.src === location.href){
-          var ds = a.getAttribute("data-src");
+          const ds = a.getAttribute("data-src");
           if(ds){
             a.src = ds;
             a.addEventListener("error", function(){
-              try{ a.setAttribute("data-disabled","1"); a.removeAttribute("src"); a.src = ""; }catch(e){}
+              try{ a.setAttribute("data-disabled","1"); a.removeAttribute("src"); }catch(e){}
             }, { once: true });
-          }else{
-            return false;
-          }
+          } else { return false; }
         }
         return !!a.src;
       }
-function playSound(ok){
+
+      function playSound(ok){
         try{
           const a = ok ? sndOk : sndBad;
-          
-          
           if(!_ensureOptionalAudio(a)) return;
-if(!_ensureOptionalAudio(a)) return;
-a.currentTime = 0;
+          a.currentTime = 0;
           a.play();
         }catch(e){}
       }
@@ -956,107 +583,88 @@ a.currentTime = 0;
       }
 
       function highlightZone(zone, on){
-        if(on) zone.classList.add("highlight");
-        else zone.classList.remove("highlight");
+        zone.classList.toggle("highlight", on);
       }
 
       function setStomachMood(kind){
-        stomachState.classList.remove("good", "bad");
+        stomachState.classList.remove("good","bad");
         mouth.style.borderRadius = "0 0 999px 999px";
-        mouth.style.height = "60px";
-        b1.style.opacity = "0";
-        b2.style.opacity = "0";
-        b3.style.opacity = "0";
+        mouth.style.height = "";
+        b1.style.opacity = "0"; b2.style.opacity = "0"; b3.style.opacity = "0";
 
         if(kind === "good"){
           stomachState.classList.add("good");
           stomachState.textContent = "¡ME SIENTO BIEN!";
+          badge.classList.add("ok"); badge.classList.remove("bad");
           blink();
           popConfetti();
-        }else if(kind === "bad"){
+        } else if(kind === "bad"){
           stomachState.classList.add("bad");
           stomachState.textContent = "AY... ¡ESO MOLESTA!";
-          mouth.style.height = "48px";
+          badge.classList.add("bad"); badge.classList.remove("ok");
+          mouth.style.height = "44px";
           mouth.style.borderRadius = "999px";
           showBubbles();
-        }else if(kind === "win"){
+        } else if(kind === "win"){
           stomachState.classList.add("good");
           stomachState.textContent = "¡GENIAL! ¡LO HAS HECHO!";
+          badge.classList.add("ok"); badge.classList.remove("bad");
           blink(true);
           popConfetti(40);
-        }else{
+        } else {
           stomachState.textContent = "ESTOY LISTO PARA COMER";
+          badge.classList.remove("ok","bad");
         }
       }
 
       function blink(big){
         const y = big ? 22 : 30;
-        p1.style.top = y + "px";
-        p2.style.top = y + "px";
-        window.setTimeout(() => {
-          p1.style.top = "30px";
-          p2.style.top = "30px";
-        }, 140);
+        p1.style.top = y + "px"; p2.style.top = y + "px";
+        setTimeout(() => { p1.style.top = "30px"; p2.style.top = "30px"; }, 140);
       }
 
       function showBubbles(){
         const wrapRect = document.querySelector(".stomachWrap").getBoundingClientRect();
         const pts = [
-          { el: b1, x: wrapRect.left + wrapRect.width*0.25, y: wrapRect.top + wrapRect.height*0.62 },
-          { el: b2, x: wrapRect.left + wrapRect.width*0.55, y: wrapRect.top + wrapRect.height*0.54 },
-          { el: b3, x: wrapRect.left + wrapRect.width*0.70, y: wrapRect.top + wrapRect.height*0.67 }
+          { el: b1, x: wrapRect.width * 0.25, y: wrapRect.height * 0.62 },
+          { el: b2, x: wrapRect.width * 0.55, y: wrapRect.height * 0.54 },
+          { el: b3, x: wrapRect.width * 0.70, y: wrapRect.height * 0.67 }
         ];
         pts.forEach((p, idx) => {
-          p.el.style.left = (p.x - wrapRect.left) + "px";
-          p.el.style.top = (p.y - wrapRect.top) + "px";
+          p.el.style.left = p.x + "px"; p.el.style.top = p.y + "px";
           p.el.style.opacity = "1";
-          p.el.style.transform = "translate(-50%, -50%) scale(" + (1 + idx*0.15) + ")";
+          p.el.style.transform = "translate(-50%,-50%) scale(" + (1 + idx * 0.15) + ")";
         });
-        window.setTimeout(() => {
-          b1.style.opacity = "0";
-          b2.style.opacity = "0";
-          b3.style.opacity = "0";
-        }, 650);
+        setTimeout(() => { b1.style.opacity = "0"; b2.style.opacity = "0"; b3.style.opacity = "0"; }, 650);
       }
 
       function popConfetti(count){
         confetti.innerHTML = "";
         const n = count || 22;
         const colors = [
-          "rgba(124,58,237,0.9)",
-          "rgba(6,182,212,0.9)",
-          "rgba(34,197,94,0.9)",
-          "rgba(251,191,36,0.9)",
-          "rgba(239,68,68,0.9)",
-          "rgba(255,255,255,0.9)"
+          "rgba(124,58,237,0.9)","rgba(6,182,212,0.9)","rgba(34,197,94,0.9)",
+          "rgba(251,191,36,0.9)","rgba(239,68,68,0.9)","rgba(255,255,255,0.9)"
         ];
         const rect = frame.getBoundingClientRect();
-        for(let i=0;i<n;i++){
+        for(let i = 0; i < n; i++){
           const piece = document.createElement("i");
-          const x = rect.width*0.5 + (Math.random()*260 - 130);
-          const y = rect.height*0.42 + (Math.random()*70 - 35);
-          piece.style.left = x + "px";
-          piece.style.top = y + "px";
-          piece.style.background = colors[Math.floor(Math.random()*colors.length)];
-          piece.style.transform = "translateY(0) rotate(" + (Math.random()*60) + "deg)";
-          piece.style.animationDelay = (Math.random()*120) + "ms";
+          piece.style.left = (rect.width * 0.5 + (Math.random() * 260 - 130)) + "px";
+          piece.style.top  = (rect.height * 0.42 + (Math.random() * 70 - 35)) + "px";
+          piece.style.background = colors[Math.floor(Math.random() * colors.length)];
+          piece.style.animationDelay = (Math.random() * 120) + "ms";
           confetti.appendChild(piece);
         }
-        window.setTimeout(() => confetti.innerHTML = "", 980);
+        setTimeout(() => confetti.innerHTML = "", 980);
       }
 
       function buildFoods(){
         foodRow.innerHTML = "";
-        const list = shuffle(foods);
-        list.forEach(item => {
+        shuffle(foods).forEach(item => {
           const card = document.createElement("div");
           card.className = "food";
           card.setAttribute("data-id", item.id);
           card.setAttribute("data-correct", item.correct);
-          card.innerHTML = `
-            <div class="emoji">${item.emoji}</div>
-            <div class="label">${item.label}</div>
-          `;
+          card.innerHTML = `<div class="emoji">${item.emoji}</div><div class="label">${item.label}</div>`;
           foodRow.appendChild(card);
           enableDrag(card);
         });
@@ -1066,30 +674,20 @@ a.currentTime = 0;
         el.addEventListener("pointerdown", (ev) => {
           if(el.classList.contains("disabled")) return;
           ev.preventDefault();
-
-          drag.el = el;
-          drag.id = el.getAttribute("data-id");
+          drag.el = el; drag.id = el.getAttribute("data-id");
           drag.pointerId = ev.pointerId;
           el.setPointerCapture(ev.pointerId);
-
           const r = el.getBoundingClientRect();
           const fr = frame.getBoundingClientRect();
           drag.baseLeft = r.left - fr.left;
-          drag.baseTop = r.top - fr.top;
-
-          drag.startX = ev.clientX;
-          drag.startY = ev.clientY;
-
+          drag.baseTop  = r.top  - fr.top;
+          drag.startX = ev.clientX; drag.startY = ev.clientY;
           el.classList.add("dragging");
           el.style.position = "absolute";
-          el.style.left = drag.baseLeft + "px";
-          el.style.top = drag.baseTop + "px";
-          el.style.width = r.width + "px";
-          el.style.height = r.height + "px";
+          el.style.left = drag.baseLeft + "px"; el.style.top = drag.baseTop + "px";
+          el.style.width = r.width + "px"; el.style.height = r.height + "px";
           el.style.margin = "0";
-
           frame.appendChild(el);
-
           setStatus("SUELTA EN LA BANDEJA CORRECTA");
           badge.textContent = "JUGANDO";
         }, { passive: false });
@@ -1097,44 +695,27 @@ a.currentTime = 0;
         el.addEventListener("pointermove", (ev) => {
           if(!drag.el || drag.el !== el) return;
           ev.preventDefault();
-
-          const dx = ev.clientX - drag.startX;
-          const dy = ev.clientY - drag.startY;
-
-          const left = drag.baseLeft + dx;
-          const top  = drag.baseTop + dy;
-
-          el.style.left = left + "px";
-          el.style.top  = top + "px";
-
+          el.style.left = (drag.baseLeft + ev.clientX - drag.startX) + "px";
+          el.style.top  = (drag.baseTop  + ev.clientY - drag.startY) + "px";
           const rEl = el.getBoundingClientRect();
-          const rYes = zoneYes.getBoundingClientRect();
-          const rNo = zoneNo.getBoundingClientRect();
-
-          highlightZone(zoneYes, rectsOverlap(rEl, rYes));
-          highlightZone(zoneNo, rectsOverlap(rEl, rNo));
+          highlightZone(zoneYes, rectsOverlap(rEl, zoneYes.getBoundingClientRect()));
+          highlightZone(zoneNo,  rectsOverlap(rEl, zoneNo.getBoundingClientRect()));
         }, { passive: false });
 
         el.addEventListener("pointerup", (ev) => {
           if(!drag.el || drag.el !== el) return;
           ev.preventDefault();
-
-          highlightZone(zoneYes, false);
-          highlightZone(zoneNo, false);
-
-          const rEl = el.getBoundingClientRect();
+          highlightZone(zoneYes, false); highlightZone(zoneNo, false);
+          const rEl  = el.getBoundingClientRect();
           const rYes = zoneYes.getBoundingClientRect();
-          const rNo = zoneNo.getBoundingClientRect();
-
+          const rNo  = zoneNo.getBoundingClientRect();
           let droppedZone = null;
           if(rectsOverlap(rEl, rYes)) droppedZone = "yes";
           else if(rectsOverlap(rEl, rNo)) droppedZone = "no";
-
           const correct = el.getAttribute("data-correct");
-
           if(droppedZone && droppedZone === correct){
             placeCard(el, droppedZone);
-            solved += 1;
+            solved++;
             updateCounters();
             playSound(true);
             showToast("¡BIEN!", "good");
@@ -1146,28 +727,24 @@ a.currentTime = 0;
               showToast("¡LO HAS CONSEGUIDO!", "good");
               setStomachMood("win");
             }
-          }else{
+          } else {
             playSound(false);
             showToast("INTENTA OTRA VEZ", "bad");
             setStomachMood("bad");
             setStatus("UPS... PRUEBA DE NUEVO");
             snapBack(el);
           }
-
           drag.el.classList.remove("dragging");
           try{ drag.el.releasePointerCapture(drag.pointerId); }catch(e){}
-          drag.el = null;
-          drag.pointerId = null;
+          drag.el = null; drag.pointerId = null;
         }, { passive: false });
 
-        el.addEventListener("pointercancel", (ev) => {
+        el.addEventListener("pointercancel", () => {
           if(!drag.el || drag.el !== el) return;
-          highlightZone(zoneYes, false);
-          highlightZone(zoneNo, false);
+          highlightZone(zoneYes, false); highlightZone(zoneNo, false);
           snapBack(el);
           drag.el.classList.remove("dragging");
-          drag.el = null;
-          drag.pointerId = null;
+          drag.el = null; drag.pointerId = null;
         }, { passive: false });
       }
 
@@ -1175,9 +752,8 @@ a.currentTime = 0;
         el.classList.remove("dragging");
         el.style.transition = "transform 120ms ease, left 140ms ease, top 140ms ease";
         el.style.transform = "scale(0.98)";
-        window.setTimeout(() => {
-          el.style.transition = "";
-          el.style.transform = "";
+        setTimeout(() => {
+          el.style.transition = ""; el.style.transform = "";
           rebuildToTray(el);
         }, 160);
       }
@@ -1189,10 +765,7 @@ a.currentTime = 0;
         fresh.className = "food";
         fresh.setAttribute("data-id", original.id);
         fresh.setAttribute("data-correct", original.correct);
-        fresh.innerHTML = `
-          <div class="emoji">${original.emoji}</div>
-          <div class="label">${original.label}</div>
-        `;
+        fresh.innerHTML = `<div class="emoji">${original.emoji}</div><div class="label">${original.label}</div>`;
         enableDrag(fresh);
         foodRow.appendChild(fresh);
         el.remove();
@@ -1200,23 +773,11 @@ a.currentTime = 0;
 
       function placeCard(el, zone){
         el.classList.add("disabled");
-        el.style.position = "";
-        el.style.left = "";
-        el.style.top = "";
-        el.style.width = "";
-        el.style.height = "";
-        el.style.margin = "";
-        el.style.transform = "";
-        el.style.transition = "";
-        el.classList.remove("food");
-        el.classList.add("placed");
+        ["position","left","top","width","height","margin","transform","transition"].forEach(p => el.style[p] = "");
+        el.classList.remove("food"); el.classList.add("placed");
         const emoji = el.querySelector(".emoji")?.textContent || "";
         const label = el.querySelector(".label")?.textContent || "";
-        el.innerHTML = `
-          <div class="emoji">${emoji}</div>
-          <div class="label">${label}</div>
-        `;
-
+        el.innerHTML = `<div class="emoji">${emoji}</div><div class="label">${label}</div>`;
         if(zone === "yes") zoneYes.appendChild(el);
         else zoneNo.appendChild(el);
       }
@@ -1224,6 +785,7 @@ a.currentTime = 0;
       function reset(){
         solved = 0;
         badge.textContent = "LISTO";
+        badge.classList.remove("ok","bad");
         setStatus("ARRASTRA Y SUELTA");
         updateCounters();
         setStomachMood("neutral");
@@ -1238,33 +800,24 @@ a.currentTime = 0;
         else location.href = "index.html";
       }
 
-      // BOTONES
       document.getElementById("btnReset").addEventListener("click", reset);
       document.getElementById("btnBack").addEventListener("click", goBack);
 
-      // ANIMACIÓN OJOS MIRANDO
+      // OJOS SIGUEN EL PUNTERO
       function trackEyes(){
         const wrap = document.querySelector(".stomachWrap");
-        const r = wrap.getBoundingClientRect();
-        const cx = r.left + r.width/2;
-        const cy = r.top + r.height/2;
-
         function move(ev){
-          const x = ev.clientX ?? cx;
-          const y = ev.clientY ?? cy;
-          const dx = Math.max(-18, Math.min(18, (x - cx) / 18));
-          const dy = Math.max(-14, Math.min(14, (y - cy) / 22));
-          p1.style.left = (28 + dx) + "px";
-          p1.style.top  = (30 + dy) + "px";
-          p2.style.left = (28 + dx) + "px";
-          p2.style.top  = (30 + dy) + "px";
+          const r = wrap.getBoundingClientRect();
+          const cx = r.left + r.width / 2, cy = r.top + r.height / 2;
+          const dx = Math.max(-18, Math.min(18, (ev.clientX - cx) / 18));
+          const dy = Math.max(-14, Math.min(14, (ev.clientY - cy) / 22));
+          p1.style.left = (28 + dx) + "px"; p1.style.top = (30 + dy) + "px";
+          p2.style.left = (28 + dx) + "px"; p2.style.top = (30 + dy) + "px";
         }
-
         window.addEventListener("pointermove", move, { passive: true });
         window.addEventListener("pointerdown", move, { passive: true });
       }
 
-      // INICIO
       updateCounters();
       buildFoods();
       trackEyes();
