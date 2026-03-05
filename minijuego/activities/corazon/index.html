@@ -11,34 +11,24 @@
       --shadow-soft: 0 10px 25px rgba(0,0,0,0.14);
       --radius-xl: 28px;
       --ink: #1f2a37;
-      --bottom-h: 112px;
+      --bottom-h: min(112px, 13vh);
     }
-
     * { box-sizing: border-box; }
     html, body {
       width: 100%; height: 100%; margin: 0;
       font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-      color: var(--ink);
-      overflow: hidden;
-      user-select: none;
-      -webkit-user-select: none;
-      touch-action: none;
-      background: #0b1220;
+      color: var(--ink); overflow: hidden;
+      user-select: none; -webkit-user-select: none;
+      touch-action: none; background: #0b1220;
     }
-
-    /* FONDO */
     body::before {
-      content: "";
-      position: fixed; inset: -40px;
+      content: ""; position: fixed; inset: -40px;
       background-image: url("../../assets/fondo_parque.webp");
       background-size: cover; background-position: center;
-      filter: blur(14px) saturate(1.2);
-      transform: scale(1.08);
-      z-index: -2;
+      filter: blur(14px) saturate(1.2); transform: scale(1.08); z-index: -2;
     }
     body::after {
-      content: "";
-      position: fixed; inset: 0;
+      content: ""; position: fixed; inset: 0;
       background: linear-gradient(180deg, rgba(255,255,255,0.12), rgba(255,255,255,0.05));
       z-index: -1;
     }
@@ -46,7 +36,7 @@
     .stage {
       width: 100vw; height: 100vh;
       display: flex; justify-content: center; align-items: center;
-      padding: 18px;
+      padding: min(18px, 1.5vw);
     }
     .frame {
       width: min(1920px,100vw); height: min(1080px,100vh);
@@ -55,20 +45,16 @@
 
     /* HEADER */
     .header {
-      position: absolute; left: 22px; right: 22px; top: 18px;
-      padding: 14px 20px;
+      position: absolute; left: min(22px,1.5vw); right: min(22px,1.5vw); top: min(18px,1.5vh);
+      padding: clamp(8px,1.2vh,14px) clamp(10px,1.2vw,20px);
       border-radius: var(--radius-xl);
-      background: rgba(255,255,255,0.82);
-      border: 2px solid rgba(255,255,255,0.75);
+      background: rgba(255,255,255,0.82); border: 2px solid rgba(255,255,255,0.75);
       box-shadow: var(--shadow-soft);
-      display: flex; align-items: center;
-      justify-content: space-between; gap: 14px;
+      display: flex; align-items: center; justify-content: space-between; gap: clamp(8px,1vw,14px);
     }
     .title {
-      font-size: 40px; font-weight: 1000;
-      letter-spacing: 1px; text-transform: uppercase;
-      display: flex; align-items: center; gap: 12px;
-      white-space: nowrap;
+      font-size: clamp(18px,3vw,40px); font-weight: 1000; letter-spacing: 1px;
+      text-transform: uppercase; display: flex; align-items: center; gap: 8px; white-space: nowrap;
       animation: titlePulse 2.5s ease-in-out infinite;
     }
     @keyframes titlePulse {
@@ -76,69 +62,54 @@
       50%      { filter: drop-shadow(0 0 12px rgba(239,68,68,0.4)); }
     }
     .hint {
-      font-size: 17px; font-weight: 900; color: #3b556f;
+      font-size: clamp(12px,1.4vw,17px); font-weight: 900; color: #3b556f;
       text-transform: uppercase; text-align: right; line-height: 1.2;
     }
     .badge {
-      font-size: 17px; font-weight: 1000;
-      padding: 9px 16px; border-radius: 999px;
-      background: rgba(124,58,237,0.12);
-      border: 2px solid rgba(124,58,237,0.28);
-      color: #3b2a8f;
-      text-transform: uppercase; white-space: nowrap;
-      min-width: 130px; text-align: center;
+      font-size: clamp(12px,1.3vw,17px); font-weight: 1000;
+      padding: 7px 12px; border-radius: 999px;
+      background: rgba(124,58,237,0.12); border: 2px solid rgba(124,58,237,0.28);
+      color: #3b2a8f; text-transform: uppercase; white-space: nowrap;
+      min-width: 0; text-align: center;
       transition: background 0.3s, color 0.3s;
     }
 
     /* MAIN */
     .main {
-      position: absolute; left: 22px; right: 22px;
-      top: 112px; bottom: calc(var(--bottom-h) + 18px);
+      position: absolute; left: min(22px,1.5vw); right: min(22px,1.5vw);
+      top: clamp(80px,10vh,112px); bottom: calc(var(--bottom-h) + min(18px,1.5vh));
       display: grid; grid-template-rows: 1fr;
     }
     .panel {
-      background: var(--panel-bg);
-      border: 2px solid rgba(255,255,255,0.8);
-      border-radius: 34px;
-      box-shadow: var(--shadow);
-      padding: 16px;
-      position: relative; overflow: hidden;
+      background: var(--panel-bg); border: 2px solid rgba(255,255,255,0.8);
+      border-radius: 34px; box-shadow: var(--shadow);
+      padding: clamp(10px,1.5vh,16px); position: relative; overflow: hidden;
     }
 
     /* VIDEO BOX */
     .videoBox, .menuBox {
-      width: 100%; height: 100%;
-      border-radius: 26px;
-      background: rgba(255,255,255,0.62);
-      border: 2px solid rgba(0,0,0,0.06);
+      width: 100%; height: 100%; border-radius: 26px;
+      background: rgba(255,255,255,0.62); border: 2px solid rgba(0,0,0,0.06);
       overflow: hidden; position: relative;
     }
-    .video {
-      width: 100%; height: 100%;
-      object-fit: contain; background: rgba(0,0,0,0.12);
-    }
+    .video { width: 100%; height: 100%; object-fit: contain; background: rgba(0,0,0,0.12); }
     .overlay {
-      position: absolute; inset: 0;
-      display: grid; place-items: center;
-      background: rgba(255,255,255,0.28);
-      backdrop-filter: blur(6px);
-      opacity: 0; pointer-events: none;
-      transition: opacity 180ms ease;
+      position: absolute; inset: 0; display: grid; place-items: center;
+      background: rgba(255,255,255,0.28); backdrop-filter: blur(6px);
+      opacity: 0; pointer-events: none; transition: opacity 180ms ease;
     }
     .overlay.show { opacity: 1; pointer-events: auto; }
 
     /* PLAY BUTTON */
     .bigButton {
-      width: min(680px, 92%); height: 110px;
-      border-radius: 28px;
-      border: 3px solid rgba(255,255,255,0.9);
+      width: min(680px, 92%); height: min(110px, 13vh);
+      border-radius: 28px; border: 3px solid rgba(255,255,255,0.9);
       box-shadow: var(--shadow-soft);
       background: linear-gradient(145deg, #fff9f0, #fef3c7);
-      font-size: 32px; font-weight: 1000;
-      text-transform: uppercase; letter-spacing: 1px;
-      color: #92400e; cursor: pointer; touch-action: manipulation;
-      display: flex; align-items: center;
-      justify-content: center; gap: 14px; padding: 0 20px;
+      font-size: clamp(16px,2.5vw,32px); font-weight: 1000;
+      text-transform: uppercase; letter-spacing: 1px; color: #92400e;
+      cursor: pointer; touch-action: manipulation;
+      display: flex; align-items: center; justify-content: center; gap: 12px; padding: 0 20px;
       transition: transform 0.15s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.15s;
       animation: playPulse 2s ease-in-out infinite;
     }
@@ -150,22 +121,18 @@
     .bigButton:active { transform: scale(0.96); }
 
     .skipRow {
-      position: absolute; left: 16px; right: 16px; bottom: 16px;
-      display: flex; gap: 12px; justify-content: space-between;
-      pointer-events: none;
+      position: absolute; left: 12px; right: 12px; bottom: 12px;
+      display: flex; gap: 10px; justify-content: space-between; pointer-events: none;
     }
     .miniBtn {
       pointer-events: auto;
-      height: 72px; border-radius: 20px;
-      border: 2px solid rgba(255,255,255,0.85);
-      box-shadow: var(--shadow-soft);
+      height: min(72px,9vh); border-radius: 20px;
+      border: 2px solid rgba(255,255,255,0.85); box-shadow: var(--shadow-soft);
       background: rgba(255,255,255,0.90);
-      font-size: 24px; font-weight: 1000;
-      text-transform: uppercase; letter-spacing: 1px;
-      color: #1f2a37; cursor: pointer; touch-action: manipulation;
-      padding: 0 18px;
-      display: flex; align-items: center;
-      justify-content: center; gap: 10px;
+      font-size: clamp(13px,1.8vw,24px); font-weight: 1000;
+      text-transform: uppercase; letter-spacing: 1px; color: #1f2a37;
+      cursor: pointer; touch-action: manipulation; padding: 0 clamp(10px,1.5vw,18px);
+      display: flex; align-items: center; justify-content: center; gap: 8px;
       transition: transform 0.12s;
     }
     .miniBtn:hover  { transform: translateY(-2px); }
@@ -173,160 +140,108 @@
 
     /* MENU BOX */
     .menuTop {
-      display: flex; align-items: center;
-      justify-content: space-between; gap: 12px;
-      margin-bottom: 14px;
+      display: flex; align-items: center; justify-content: space-between; gap: 10px;
+      margin-bottom: clamp(8px,1.2vh,14px);
     }
-    .menuTitle {
-      font-size: 28px; font-weight: 1100;
-      text-transform: uppercase; letter-spacing: 1px; color: #111827;
-    }
+    .menuTitle { font-size: clamp(16px,2.2vw,28px); font-weight: 1100; text-transform: uppercase; letter-spacing: 1px; color: #111827; }
 
     .grid {
-      width: 100%; height: calc(100% - 64px);
-      display: grid; gap: 14px;
-      grid-template-columns: repeat(3, 1fr);
-      grid-auto-rows: 1fr; overflow: hidden;
+      width: 100%; height: calc(100% - clamp(44px,6vh,64px));
+      display: grid; gap: clamp(8px,1.2vw,14px);
+      grid-template-columns: repeat(3, 1fr); grid-auto-rows: 1fr; overflow: hidden;
     }
 
     /* ACTIVITY CARDS */
     .card {
-      border-radius: 28px;
-      background: rgba(255,255,255,0.95);
-      border: 3px solid rgba(255,255,255,0.9);
-      box-shadow: 0 16px 34px rgba(0,0,0,0.13);
-      display: grid; place-items: center;
-      padding: 16px; cursor: pointer; touch-action: manipulation;
+      border-radius: clamp(16px,2vw,28px); background: rgba(255,255,255,0.95);
+      border: 3px solid rgba(255,255,255,0.9); box-shadow: 0 16px 34px rgba(0,0,0,0.13);
+      display: grid; place-items: center; padding: clamp(10px,1.5vh,16px);
+      cursor: pointer; touch-action: manipulation;
       position: relative; overflow: hidden;
-      transition: transform 0.2s cubic-bezier(0.34,1.56,0.64,1),
-                  box-shadow 0.2s, border-color 0.2s;
+      transition: transform 0.2s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.2s, border-color 0.2s;
       animation: cardIn 0.4s cubic-bezier(0.34,1.56,0.64,1) backwards;
     }
     @keyframes cardIn {
       0%   { transform: scale(0.7) translateY(20px); opacity: 0; }
       100% { transform: scale(1)   translateY(0);    opacity: 1; }
     }
-    /* Brillito interior */
     .card::before {
-      content: '';
-      position: absolute; top: 0; left: 0; right: 0;
-      height: 50%; border-radius: 28px 28px 0 0;
-      background: linear-gradient(180deg, rgba(255,255,255,0.6), transparent);
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 50%;
+      border-radius: inherit; background: linear-gradient(180deg, rgba(255,255,255,0.6), transparent);
       pointer-events: none;
     }
-    .card:hover {
-      transform: translateY(-6px) scale(1.04);
-      box-shadow: 0 26px 50px rgba(0,0,0,0.18);
-      border-color: rgba(124,58,237,0.3);
-    }
+    .card:hover { transform: translateY(-6px) scale(1.04); box-shadow: 0 26px 50px rgba(0,0,0,0.18); border-color: rgba(124,58,237,0.3); }
     .card:active { transform: scale(0.96); }
 
     .emoji {
-      font-size: 82px; line-height: 1;
-      filter: drop-shadow(0 12px 14px rgba(0,0,0,0.10));
+      font-size: clamp(38px,6.5vh,82px); line-height: 1;
+      filter: drop-shadow(0 10px 12px rgba(0,0,0,0.10));
       transition: transform 0.2s cubic-bezier(0.34,1.56,0.64,1);
     }
     .card:hover .emoji { transform: scale(1.15) rotate(8deg); }
 
-    .label {
-      margin-top: 10px; font-size: 22px; font-weight: 1100;
-      text-transform: uppercase; letter-spacing: 0.8px;
-      color: #22314a; text-align: center;
-    }
-    .label-sub {
-      margin-top: 4px; font-size: 13px; font-weight: 800;
-      opacity: 0.55; text-transform: uppercase; letter-spacing: 0.5px;
-    }
+    .label { margin-top: clamp(6px,0.8vh,10px); font-size: clamp(14px,1.8vh,22px); font-weight: 1100; text-transform: uppercase; letter-spacing: 0.8px; color: #22314a; text-align: center; }
+    .label-sub { margin-top: 3px; font-size: clamp(10px,1.2vh,13px); font-weight: 800; opacity: 0.55; text-transform: uppercase; letter-spacing: 0.5px; }
 
-    /* COMPLETED BADGE */
     .card.done::after {
-      content: '✅';
-      position: absolute; top: 10px; right: 12px;
-      font-size: 24px;
+      content: '✅'; position: absolute; top: 8px; right: 10px;
+      font-size: clamp(16px,2vh,24px);
       animation: doneIn 0.4s cubic-bezier(0.34,1.56,0.64,1);
     }
-    @keyframes doneIn {
-      0%   { transform: scale(0) rotate(-180deg); opacity: 0; }
-      100% { transform: scale(1) rotate(0deg); opacity: 1; }
-    }
-    .card.done {
-      background: linear-gradient(145deg, rgba(255,255,255,0.95), rgba(220,252,231,0.85));
-      border-color: rgba(134,239,172,0.7);
-    }
+    @keyframes doneIn { 0% { transform: scale(0) rotate(-180deg); opacity: 0; } 100% { transform: scale(1) rotate(0deg); opacity: 1; } }
+    .card.done { background: linear-gradient(145deg, rgba(255,255,255,0.95), rgba(220,252,231,0.85)); border-color: rgba(134,239,172,0.7); }
 
     /* BOTTOM BAR */
     .bottomBar {
       position: absolute; left: 0; right: 0; bottom: 0;
-      height: var(--bottom-h); padding: 14px 18px;
-      background: rgba(255,255,255,0.88);
-      border-top: 2px solid rgba(255,255,255,0.85);
+      height: var(--bottom-h); padding: clamp(8px,1vh,14px) clamp(10px,1.2vw,18px);
+      background: rgba(255,255,255,0.88); border-top: 2px solid rgba(255,255,255,0.85);
       box-shadow: 0 -18px 45px rgba(0,0,0,0.14);
-      display: grid;
-      grid-template-columns: 1fr 1fr 1.4fr;
-      gap: 14px; align-items: center;
+      display: grid; grid-template-columns: 1fr 1fr 1.4fr; gap: clamp(8px,1vw,14px); align-items: center;
     }
     .btn {
-      height: 78px; border-radius: 22px;
-      border: 2px solid rgba(0,0,0,0.08);
-      box-shadow: var(--shadow-soft);
+      height: min(78px,9.5vh); border-radius: 22px;
+      border: 2px solid rgba(0,0,0,0.08); box-shadow: var(--shadow-soft);
       background: rgba(255,255,255,0.92);
-      font-size: 26px; font-weight: 1000;
-      text-transform: uppercase; letter-spacing: 1px;
-      color: #1f2a37; cursor: pointer; touch-action: manipulation;
-      display: flex; align-items: center;
-      justify-content: center; gap: 10px; padding: 0 18px;
+      font-size: clamp(14px,1.8vw,26px); font-weight: 1000;
+      text-transform: uppercase; letter-spacing: 1px; color: #1f2a37;
+      cursor: pointer; touch-action: manipulation;
+      display: flex; align-items: center; justify-content: center; gap: 8px; padding: 0 clamp(10px,1.2vw,18px);
       transition: transform 0.12s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.12s;
     }
     .btn:hover  { transform: translateY(-2px); box-shadow: 0 14px 30px rgba(0,0,0,0.14); }
     .btn:active { transform: translateY(1px) scale(0.97); }
-    .btn.primary {
-      background: linear-gradient(145deg, rgba(124,58,237,0.12), rgba(124,58,237,0.18));
-      border-color: rgba(124,58,237,0.26); color: #2f1d78;
-    }
-    .btn.secondary {
-      background: linear-gradient(145deg, rgba(6,182,212,0.10), rgba(6,182,212,0.16));
-      border-color: rgba(6,182,212,0.22); color: #0b5563;
-    }
+    .btn.primary  { background: linear-gradient(145deg, rgba(124,58,237,0.12), rgba(124,58,237,0.18)); border-color: rgba(124,58,237,0.26); color: #2f1d78; }
+    .btn.secondary{ background: linear-gradient(145deg, rgba(6,182,212,0.10), rgba(6,182,212,0.16)); border-color: rgba(6,182,212,0.22); color: #0b5563; }
 
-    /* STATUS BOX */
     .statusBox {
-      height: 78px; border-radius: 22px;
-      border: 2px solid rgba(0,0,0,0.08);
-      box-shadow: var(--shadow-soft);
+      height: min(78px,9.5vh); border-radius: 22px;
+      border: 2px solid rgba(0,0,0,0.08); box-shadow: var(--shadow-soft);
       background: rgba(255,255,255,0.92);
-      display: flex; flex-direction: column;
-      justify-content: center; padding: 8px 16px; gap: 4px;
+      display: flex; flex-direction: column; justify-content: center; padding: 6px clamp(10px,1.2vw,16px); gap: 4px;
     }
     .statusTop {
-      display: flex; align-items: center;
-      justify-content: space-between;
-      font-size: 16px; font-weight: 1000;
-      text-transform: uppercase; color: #334155;
+      display: flex; align-items: center; justify-content: space-between;
+      font-size: clamp(11px,1.4vh,16px); font-weight: 1000; text-transform: uppercase; color: #334155;
     }
     .statusValue {
-      font-size: 22px; font-weight: 1100;
-      text-transform: uppercase; color: #111827;
-      letter-spacing: 0.5px;
-      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+      font-size: clamp(14px,1.8vh,22px); font-weight: 1100; text-transform: uppercase; color: #111827;
+      letter-spacing: 0.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     }
-
-    /* PROGRESS TRACK en status */
-    .statusProgress {
-      height: 6px; background: rgba(0,0,0,0.08);
-      border-radius: 999px; overflow: hidden; margin-top: 2px;
-    }
+    .statusProgress { height: 6px; background: rgba(0,0,0,0.08); border-radius: 999px; overflow: hidden; margin-top: 2px; }
     .statusProgressFill {
-      height: 100%;
-      background: linear-gradient(90deg, #a78bfa, #7c3aed);
-      border-radius: 999px;
+      height: 100%; background: linear-gradient(90deg, #a78bfa, #7c3aed); border-radius: 999px;
       transition: width 0.5s cubic-bezier(0.34,1.56,0.64,1);
     }
 
-    @media (max-width: 1400px) {
-      .grid { grid-template-columns: repeat(2, 1fr); }
-      .emoji { font-size: 72px; }
-      .label { font-size: 20px; }
-      .title { font-size: 34px; }
+    @media (max-width: 900px) {
+      .grid { grid-template-columns: repeat(2, 1fr) !important; }
+      .emoji { font-size: clamp(32px,5.5vh,64px); }
+    }
+    @media (max-height: 700px) {
+      .bigButton { height: min(80px,12vh); }
+      .emoji { font-size: clamp(28px,5vh,55px); }
+      .grid { gap: 8px; }
     }
   </style>
 </head>
@@ -346,13 +261,11 @@
         <!-- VIDEO -->
         <div class="videoBox" id="videoBox">
           <video class="video" id="introVideo" playsinline preload="auto">
-            <source src="intro.mp4" type="video/mp4" />
+            <source src="intro.mp4"  type="video/mp4" />
             <source src="intro.webm" type="video/webm" />
           </video>
           <div class="overlay show" id="tapOverlay">
-            <button class="bigButton" id="btnPlay" type="button">
-              ▶ TOCA PARA VER EL VIDEO
-            </button>
+            <button class="bigButton" id="btnPlay" type="button">▶ TOCA PARA VER EL VIDEO</button>
           </div>
           <div class="skipRow">
             <button class="miniBtn" id="btnSkip"   type="button">⏭ SALTAR</button>
@@ -360,7 +273,7 @@
           </div>
         </div>
 
-        <!-- MENÚ ACTIVIDADES -->
+        <!-- MENÚ -->
         <div class="menuBox" id="menuBox" style="display:none;">
           <div class="menuTop">
             <div class="menuTitle">🎮 ACTIVIDADES</div>
@@ -377,10 +290,9 @@
       <button class="btn secondary" id="btnBack" >🏠 VOLVER</button>
       <div class="statusBox" role="status" aria-live="polite">
         <div class="statusTop">
-          <span>ESTADO</span>
-          <span id="miniRight">LISTO</span>
+          <span>ESTADO</span><span id="miniRight">LISTO</span>
         </div>
-        <div class="statusValue"    id="statusText">TOCA PARA EMPEZAR</div>
+        <div class="statusValue" id="statusText">TOCA PARA EMPEZAR</div>
         <div class="statusProgress">
           <div class="statusProgressFill" id="statusProgress" style="width:0%"></div>
         </div>
@@ -395,32 +307,29 @@
   "use strict";
 
   var ORGAN = {
-    id: "corazon",
-    name: "CORAZÓN",
     activities: [
-      { label:"CAMINO",  sub:"ARTERIAS", icon:"🛣️", file:"corazon_camino_arterias.html" },
-      { label:"RÁPIDO",  sub:"SEMÁFORO", icon:"🚦", file:"corazon_semaforo.html" },
+      { label:"CAMINO",  sub:"ARTERIAS",  icon:"🛣️", file:"corazon_camino_arterias.html" },
+      { label:"RÁPIDO",  sub:"SEMÁFORO",  icon:"🚦", file:"corazon_semaforo.html" },
       { label:"JUEGO",   sub:"ARRASTRAR", icon:"❤️", file:"corazon_juego.html" }
     ]
   };
 
-  var introVideo     = document.getElementById("introVideo");
-  var videoBox       = document.getElementById("videoBox");
-  var menuBox        = document.getElementById("menuBox");
-  var grid           = document.getElementById("grid");
-  var tapOverlay     = document.getElementById("tapOverlay");
-  var btnPlay        = document.getElementById("btnPlay");
-  var btnSkip        = document.getElementById("btnSkip");
-  var btnRepeat      = document.getElementById("btnRepeat");
-  var btnWatch       = document.getElementById("btnWatch");
-  var btnReset       = document.getElementById("btnReset");
-  var btnBack        = document.getElementById("btnBack");
-  var badge          = document.getElementById("badge");
-  var statusText     = document.getElementById("statusText");
-  var miniRight      = document.getElementById("miniRight");
+  var introVideo   = document.getElementById("introVideo");
+  var videoBox     = document.getElementById("videoBox");
+  var menuBox      = document.getElementById("menuBox");
+  var grid         = document.getElementById("grid");
+  var tapOverlay   = document.getElementById("tapOverlay");
+  var btnPlay      = document.getElementById("btnPlay");
+  var btnSkip      = document.getElementById("btnSkip");
+  var btnRepeat    = document.getElementById("btnRepeat");
+  var btnWatch     = document.getElementById("btnWatch");
+  var btnReset     = document.getElementById("btnReset");
+  var btnBack      = document.getElementById("btnBack");
+  var badge        = document.getElementById("badge");
+  var statusText   = document.getElementById("statusText");
+  var miniRight    = document.getElementById("miniRight");
   var statusProgress = document.getElementById("statusProgress");
 
-  // ── PROGRESO ──
   function getCompleted() {
     try {
       for (var i = 0; i < localStorage.length; i++) {
@@ -437,26 +346,22 @@
     var cards = grid.querySelectorAll(".card");
     var count = 0;
     cards.forEach(function(c) {
-      var file = c.dataset.file;
-      var completed = done.some(function(id){ return file && file.indexOf(id) !== -1; });
+      var completed = done.some(function(id){ return c.dataset.file && c.dataset.file.indexOf(id) !== -1; });
       c.classList.toggle("done", completed);
       if (completed) count++;
     });
-    // Barra de progreso
     var pct = ORGAN.activities.length > 0 ? (count / ORGAN.activities.length) * 100 : 0;
     statusProgress.style.width = pct + "%";
-    setStatus(count + " DE " + ORGAN.activities.length + " COMPLETADAS");
-    miniRight.textContent = count + "/" + ORGAN.activities.length;
+    statusText.textContent = count + " DE " + ORGAN.activities.length + " COMPLETADAS";
+    miniRight.textContent  = count + "/" + ORGAN.activities.length;
   }
 
-  // ── VISTAS ──
   function setStatus(t) { statusText.textContent = t; }
-  function setBadge(t)  { badge.textContent = t; }
 
   function showVideo() {
     menuBox.style.display = "none";
     videoBox.style.display = "block";
-    setBadge("VIDEO");
+    badge.textContent = "VIDEO";
     miniRight.textContent = "VIDEO";
     tapOverlay.classList.add("show");
     setStatus("TOCA PARA VER EL VIDEO");
@@ -465,7 +370,7 @@
   function showMenu() {
     videoBox.style.display = "none";
     menuBox.style.display  = "block";
-    setBadge("JUEGOS");
+    badge.textContent = "JUEGOS";
     refreshCards();
   }
 
@@ -482,22 +387,16 @@
     } catch(e) { tapOverlay.classList.add("show"); }
   }
 
-  // ── EVENTOS ──
-  introVideo.addEventListener("ended",  function() { showMenu(); });
-  introVideo.addEventListener("error",  function() { showMenu(); });
+  introVideo.addEventListener("ended", function() { showMenu(); });
+  introVideo.addEventListener("error", function() { showMenu(); });
 
   btnPlay.addEventListener("click",   function() { tryPlay(); });
   btnSkip.addEventListener("click",   function() { try{ introVideo.pause(); }catch(e){} showMenu(); });
   btnRepeat.addEventListener("click", function() { try{ introVideo.currentTime=0; }catch(e){} showVideo(); tryPlay(); });
   btnWatch.addEventListener("click",  function() { try{ introVideo.currentTime=0; }catch(e){} showVideo(); tryPlay(); });
+  btnReset.addEventListener("click",  function() { try{ introVideo.pause(); introVideo.currentTime=0; }catch(e){} showVideo(); });
+  btnBack.addEventListener("click",   function() { location.href="../../index.html"; });
 
-  btnReset.addEventListener("click", function() {
-    try{ introVideo.pause(); introVideo.currentTime=0; }catch(e){}
-    showVideo();
-  });
-  btnBack.addEventListener("click", function() { location.href="../../index.html"; });
-
-  // ── BUILD GRID ──
   function buildGrid() {
     grid.innerHTML = "";
     ORGAN.activities.forEach(function(a, i) {
