@@ -407,8 +407,8 @@
     </div>
   </div>
 
-  <audio id="sndOk" data-src="/asstests/aplausos.mp4" preload="none"></audio>
-  <audio id="sndBad" data-src="/asstests/ohh.mp4" preload="none"></audio>
+  <audio id="sndOk" src="/asstests/aplausos.mp4" preload="none"></audio>
+  <audio id="sndBad" src="/asstests/ohh.mp4" preload="none"></audio>
 
   <script>
     (function(){
@@ -440,11 +440,25 @@
 
       const FLOWER_COLORS = ["#ff6b6b","#6ecbff","#7ee7a4","#ffd36e","#c7a6ff","#ffb36e"];
 
+      const OBJECT_TYPES = [
+        { name: "FLORES",      emoji: null,  make: makeFlower },
+        { name: "ESTRELLAS",   emoji: "⭐",  make: null },
+        { name: "CORAZONES",   emoji: "❤️",  make: null },
+        { name: "MARIPOSAS",   emoji: "🦋",  make: null },
+        { name: "SOLES",       emoji: "☀️",  make: null },
+        { name: "LUNARES",     emoji: "🌙",  make: null },
+        { name: "PECES",       emoji: "🐟",  make: null },
+        { name: "MANZANAS",    emoji: "🍎",  make: null },
+        { name: "GLOBOS",      emoji: "🎈",  make: null },
+        { name: "PELOTAS",     emoji: "⚽",  make: null }
+      ];
+
       let round = 0;
       let hits = 0;
       let misses = 0;
       let correctAnswer = 0;
       let locked = false;
+      let currentObjType = 0;
 
       function playSound(a){
         try{ a.currentTime = 0; a.play(); }catch(e){}
@@ -492,11 +506,20 @@
         return wrap;
       }
 
+      function makeEmoji(emoji){
+        const span = document.createElement("span");
+        span.style.fontSize = "52px";
+        span.style.lineHeight = "1";
+        span.textContent = emoji;
+        return span;
+      }
+
       function placeObjects(n){
         field.innerHTML = "";
 
         const r = field.getBoundingClientRect();
         const pad = 18;
+        const objType = OBJECT_TYPES[currentObjType];
 
         const used = [];
         function okSpot(x,y){
@@ -513,8 +536,12 @@
           obj.className = "obj";
           obj.style.setProperty("--rot", (randInt(-12,12)) + "deg");
 
-          const c = FLOWER_COLORS[randInt(0, FLOWER_COLORS.length-1)];
-          obj.appendChild(makeFlower(c));
+          if(objType.make){
+            const c = FLOWER_COLORS[randInt(0, FLOWER_COLORS.length-1)];
+            obj.appendChild(objType.make(c));
+          } else {
+            obj.appendChild(makeEmoji(objType.emoji));
+          }
 
           let tries = 0;
           let x=0, y=0;
@@ -602,6 +629,13 @@
       function hideModal(){ modal.classList.remove("show"); }
 
       function nextRound(){
+        currentObjType = round % OBJECT_TYPES.length;
+        const objType = OBJECT_TYPES[currentObjType];
+        const questionEl = document.getElementById("question");
+        const badgeEl = document.getElementById("badge");
+        if(questionEl) questionEl.textContent = "¿CUÁNTAS " + objType.name + " HAY?";
+        if(badgeEl) badgeEl.textContent = objType.name;
+
         const n = randInt(MIN_N, MAX_N);
         correctAnswer = n;
         placeObjects(n);
@@ -611,6 +645,7 @@
       function startGame(){
         hideModal();
         round = 0; hits = 0; misses = 0;
+        currentObjType = 0;
         updateUI();
         nextRound();
       }

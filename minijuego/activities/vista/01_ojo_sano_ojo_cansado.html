@@ -215,8 +215,8 @@
 <body>
 <div class="bg"></div>
 
-<audio id="audioOk" preload="none" data-src="/asstests/aplausos.mp4" ></audio>
-<audio id="audioErr" preload="none" data-src="/asstests/ohh.mp4" ></audio>
+<audio id="audioOk" preload="none" src="/asstests/aplausos.mp4"></audio>
+<audio id="audioErr" preload="none" src="/asstests/ohh.mp4"></audio>
 
 <div class="app">
   <div class="top">
@@ -393,10 +393,12 @@
     card.appendChild(ico);
     card.appendChild(txt);
 
-    card.addEventListener('pointerdown', function(ev){
+    function onPointerDown(ev){
       if (card.classList.contains('placed')) { return; }
       startDrag(ev, card);
-    });
+    }
+    card._pointerDown = onPointerDown;
+    card.addEventListener('pointerdown', onPointerDown);
 
     return card;
   }
@@ -506,7 +508,7 @@
     el.style.zIndex = '';
     el.style.touchAction = 'none';
     el.style.cursor = 'default';
-    el.removeEventListener('pointerdown', function(){});
+    if (el._pointerDown) { el.removeEventListener('pointerdown', el._pointerDown); }
     var targetList = zoneKey === 'sano' ? dropSano : dropCansado;
     targetList.appendChild(el);
     state.placed[el.getAttribute('data-id')] = zoneKey;

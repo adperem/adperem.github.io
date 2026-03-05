@@ -221,13 +221,43 @@
       border: 2px solid rgba(0,0,0,.10);
       font-weight: 950;
       letter-spacing: 1px;
-      font-size: 14px;
+      font-size: 18px;
       box-shadow: 0 16px 22px rgba(0,0,0,.10);
       cursor:pointer;
       background: var(--accent);
+      text-transform: uppercase;
     }
     .btn.secondary{ background: var(--accent2); min-width: 200px; }
     .btn:active{ transform: translateY(1px); }
+
+    .toast{
+      position:fixed; left:50%; top:50%; transform:translate(-50%,-50%) scale(.9);
+      z-index:100; pointer-events:none; opacity:0;
+      background:rgba(255,255,255,.96); border-radius:22px; padding:14px 24px;
+      font-size:28px; font-weight:900; text-transform:uppercase;
+      box-shadow:0 24px 50px rgba(0,0,0,.18); border:3px solid rgba(255,255,255,.95);
+      transition:opacity .18s ease, transform .18s ease;
+    }
+    .toast.show{ opacity:1; transform:translate(-50%,-50%) scale(1); }
+    .toast.ok{ border-color:rgba(42,211,156,.7); color:#165c42; }
+    .toast.err{ border-color:rgba(255,107,107,.7); color:#9f1d1d; }
+
+    .modal{
+      position:fixed; inset:0; z-index:200;
+      display:none; align-items:center; justify-content:center; padding:18px;
+      background:rgba(0,0,0,.28);
+    }
+    .modal.show{ display:flex; }
+    .modalCard{
+      width:min(740px,96vw);
+      background:rgba(255,255,255,.96); border-radius:28px;
+      box-shadow:0 24px 55px rgba(0,0,0,.22);
+      padding:24px 28px; text-align:center;
+      border:3px solid rgba(42,211,156,.45);
+    }
+    .modalTitle{ font-size:32px; font-weight:900; text-transform:uppercase; color:#165c42; margin-bottom:8px; }
+    .modalSub{ font-size:18px; font-weight:900; text-transform:uppercase; color:#475569; margin-bottom:20px; }
+    .modalActions{ display:flex; gap:12px; justify-content:center; flex-wrap:wrap; }
 
     .sticker{
       position:absolute;
@@ -296,6 +326,20 @@
     <div class="sticker" aria-hidden="true">🎨</div>
   </div>
 
+  <div class="toast" id="toast"></div>
+
+  <div class="modal" id="completedModal">
+    <div class="modalCard">
+      <div style="font-size:48px;margin-bottom:8px;">🎉</div>
+      <div class="modalTitle">¡GENIAL! JUEGO COMPLETADO</div>
+      <div class="modalSub" id="modalSub"></div>
+      <div class="modalActions">
+        <button class="btn" id="btnModalReset">REINICIAR</button>
+        <button class="btn secondary" id="btnModalBack">VOLVER</button>
+      </div>
+    </div>
+  </div>
+
   <script>
     (function(){
       var okAudio = new Audio("/asstests/aplausos.mp4");
@@ -304,6 +348,22 @@
       badAudio.preload = "auto";
       function playOk(){ try{ okAudio.currentTime=0; okAudio.play(); }catch(e){} }
       function playBad(){ try{ badAudio.currentTime=0; badAudio.play(); }catch(e){} }
+
+      var toastEl = document.getElementById("toast");
+      var toastTimer = null;
+      function showToast(text, kind){
+        toastEl.textContent = text;
+        toastEl.className = "toast " + (kind||"") + " show";
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(function(){ toastEl.className = "toast"; }, 700);
+      }
+
+      var completedModal = document.getElementById("completedModal");
+      var modalSub = document.getElementById("modalSub");
+      function showCompleted(ok, bad){
+        if(modalSub) modalSub.textContent = "ACIERTOS: " + ok + "  |  ERRORES: " + bad;
+        if(completedModal) completedModal.classList.add("show");
+      }
 
       var grid = document.getElementById("grid");
       var targetPill = document.getElementById("targetPill");
@@ -432,6 +492,7 @@
                 state.remaining -= 1;
                 setHud();
                 playOk();
+                showToast("¡BIEN!", "ok");
 
                 if(state.remaining <= 0){
                   setTimeout(function(){
@@ -443,6 +504,7 @@
                 state.bad += 1;
                 setHud();
                 playBad();
+                showToast("PRUEBA OTRA VEZ", "err");
                 setTimeout(function(){ t.classList.remove("bad"); }, 220);
               }
             });
@@ -458,7 +520,8 @@
         if(state.round >= state.total){
           barFill.style.width = "100%";
           progressText.textContent = state.total + " DE " + state.total;
-          targetPill.textContent = "¡MUY BIEN!";
+          playOk();
+          showCompleted(state.ok, state.bad);
           return;
         }
         state.round += 1;
@@ -466,6 +529,7 @@
       }
 
       function resetGame(){
+        if(completedModal) completedModal.classList.remove("show");
         state.round = 1;
         state.ok = 0;
         state.bad = 0;
@@ -473,6 +537,11 @@
       }
 
       btnReset.addEventListener("click", function(){ resetGame(); });
+
+      var btnModalReset = document.getElementById("btnModalReset");
+      var btnModalBack = document.getElementById("btnModalBack");
+      if(btnModalReset) btnModalReset.addEventListener("click", function(){ resetGame(); });
+      if(btnModalBack) btnModalBack.addEventListener("click", function(){ location.href="index.html"; });
 
       resetGame();
     })();

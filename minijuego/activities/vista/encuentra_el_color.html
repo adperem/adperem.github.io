@@ -195,8 +195,8 @@
 <body>
 <div class="bg"></div>
 
-<audio id="audioOk" preload="none" data-src="/asstests/aplausos.mp4" ></audio>
-<audio id="audioErr" preload="none" data-src="/asstests/ohh.mp4" ></audio>
+<audio id="audioOk" preload="none" src="/asstests/aplausos.mp4"></audio>
+<audio id="audioErr" preload="none" src="/asstests/ohh.mp4"></audio>
 
 <div class="app">
   <div class="top">
@@ -249,6 +249,18 @@
 </div>
 
 <div class="feedback" id="feedback">¡MUY BIEN!</div>
+
+<div id="completedModal" style="display:none;position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.28);display:none;align-items:center;justify-content:center;padding:18px;">
+  <div style="width:min(740px,96vw);background:rgba(255,255,255,.96);border-radius:28px;box-shadow:0 24px 55px rgba(0,0,0,.22);padding:24px 28px;text-align:center;border:3px solid rgba(64,196,99,.45);">
+    <div style="font-size:52px;margin-bottom:8px;">🎉</div>
+    <div style="font-size:32px;font-weight:900;text-transform:uppercase;color:#176a2f;margin-bottom:10px;">¡GENIAL! JUEGO COMPLETADO</div>
+    <div id="modalSubtitle" style="font-size:20px;font-weight:900;color:#475569;text-transform:uppercase;margin-bottom:20px;"></div>
+    <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+      <button onclick="document.getElementById('completedModal').style.display='none';resetGame();" style="min-width:200px;height:72px;border-radius:18px;border:3px solid rgba(124,156,255,.22);background:linear-gradient(180deg,#ffe7a7,#ffd36d);font-size:24px;font-weight:900;color:#123;cursor:pointer;text-transform:uppercase;">REINICIAR</button>
+      <button onclick="window.history.length>1?window.history.back():location.href='./';" style="min-width:200px;height:72px;border-radius:18px;border:3px solid rgba(124,156,255,.22);background:linear-gradient(180deg,#e6f4ff,#cde9ff);font-size:24px;font-weight:900;color:#123;cursor:pointer;text-transform:uppercase;">VOLVER</button>
+    </div>
+  </div>
+</div>
 
 <script>
 (function(){
@@ -348,9 +360,11 @@
           roundState.textContent = 'RONDA SUPERADA';
           setTimeout(function(){
             if (state.completedRounds >= TOTAL_ROUNDS){
-              showFeedback('¡GENIAL! JUEGO COMPLETADO', 'ok');
-              roundState.textContent = 'JUEGO COMPLETADO';
               playSound(audioOk);
+              var modal = document.getElementById('completedModal');
+              var sub = document.getElementById('modalSubtitle');
+              if(sub) sub.textContent = 'HAS SUPERADO LAS ' + TOTAL_ROUNDS + ' RONDAS';
+              if(modal){ modal.style.display = 'flex'; }
             } else {
               nextRound();
             }
@@ -415,12 +429,15 @@
   }
 
   function resetGame(){
+    var modal = document.getElementById('completedModal');
+    if(modal){ modal.style.display = 'none'; }
     state.roundIndex = 0;
     state.completedRounds = 0;
     updateMainProgress();
     buildRound();
     showFeedback('ACTIVIDAD REINICIADA', 'ok');
   }
+  window.resetGame = resetGame;
 
   document.getElementById('btnReset').addEventListener('click', function(){
     resetGame();
