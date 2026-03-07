@@ -28,8 +28,16 @@
       0%   { transform: scale(0.3) rotate(-15deg); opacity: 0; }
       100% { transform: scale(1)   rotate(0deg);   opacity: 1; }
     }
-    /* Imagen circular */
-    .pic { border-radius: 50% !important; }
+    /* Imagen: layout horizontal imagen+emoji */
+    .pic {
+      width: min(560px, 94vw) !important;
+      height: auto !important;
+      flex-direction: row !important;
+      gap: 20px !important;
+      padding: 20px 28px !important;
+    }
+    .pic img { width: 160px !important; height: 160px !important; border-radius: 18px; }
+    .pic-emoji-wrap { display: flex; align-items: center; justify-content: center; flex: 1; }
 
     /* Opciones hover + entrada */
     .opt {
@@ -133,7 +141,10 @@
       <div class="card">
         <div class="pic">
           <img id="img" alt="" src="assets/placeholder.png" />
-          <div class="emoji" id="emoji">🧠</div>
+          <div class="pic-emoji-wrap">
+            <div class="emoji" id="emoji">🧠</div>
+          </div>
+          <div class="word-label" id="wordLabel"></div>
         </div>
         <div class="hint" id="hint">TOCA LA SÍLABA</div>
         <div class="options" id="options" aria-label="OPCIONES"></div>

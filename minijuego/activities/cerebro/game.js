@@ -3,7 +3,7 @@
 var PART_ID = "cerebro";
 var COLORS = ["#fbbf24","#34d399","#60a5fa","#f472b6","#a78bfa","#fb923c","#4ade80","#38bdf8"];
 
-var progressEl, progressBarEl, imgEl, emojiEl, hintEl, optionsEl;
+var progressEl, progressBarEl, imgEl, emojiEl, wordLabelEl, hintEl, optionsEl;
 var toastEl, finishEl, finishScoreEl, confettiEl;
 var btnReset, btnAgain, sndClap, sndOhh;
 var rounds = [], allSyllables = [];
@@ -16,6 +16,7 @@ document.addEventListener("DOMContentLoaded", function () {
   progressBarEl = document.getElementById("progressBar");
   imgEl         = document.getElementById("img");
   emojiEl       = document.getElementById("emoji");
+  wordLabelEl   = document.getElementById("wordLabel");
   hintEl        = document.getElementById("hint");
   optionsEl     = document.getElementById("options");
   toastEl       = document.getElementById("toast");
@@ -76,7 +77,9 @@ function renderRound() {
   emojiEl.classList.add("anim");
 
   imgEl.style.display = "none";
+  emojiEl.style.display = "";
   imgEl.src = "";
+  if (wordLabelEl) wordLabelEl.textContent = r.id.toUpperCase();
   if (r.img) {
     imgEl.alt = r.id;
     imgEl.src = r.img;
