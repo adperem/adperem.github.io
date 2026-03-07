@@ -123,18 +123,17 @@ function onPointerDown(ev) {
   placeholder.style.border = "3px dashed rgba(0,0,0,0.18)";
   placeholder.style.background = "rgba(255,255,255,0.55)";
 
-  startParent.insertBefore(placeholder, el);
-
   var rect = el.getBoundingClientRect();
   offsetX = ev.clientX - rect.left;
   offsetY = ev.clientY - rect.top;
+
+  startParent.insertBefore(placeholder, el);
+  document.body.appendChild(el);
 
   el.classList.add("dragging");
   el.style.left = rect.left + "px";
   el.style.top = rect.top + "px";
   el.style.width = rect.width + "px";
-
-  document.body.appendChild(el);
 
   try { el.setPointerCapture(ev.pointerId); } catch (e) {}
 
