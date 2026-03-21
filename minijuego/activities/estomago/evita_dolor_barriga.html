@@ -441,12 +441,19 @@
       var score      = 0;
       var spawnTimer = 0;
       var lastTime   = 0;
+      var timeLeft   = 120;
+      var gameStartTime    = 0;
+      var lastDisplayedSec = -1;
 
       function setStatus(t){ statusText.textContent = t; }
       function setBadge(t, cls){ badge.textContent = t; badge.className = "badge" + (cls ? " " + cls : ""); }
 
       function updateMini(){
-        miniRight.textContent = "VIDAS: " + lives + "  PUNTOS: " + score;
+        var mins = Math.floor(timeLeft / 60);
+        var secs = Math.floor(timeLeft % 60);
+        var timeStr = mins + ":" + (secs < 10 ? "0" : "") + secs;
+        miniRight.textContent = "⏱ " + timeStr + "  VIDAS: " + lives + "  PUNTOS: " + score;
+        miniRight.style.color = (timeLeft <= 30 && running) ? "#b91c1c" : "";
       }
 
       function showToast(text, kind){
@@ -576,8 +583,14 @@
       function tick(t){
         if(!running) return;
         if(!lastTime) lastTime = t;
+        if(!gameStartTime) gameStartTime = t;
         var dt = (t - lastTime) / 1000;
         lastTime = t;
+
+        timeLeft = Math.max(0, 120 - (t - gameStartTime) / 1000);
+        var curSec = Math.floor(timeLeft);
+        if(curSec !== lastDisplayedSec){ lastDisplayedSec = curSec; updateMini(); }
+        if(timeLeft <= 0){ endGame("time"); return; }
 
         spawnTimer += dt;
         var spawnEvery = 0.78;
@@ -600,11 +613,14 @@
 
       function startGame(){
         clearAll();
-        running    = true;
-        lives      = 3;
-        score      = 0;
-        spawnTimer = 0;
-        lastTime   = 0;
+        running          = true;
+        lives            = 3;
+        score            = 0;
+        spawnTimer       = 0;
+        lastTime         = 0;
+        timeLeft         = 120;
+        gameStartTime    = 0;
+        lastDisplayedSec = -1;
         updateMini();
         setBadge("JUGANDO");
         setStatus("TOCA LA COMIDA BUENA");
@@ -612,15 +628,16 @@
         requestAnimationFrame(tick);
       }
 
-      function endGame(){
+      function endGame(reason){
         running = false;
         setBadge("FIN");
         setStatus("FIN");
-        overlay.querySelector("h2").textContent = "FIN DEL JUEGO";
+        var title = reason === "time" ? "¡TIEMPO!" : "FIN DEL JUEGO";
+        overlay.querySelector("h2").textContent = title;
         overlay.querySelector("p").textContent  = "PUNTOS: " + score + " — TOCA REINICIAR";
         overlay.querySelector(".bigBtn").textContent = "🔄 REINICIAR";
         overlay.classList.add("show");
-        showToast("FIN", "bad");
+        showToast(title, "bad");
       }
 
       function clearAll(){
@@ -631,9 +648,12 @@
 
       function reset(){
         clearAll();
-        running = false;
-        lives   = 3;
-        score   = 0;
+        running          = false;
+        lives            = 3;
+        score            = 0;
+        timeLeft         = 120;
+        gameStartTime    = 0;
+        lastDisplayedSec = -1;
         updateMini();
         setBadge("LISTO");
         setStatus("TOCA EMPEZAR");
