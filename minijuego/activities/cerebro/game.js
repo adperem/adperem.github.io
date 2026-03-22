@@ -38,16 +38,16 @@ document.addEventListener("DOMContentLoaded", function () {
 function buildRounds() {
   rounds = [
     { id:"mano",      syllable:"MA", emoji:"✋",  img:"./assets/mano.png" },
-    { id:"pelicano",  syllable:"PE", emoji:"🐦",  img:"./assets/pelicano.png" },
+    { id:"pelícano",  syllable:"PE", emoji:"🐦",  img:"./assets/pelicano.png" },
     { id:"nido",      syllable:"NI", emoji:"🪺",  img:"./assets/nido.png" },
-    { id:"nandu",     syllable:"ÑA", emoji:"🐦",  img:"./assets/nandu.png" },
+    { id:"ñandú",     syllable:"ÑA", emoji:"🐦",  img:"./assets/nandu.png" },
     { id:"lagarto",   syllable:"LA", emoji:"🦎",  img:"./assets/lagarto.png" },
     { id:"saturno",   syllable:"SA", emoji:"🪐",  img:"./assets/saturno.png" },
-    { id:"melocoton", syllable:"ME", emoji:"🍑",  img:"./assets/melocoton.png" },
+    { id:"melocotón", syllable:"ME", emoji:"🍑",  img:"./assets/melocoton.png" },
     { id:"parque",    syllable:"PA", emoji:"🛝",  img:"./assets/parque.png" },
     { id:"noria",     syllable:"NO", emoji:"🎡",  img:"./assets/noria.png" },
-    { id:"gnu",       syllable:"ÑU", emoji:"🦬",  img:"./assets/gnu.png" },
-    { id:"leon",      syllable:"LE", emoji:"🦁",  img:"./assets/leon.png" },
+    { id:"ñu",       syllable:"ÑU", emoji:"🦬",  img:"./assets/gnu.png" },
+    { id:"león",      syllable:"LE", emoji:"🦁",  img:"./assets/leon.png" },
     { id:"siete",     syllable:"SI", emoji:"7️⃣", img:"./assets/7.png" }
   ];
   allSyllables = rounds.map(function(r){ return r.syllable; });

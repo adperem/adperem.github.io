@@ -53,8 +53,8 @@
 
     /* CONTENEDOR CON LA MISMA PROPORCIÓN QUE LA IMAGEN (2048x1365) */
     .mapWrap{
-      width: min(1920px, calc(100vw - 36px));
-      height: min(1080px, calc(100vh - 36px));
+      width: min(1280px, calc(100vw - 36px));
+      height: min(720px, calc(100vh - 36px));
       display: grid;
       place-items: center;
     }
@@ -202,5 +202,15 @@
       if(params.has("debug")) document.body.classList.add("debug");
     })();
   </script>
+<script src="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/dist/twemoji.min.js" crossorigin="anonymous"></script>
+<script>
+(function(){
+  var _opts={folder:'svg',ext:'.svg'};
+  function _p(el){try{twemoji.parse(el,_opts);}catch(e){}}
+  if(document.readyState!=='loading')_p(document.body);
+  else document.addEventListener('DOMContentLoaded',function(){_p(document.body);});
+  new MutationObserver(function(ms){ms.forEach(function(m){m.addedNodes.forEach(function(n){if(n.nodeType===1)_p(n);else if(n.nodeType===3&&n.parentNode&&n.parentNode.nodeType===1)_p(n.parentNode);});});}).observe(document.documentElement,{childList:true,subtree:true});
+})();
+</script>
 </body>
 </html>

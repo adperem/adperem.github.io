@@ -438,5 +438,15 @@
   buildRound();
 })();
 </script>
+<script src="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/dist/twemoji.min.js" crossorigin="anonymous"></script>
+<script>
+(function(){
+  var _opts={folder:'svg',ext:'.svg'};
+  function _p(el){try{twemoji.parse(el,_opts);}catch(e){}}
+  if(document.readyState!=='loading')_p(document.body);
+  else document.addEventListener('DOMContentLoaded',function(){_p(document.body);});
+  new MutationObserver(function(ms){ms.forEach(function(m){m.addedNodes.forEach(function(n){if(n.nodeType===1)_p(n);else if(n.nodeType===3&&n.parentNode&&n.parentNode.nodeType===1)_p(n.parentNode);});});}).observe(document.documentElement,{childList:true,subtree:true});
+})();
+</script>
 </body>
 </html>

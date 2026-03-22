@@ -39,7 +39,7 @@
       padding: min(18px, 1.5vw);
     }
     .frame {
-      width: min(1920px,100vw); height: min(1080px,100vh);
+      width: min(1280px,100vw); height: min(720px,100vh);
       position: relative; border-radius: 34px; overflow: hidden;
     }
 
@@ -418,6 +418,16 @@
 
   buildGrid();
   showVideo();
+})();
+</script>
+<script src="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/dist/twemoji.min.js" crossorigin="anonymous"></script>
+<script>
+(function(){
+  var _opts={folder:'svg',ext:'.svg'};
+  function _p(el){try{twemoji.parse(el,_opts);}catch(e){}}
+  if(document.readyState!=='loading')_p(document.body);
+  else document.addEventListener('DOMContentLoaded',function(){_p(document.body);});
+  new MutationObserver(function(ms){ms.forEach(function(m){m.addedNodes.forEach(function(n){if(n.nodeType===1)_p(n);else if(n.nodeType===3&&n.parentNode&&n.parentNode.nodeType===1)_p(n.parentNode);});});}).observe(document.documentElement,{childList:true,subtree:true});
 })();
 </script>
 </body>
