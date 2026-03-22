@@ -4,91 +4,186 @@ var PART_ID = "cerebro_lectoescritura";
 
 /* ── Pool de sílabas con pistas ── */
 var POOL = [
-  { syl: "MA", hint: "MANO"     },
-  { syl: "NA", hint: "NARANJA"  },
-  { syl: "PA", hint: "ZAPATO"   },
-  { syl: "TA", hint: "TAZA"     },
-  { syl: "LA", hint: "LUNA"     },
-  { syl: "SA", hint: "MESA"     },
-  { syl: "CA", hint: "CASA"     },
-  { syl: "PE", hint: "PELOTA"   },
-  { syl: "LE", hint: "LECHE"    },
-  { syl: "MI", hint: "CAMINO"   },
-  { syl: "SI", hint: "SILLA"    },
-  { syl: "NO", hint: "NOCHE"    },
-  { syl: "BO", hint: "GLOBO"    },
-  { syl: "LO", hint: "LOBO"     },
-  { syl: "RI", hint: "RICO"     },
-  { syl: "TU", hint: "TULIPAN"  },
-  { syl: "FU", hint: "FUEGO"    },
-  { syl: "GU", hint: "AGUJA"    },
+  { syl: "MA", hint: "MANO"    },
+  { syl: "NA", hint: "NARANJA" },
+  { syl: "PA", hint: "ZAPATO"  },
+  { syl: "TA", hint: "TAZA"    },
+  { syl: "LA", hint: "LAGO"    },
+  { syl: "SA", hint: "MESA"    },
+  { syl: "CA", hint: "CASA"    },
+  { syl: "PE", hint: "PELOTA"  },
+  { syl: "LE", hint: "LECHE"   },
+  { syl: "MI", hint: "CAMINO"  },
+  { syl: "SI", hint: "SILLA"   },
+  { syl: "NO", hint: "NOCHE"   },
+  { syl: "BO", hint: "GLOBO"   },
+  { syl: "LO", hint: "LOBO"    },
+  { syl: "RI", hint: "RICO"    },
+  { syl: "TU", hint: "TULIPÁN" },
+  { syl: "FU", hint: "FUEGO"   },
+  { syl: "GU", hint: "AGUJA"   },
 ];
 
 var ROUNDS_COUNT = 10;
 
 /* ── Referencias DOM ── */
-var syllableEl  = null;
+var syllableEl   = null;
 var roundLabelEl = null;
-var wordInputEl = null;
-var btnCheck    = null;
-var btnHint     = null;
-var hintAreaEl  = null;
-var counterEl   = null;
-var toastEl     = null;
-var finishEl    = null;
-var btnReset    = null;
-var btnAgain    = null;
-var sndClap     = null;
-var sndOhh      = null;
+var btnHint      = null;
+var hintAreaEl   = null;
+var btnClear     = null;
+var btnNext      = null;
+var counterEl    = null;
+var toastEl      = null;
+var finishEl     = null;
+var btnReset     = null;
+var btnAgain     = null;
+var sndClap      = null;
+var canvas       = null;
+var ctx          = null;
 
-/* ── Estado ── */
+/* ── Estado del juego ── */
 var rounds       = [];
 var currentRound = 0;
 var completed    = 0;
 var hintShown    = false;
 var progressKey  = null;
 
-/* ── Init ── */
+/* ── Estado del dibujo ── */
+var isDrawing = false;
+var lastX     = 0;
+var lastY     = 0;
+var hasDrawn  = false;
+
+/* ════════════════════════════════════════
+   INIT
+═══════════════════════════════════════ */
 document.addEventListener("DOMContentLoaded", function () {
   syllableEl   = document.getElementById("syllable");
   roundLabelEl = document.getElementById("roundLabel");
-  wordInputEl  = document.getElementById("wordInput");
-  btnCheck     = document.getElementById("btnCheck");
   btnHint      = document.getElementById("btnHint");
   hintAreaEl   = document.getElementById("hintArea");
+  btnClear     = document.getElementById("btnClear");
+  btnNext      = document.getElementById("btnNext");
   counterEl    = document.getElementById("counter");
   toastEl      = document.getElementById("toast");
   finishEl     = document.getElementById("finish");
   btnReset     = document.getElementById("btnReset");
   btnAgain     = document.getElementById("btnAgain");
   sndClap      = document.getElementById("sndClap");
-  sndOhh       = document.getElementById("sndOhh");
+  canvas       = document.getElementById("drawCanvas");
+  ctx          = canvas.getContext("2d");
 
-  btnCheck.addEventListener("click", checkAnswer);
-  btnHint.addEventListener("click", revealHint);
+  btnHint.addEventListener("click",  revealHint);
+  btnClear.addEventListener("click", clearCanvas);
+  btnNext.addEventListener("click",  nextRound);
   btnReset.addEventListener("click", resetGame);
   btnAgain.addEventListener("click", resetGame);
-  wordInputEl.addEventListener("keydown", function (ev) {
-    if (ev.key === "Enter") checkAnswer();
-  });
 
-  /* Carga de audio diferida */
-  [sndClap, sndOhh].forEach(function (el) {
-    if (el && el.dataset.src) el.src = el.dataset.src;
-  });
+  if (sndClap && sndClap.dataset.src) sndClap.src = sndClap.dataset.src;
 
+  initCanvas();
   resetGame();
-  showToast("ESCRIBE UNA PALABRA CON LA SÍLABA 💬", "good", 1500);
+  showToast("¡ESCRIBE UNA PALABRA CON LA SÍLABA! ✏️", "good", 1500);
 });
 
-/* ── Construcción de rondas ── */
+/* ════════════════════════════════════════
+   CANVAS — dibujo a mano
+═══════════════════════════════════════ */
+function initCanvas() {
+  resizeCanvas();
+  window.addEventListener("resize", resizeCanvas);
+
+  canvas.addEventListener("pointerdown",   onPointerDown);
+  canvas.addEventListener("pointermove",   onPointerMove);
+  canvas.addEventListener("pointerup",     onPointerUp);
+  canvas.addEventListener("pointercancel", onPointerUp);
+  canvas.addEventListener("pointerleave",  onPointerUp);
+}
+
+function resizeCanvas() {
+  /* Preserva el dibujo si existe */
+  var img = null;
+  if (hasDrawn) {
+    try { img = ctx.getImageData(0, 0, canvas.width, canvas.height); } catch (e) {}
+  }
+
+  var wrap = document.getElementById("canvasWrap");
+  canvas.width  = wrap.clientWidth;
+  canvas.height = wrap.clientHeight;
+
+  /* Restaura los estilos de trazo (se pierden al redimensionar) */
+  ctx.lineCap     = "round";
+  ctx.lineJoin    = "round";
+  ctx.lineWidth   = 5;
+  ctx.strokeStyle = "#1e293b";
+  ctx.fillStyle   = "#1e293b";
+
+  if (img) {
+    try { ctx.putImageData(img, 0, 0); } catch (e) {}
+  }
+}
+
+function onPointerDown(ev) {
+  ev.preventDefault();
+  isDrawing = true;
+  hasDrawn  = true;
+  var pos = getPos(ev);
+  lastX = pos.x;
+  lastY = pos.y;
+
+  /* Punto en el lugar del primer contacto */
+  ctx.beginPath();
+  ctx.arc(lastX, lastY, ctx.lineWidth / 2, 0, Math.PI * 2);
+  ctx.fill();
+
+  try { canvas.setPointerCapture(ev.pointerId); } catch (e) {}
+}
+
+function onPointerMove(ev) {
+  if (!isDrawing) return;
+  ev.preventDefault();
+  var pos = getPos(ev);
+
+  ctx.beginPath();
+  ctx.moveTo(lastX, lastY);
+  ctx.lineTo(pos.x, pos.y);
+  ctx.stroke();
+
+  lastX = pos.x;
+  lastY = pos.y;
+}
+
+function onPointerUp(ev) {
+  if (!isDrawing) return;
+  isDrawing = false;
+  try { canvas.releasePointerCapture(ev.pointerId); } catch (e) {}
+}
+
+function getPos(ev) {
+  var rect   = canvas.getBoundingClientRect();
+  var scaleX = canvas.width  / rect.width;
+  var scaleY = canvas.height / rect.height;
+  return {
+    x: (ev.clientX - rect.left) * scaleX,
+    y: (ev.clientY - rect.top)  * scaleY
+  };
+}
+
+function clearCanvas() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  hasDrawn = false;
+}
+
+/* ════════════════════════════════════════
+   JUEGO
+═══════════════════════════════════════ */
 function buildRounds() {
   var pool = POOL.slice();
   shuffleInPlace(pool);
   rounds = pool.slice(0, ROUNDS_COUNT);
 }
 
-/* ── Reset ── */
 function resetGame() {
   buildRounds();
   currentRound = 0;
@@ -98,68 +193,36 @@ function resetGame() {
   showRound();
 }
 
-/* ── Mostrar ronda ── */
 function showRound() {
   var r = rounds[currentRound];
 
-  hintShown           = false;
+  hintShown = false;
   hintAreaEl.textContent = "";
   hintAreaEl.classList.remove("visible");
-  wordInputEl.value   = "";
-  wordInputEl.disabled = false;
-  btnCheck.disabled   = false;
-  btnHint.disabled    = false;
+  btnHint.disabled = false;
+  clearCanvas();
 
-  /* Reanima la pastilla */
+  /* Anima la pastilla de la sílaba */
   syllableEl.style.animation = "none";
-  void syllableEl.offsetWidth; /* reflow */
-  syllableEl.style.animation  = "";
-  syllableEl.textContent       = r.syl;
+  void syllableEl.offsetWidth;
+  syllableEl.style.animation = "";
+  syllableEl.textContent      = r.syl;
 
   roundLabelEl.textContent = (currentRound + 1) + " DE " + rounds.length;
-
-  setTimeout(function () {
-    try { wordInputEl.focus(); } catch (e) {}
-  }, 300);
 }
 
-/* ── Comprobar respuesta ── */
-function checkAnswer() {
-  var raw = wordInputEl.value.trim();
-
-  if (!raw) {
-    showToast("ESCRIBE UNA PALABRA 📝", "bad", 900);
-    shakeEl(wordInputEl);
+/* El profesor pulsa SIGUIENTE cuando considera válida la respuesta */
+function nextRound() {
+  if (!hasDrawn) {
+    showToast("¡PRIMERO ESCRIBE UNA PALABRA! ✏️", "bad", 1000);
     return;
   }
-
-  var word = normalize(raw);
-  var syl  = normalize(rounds[currentRound].syl);
-
-  /* La palabra debe tener al menos la sílaba + 2 letras más */
-  if (word.length < syl.length + 2) {
-    showToast("ESCRIBE UNA PALABRA MÁS LARGA 📏", "bad", 1000);
-    shakeEl(wordInputEl);
-    return;
-  }
-
-  if (!word.includes(syl)) {
-    showToast("ESA PALABRA NO TIENE «" + rounds[currentRound].syl + "» 🤔", "bad", 1200);
-    shakeEl(wordInputEl);
-    playSound(sndOhh);
-    return;
-  }
-
-  /* ¡Correcto! */
-  wordInputEl.disabled = true;
-  btnCheck.disabled    = true;
-  btnHint.disabled     = true;
 
   completed++;
   updateCounter();
-  showToast("¡MUY BIEN! " + raw.toUpperCase() + " 👏", "good", 1200);
   playSound(sndClap);
   spawnConfetti(7);
+  showToast("¡MUY BIEN! 👏", "good", 1000);
 
   setTimeout(function () {
     currentRound++;
@@ -168,48 +231,35 @@ function checkAnswer() {
     } else {
       showRound();
     }
-  }, 1300);
+  }, 1100);
 }
 
 /* ── Pista ── */
 function revealHint() {
   if (hintShown) return;
-  hintShown = true;
+  hintShown        = true;
   btnHint.disabled = true;
 
-  var r   = rounds[currentRound];
-  var syl = r.syl;
+  var r    = rounds[currentRound];
+  var syl  = r.syl;
   var hint = r.hint;
-
-  /* Resalta la sílaba dentro de la palabra de ejemplo */
-  var normHint = normalize(hint);
-  var normSyl  = normalize(syl);
-  var idx      = normHint.indexOf(normSyl);
-  var html     = hint;
+  var idx  = normalize(hint).indexOf(normalize(syl));
+  var html = hint;
   if (idx !== -1) {
     html =
       hint.slice(0, idx) +
       '<span class="hl">' + hint.slice(idx, idx + syl.length) + '</span>' +
       hint.slice(idx + syl.length);
   }
-
-  hintAreaEl.innerHTML = "EJEMPLO: " + html;
+  hintAreaEl.innerHTML = "EJEMPLO:<br>" + html;
   hintAreaEl.classList.remove("visible");
   void hintAreaEl.offsetWidth;
   hintAreaEl.classList.add("visible");
 }
 
-/* ── Normaliza: mayúsculas + quita tildes en vocales (Ñ se conserva) ── */
-function normalize(str) {
-  return str.toUpperCase()
-    .replace(/[ÁÀÂ]/g, "A")
-    .replace(/[ÉÈÊ]/g, "E")
-    .replace(/[ÍÌÎ]/g, "I")
-    .replace(/[ÓÒÔ]/g, "O")
-    .replace(/[ÚÙÛÜ]/g, "U");
-}
-
-/* ── UI helpers ── */
+/* ════════════════════════════════════════
+   UI HELPERS
+═══════════════════════════════════════ */
 function updateCounter() {
   counterEl.textContent = completed + " DE " + rounds.length;
 }
@@ -244,23 +294,6 @@ function showToast(text, kind, ms) {
   }, ms || 900);
 }
 
-function shakeEl(el) {
-  try {
-    el.animate(
-      [
-        { transform: "translateX(0px)"  },
-        { transform: "translateX(-9px)" },
-        { transform: "translateX(9px)"  },
-        { transform: "translateX(-6px)" },
-        { transform: "translateX(6px)"  },
-        { transform: "translateX(0px)"  }
-      ],
-      { duration: 240, iterations: 1 }
-    );
-  } catch (e) {}
-}
-
-/* ── Audio ── */
 function playSound(audioEl) {
   if (!audioEl) return;
   try { audioEl.pause(); audioEl.currentTime = 0; } catch (e) {}
@@ -269,7 +302,18 @@ function playSound(audioEl) {
   if (p && p.catch) p.catch(function () {});
 }
 
-/* ── Utilidades ── */
+/* ════════════════════════════════════════
+   UTILIDADES
+═══════════════════════════════════════ */
+function normalize(str) {
+  return str.toUpperCase()
+    .replace(/[ÁÀÂ]/g, "A")
+    .replace(/[ÉÈÊ]/g, "E")
+    .replace(/[ÍÌÎ]/g, "I")
+    .replace(/[ÓÒÔ]/g, "O")
+    .replace(/[ÚÙÛÜ]/g, "U");
+}
+
 function shuffleInPlace(a) {
   for (var i = a.length - 1; i > 0; i--) {
     var j = Math.floor(Math.random() * (i + 1));
@@ -277,7 +321,7 @@ function shuffleInPlace(a) {
   }
 }
 
-/* ── Progreso (localStorage) ── */
+/* ── Progreso ── */
 function guessProgressKey() {
   for (var i = 0; i < localStorage.length; i++) {
     var k = localStorage.key(i);
@@ -301,9 +345,7 @@ function loadProgress() {
     if (!obj || typeof obj !== "object") return { completed: [] };
     if (!Array.isArray(obj.completed)) obj.completed = [];
     return obj;
-  } catch (e) {
-    return { completed: [] };
-  }
+  } catch (e) { return { completed: [] }; }
 }
 
 function saveProgress(obj) {
@@ -333,8 +375,8 @@ function spawnConfetti(n) {
         el.className = "confetti-piece";
         el.style.left   = (20 + Math.random() * 60) + "%";
         el.style.background = CONFETTI_COLORS[Math.floor(Math.random() * CONFETTI_COLORS.length)];
-        el.style.width  = (8  + Math.random() * 10) + "px";
-        el.style.height = (8  + Math.random() * 10) + "px";
+        el.style.width  = (8 + Math.random() * 10) + "px";
+        el.style.height = (8 + Math.random() * 10) + "px";
         el.style.borderRadius = Math.random() > 0.5 ? "50%" : "3px";
         el.style.animationDuration = (1.2 + Math.random() * 0.8) + "s";
         container.appendChild(el);
@@ -352,7 +394,7 @@ function spawnConfettiBurst() {
         if (!container) return;
         var el = document.createElement("div");
         el.className = "confetti-piece";
-        el.style.left   = (3  + Math.random() * 94) + "%";
+        el.style.left   = (3 + Math.random() * 94) + "%";
         el.style.background = CONFETTI_COLORS[Math.floor(Math.random() * CONFETTI_COLORS.length)];
         el.style.width  = (8  + Math.random() * 14) + "px";
         el.style.height = (8  + Math.random() * 14) + "px";
