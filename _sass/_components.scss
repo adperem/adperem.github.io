@@ -226,58 +226,61 @@
   position: relative;
   overflow: hidden;
   isolation: isolate;
-  border-bottom: 1px solid rgba(56, 189, 248, 0.06);
-  box-shadow: 0 1px 80px -20px rgba(56, 189, 248, 0.06);
+  border-bottom: 1px solid rgba(34, 211, 238, 0.07);
+  box-shadow: 0 1px 120px -20px rgba(34, 211, 238, 0.08);
 
   @media (min-width: 768px) {
     padding: var(--space-6xl) 0 var(--space-5xl);
   }
 
-  // Layer 1-4: gradients + orbs + dot grid
+  // Gradient stack: base + primary bloom + depth orbs + dot grid
   &::before {
     content: '';
     position: absolute;
-    inset: -40% -20%;
+    inset: -50% -25%;
     z-index: -2;
     pointer-events: none;
     background:
-      // Layer 4 — Dot grid (structural texture)
-      radial-gradient(circle, rgba(148, 196, 242, 0.04) 1px, transparent 1px),
-      // Layer 3 — Secondary orb (blue-violet, lower-left)
-      radial-gradient(ellipse 45% 50% at 15% 80%, rgba(99, 102, 241, 0.07) 0%, transparent 65%),
-      // Layer 2 — Primary orb (cyan-blue, upper-right)
-      radial-gradient(ellipse 55% 55% at 75% 15%, rgba(56, 189, 248, 0.08) 0%, transparent 60%),
-      // Layer 1 — Base wash
-      linear-gradient(168deg, #020617 0%, #060c1f 40%, #0a0f1e 100%);
+      // Dot grid — low-opacity structural mesh
+      radial-gradient(circle, rgba(148, 196, 242, 0.055) 1px, transparent 1px),
+      // Orb 3 — indigo anchor, bottom-right
+      radial-gradient(ellipse 38% 35% at 90% 88%, rgba(99, 102, 241, 0.065) 0%, transparent 65%),
+      // Orb 2 — violet-blue, bottom-left
+      radial-gradient(ellipse 50% 45% at 8% 85%, rgba(79, 70, 229, 0.075) 0%, transparent 60%),
+      // Primary bloom — dominant cyan halo entering from above
+      radial-gradient(ellipse 85% 60% at 60% -10%, rgba(34, 211, 238, 0.12) 0%, rgba(56, 189, 248, 0.055) 40%, transparent 70%),
+      // Base — rich directional dark navy
+      linear-gradient(165deg, #02061a 0%, #050c20 30%, #080e1e 60%, #020618 100%);
     background-size:
-      24px 24px,
+      28px 28px,
+      100% 100%,
       100% 100%,
       100% 100%,
       100% 100%;
-    animation: hero-drift 20s ease-in-out infinite alternate;
+    animation: hero-drift 24s ease-in-out infinite alternate;
   }
 
-  // Layer 5 — Noise overlay
+  // Noise texture + radial vignette for depth and focus
   &::after {
     content: '';
     position: absolute;
     inset: 0;
     z-index: -1;
     pointer-events: none;
-    opacity: 0.035;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
-    background-size: 256px 256px;
+    background:
+      // SVG noise — opacity baked into rect so vignette is unaffected
+      url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)' opacity='0.04'/%3E%3C/svg%3E") 0 0 / 256px 256px repeat,
+      // Radial vignette — darken edges, pull focus inward
+      radial-gradient(ellipse 90% 85% at 50% 50%, transparent 35%, rgba(2, 6, 23, 0.5) 100%);
   }
 }
 
-// Slow ambient drift — orbs shift position subtly
+// Organic ambient drift — orbs shift with 3 waypoints
 @keyframes hero-drift {
-  0% {
-    transform: translate(0, 0) scale(1);
-  }
-  100% {
-    transform: translate(-3%, 2%) scale(1.03);
-  }
+  0%   { transform: translate(0, 0) scale(1); }
+  40%  { transform: translate(-1.5%, 1%) scale(1.015); }
+  70%  { transform: translate(1%, -0.5%) scale(1.02); }
+  100% { transform: translate(-3%, 2%) scale(1.03); }
 }
 
 @media (prefers-reduced-motion: reduce) {
