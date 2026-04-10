@@ -224,22 +224,65 @@
 .hero {
   padding: var(--space-5xl) 0 var(--space-4xl);
   position: relative;
-
-  // Soft ambient glow behind the hero text
-  &::before {
-    content: '';
-    position: absolute;
-    top: -20%;
-    left: -10%;
-    width: 60%;
-    height: 140%;
-    background: radial-gradient(ellipse at center, oklch(0.20 0.06 250 / 0.4) 0%, transparent 70%);
-    pointer-events: none;
-    z-index: -1;
-  }
+  overflow: hidden;
+  isolation: isolate;
+  border-bottom: 1px solid rgba(56, 189, 248, 0.06);
+  box-shadow: 0 1px 80px -20px rgba(56, 189, 248, 0.06);
 
   @media (min-width: 768px) {
     padding: var(--space-6xl) 0 var(--space-5xl);
+  }
+
+  // Layer 1-4: gradients + orbs + dot grid
+  &::before {
+    content: '';
+    position: absolute;
+    inset: -40% -20%;
+    z-index: -2;
+    pointer-events: none;
+    background:
+      // Layer 4 — Dot grid (structural texture)
+      radial-gradient(circle, rgba(148, 196, 242, 0.04) 1px, transparent 1px),
+      // Layer 3 — Secondary orb (blue-violet, lower-left)
+      radial-gradient(ellipse 45% 50% at 15% 80%, rgba(99, 102, 241, 0.07) 0%, transparent 65%),
+      // Layer 2 — Primary orb (cyan-blue, upper-right)
+      radial-gradient(ellipse 55% 55% at 75% 15%, rgba(56, 189, 248, 0.08) 0%, transparent 60%),
+      // Layer 1 — Base wash
+      linear-gradient(168deg, #020617 0%, #060c1f 40%, #0a0f1e 100%);
+    background-size:
+      24px 24px,
+      100% 100%,
+      100% 100%,
+      100% 100%;
+    animation: hero-drift 20s ease-in-out infinite alternate;
+  }
+
+  // Layer 5 — Noise overlay
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    opacity: 0.035;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+    background-size: 256px 256px;
+  }
+}
+
+// Slow ambient drift — orbs shift position subtly
+@keyframes hero-drift {
+  0% {
+    transform: translate(0, 0) scale(1);
+  }
+  100% {
+    transform: translate(-3%, 2%) scale(1.03);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero::before {
+    animation: none;
   }
 }
 
