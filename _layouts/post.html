@@ -1,0 +1,102 @@
+---
+layout: default
+---
+
+<div class="reading-progress" id="reading-progress"></div>
+
+<div class="container">
+  <a href="{{ '/blog/' | relative_url }}" class="back-link">Back to blog</a>
+
+  <article>
+    <header class="post-header">
+      {% if page.categories.size > 0 %}
+      <div class="post-category">{{ page.categories | join: ' / ' }}</div>
+      {% endif %}
+
+      <h1 class="post-title">{{ page.title }}</h1>
+
+      {% if page.description %}
+      <p class="post-description">{{ page.description }}</p>
+      {% endif %}
+
+      <div class="post-meta">
+        <time datetime="{{ page.date | date_to_xmlschema }}">{{ page.date | date: "%B %-d, %Y" }}</time>
+        <span class="meta-sep">&middot;</span>
+        {% assign words = content | number_of_words %}
+        {% assign minutes = words | divided_by: 200 %}
+        {% if minutes < 1 %}{% assign minutes = 1 %}{% endif %}
+        <span>{{ minutes }} min read</span>
+      </div>
+    </header>
+
+    {% if page.image %}
+    <div class="post-image">
+      <img src="{{ page.image.path | relative_url }}" alt="{{ page.image.alt | default: page.title }}" loading="lazy">
+    </div>
+    {% endif %}
+
+    <div class="post-layout">
+      <div class="post-content">
+        <div class="post-body" id="post-body">
+          {{ content }}
+        </div>
+
+        <footer class="post-footer">
+          {% if page.tags.size > 0 %}
+          <div class="post-tags">
+            <div class="post-tags__label">Tags</div>
+            <div class="tag-list">
+              {% for tag in page.tags %}
+              <span class="tag">{{ tag }}</span>
+              {% endfor %}
+            </div>
+          </div>
+          {% endif %}
+
+          {% assign sorted = site.posts %}
+          {% assign post_index = nil %}
+          {% for p in sorted %}
+            {% if p.url == page.url %}
+              {% assign post_index = forloop.index0 %}
+            {% endif %}
+          {% endfor %}
+
+          {% if post_index %}
+          <nav class="post-nav" aria-label="Post navigation">
+            {% assign prev_index = post_index | plus: 1 %}
+            {% assign next_index = post_index | minus: 1 %}
+
+            {% if prev_index < sorted.size %}
+            {% assign prev_post = sorted[prev_index] %}
+            <a href="{{ prev_post.url | relative_url }}" class="post-nav__item">
+              <div class="post-nav__label">&larr; Previous</div>
+              <div class="post-nav__title">{{ prev_post.title }}</div>
+            </a>
+            {% else %}
+            <div></div>
+            {% endif %}
+
+            {% if next_index >= 0 %}
+            {% assign next_post = sorted[next_index] %}
+            <a href="{{ next_post.url | relative_url }}" class="post-nav__item post-nav__item--next">
+              <div class="post-nav__label">Next &rarr;</div>
+              <div class="post-nav__title">{{ next_post.title }}</div>
+            </a>
+            {% endif %}
+          </nav>
+          {% endif %}
+        </footer>
+      </div>
+
+      {% if page.toc %}
+      <aside class="toc-sidebar" aria-label="Table of contents">
+        <div class="toc" id="toc">
+          <div class="toc__title">On this page</div>
+          <ul class="toc__list" id="toc-list">
+          </ul>
+        </div>
+      </aside>
+      {% endif %}
+    </div>
+  </article>
+</div>

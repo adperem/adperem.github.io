@@ -1,4 +1,76 @@
 ---
 layout: home
-# Index page
+title: Home
 ---
+
+<section class="hero">
+  <div class="container">
+    <h1 class="hero__headline fade-up">Cybersecurity researcher, tool builder, and vulnerability hunter.</h1>
+    <p class="hero__sub fade-up">I break things to understand how they work. Then I write about it.</p>
+    <div class="hero__actions fade-up">
+      <a href="/blog/" class="link-arrow">Read the blog</a>
+      <a href="/projects/" class="link-arrow">View projects</a>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <div class="section-label fade-up">Latest Research</div>
+    {% assign recent = site.posts | slice: 0, 4 %}
+    {% for post in recent %}
+    <a href="{{ post.url | relative_url }}" class="post-row fade-up">
+      <div class="post-row__title">{{ post.title }}</div>
+      <div class="post-row__excerpt">{{ post.description | default: post.excerpt | strip_html | truncate: 160 }}</div>
+      <div class="post-row__meta">
+        <span>{{ post.categories | first }}</span>
+        <span class="meta-sep">&middot;</span>
+        <time datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: "%b %Y" }}</time>
+      </div>
+    </a>
+    {% endfor %}
+    <div style="margin-top: var(--space-3xl);" class="fade-up">
+      <a href="/blog/" class="link-arrow">See all posts</a>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <div class="split fade-up">
+      <div>
+        <div class="split__label">Tools</div>
+        <p class="split__text">Built for real-world offensive security workflows.</p>
+      </div>
+      <div>
+        <div class="project-item fade-up">
+          <div class="project-item__name"><a href="https://github.com/adperem/fuzzstorm" target="_blank" rel="noopener">Fuzzstorm</a></div>
+          <div class="project-item__desc">Fuzzing tool with soft 404 detection and HTML reports for web application testing.</div>
+          <div class="project-item__tech">Python &middot; CLI</div>
+        </div>
+        <div class="project-item fade-up">
+          <div class="project-item__name"><a href="https://github.com/adperem/loxs" target="_blank" rel="noopener">loxs</a></div>
+          <div class="project-item__desc">Enhanced automation utility with Tor traffic routing for privacy-focused workflows.</div>
+          <div class="project-item__tech">Python &middot; CLI</div>
+        </div>
+        <div class="project-item fade-up">
+          <div class="project-item__name"><a href="https://github.com/adperem/recon_subdomains" target="_blank" rel="noopener">Recon Subdomains</a></div>
+          <div class="project-item__desc">Subdomain enumeration combining chaos, subfinder, amass and more.</div>
+          <div class="project-item__tech">Bash &middot; CLI</div>
+        </div>
+        <div style="margin-top: var(--space-2xl);" class="fade-up">
+          <a href="/projects/" class="link-arrow">All projects</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <p class="about-intro fade-up">I'm Adperem &mdash; a cybersecurity enthusiast focused on web security, CTF challenges, and building tools that make offensive security workflows faster.</p>
+    <div class="fade-up">
+      <a href="/about/" class="link-arrow">More about me</a>
+    </div>
+  </div>
+</section>

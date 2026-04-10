@@ -1,0 +1,185 @@
+// ── Code (inline) ───────────────────────────────
+
+code {
+  font-family: var(--font-mono);
+  font-size: 0.88em;
+  padding: 2px 6px;
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  color: var(--text-primary);
+}
+
+// ── Code Blocks ─────────────────────────────────
+
+pre {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  line-height: 1.65;
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: var(--space-xl);
+  margin: var(--space-2xl) 0;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  max-width: 100%;
+
+  code {
+    padding: 0;
+    background: none;
+    border: none;
+    border-radius: 0;
+    font-size: inherit;
+  }
+}
+
+div.highlight {
+  position: relative;
+  margin: var(--space-2xl) 0;
+}
+
+// ── Copy Button ─────────────────────────────────
+
+.copy-btn {
+  position: absolute;
+  top: var(--space-sm);
+  right: var(--space-sm);
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  color: var(--text-tertiary);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  padding: var(--space-xs) var(--space-sm);
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity var(--duration) var(--ease-out), color var(--duration) var(--ease-out);
+
+  &:hover {
+    color: var(--text-primary);
+  }
+}
+
+div.highlight:hover .copy-btn {
+  opacity: 1;
+}
+
+// ── Syntax Colors ───────────────────────────────
+// Custom scheme based on the brand palette.
+// Muted, no neon. Blues/teals for keywords, warm tones for strings.
+
+.highlight {
+  pre { margin: 0; }
+
+  .c,      // Comment
+  .cm,     // Comment.Multiline
+  .cp,     // Comment.Preproc
+  .c1,     // Comment.Single
+  .cs      // Comment.Special
+  { color: oklch(0.48 0.008 260); font-style: italic; }
+
+  .k,      // Keyword
+  .kc,     // Keyword.Constant
+  .kd,     // Keyword.Declaration
+  .kn,     // Keyword.Namespace
+  .kp,     // Keyword.Pseudo
+  .kr,     // Keyword.Reserved
+  .kt      // Keyword.Type
+  { color: oklch(0.72 0.10 250); }
+
+  .s,      // String
+  .sb,     // String.Backtick
+  .sc,     // String.Char
+  .sd,     // String.Doc
+  .s2,     // String.Double
+  .se,     // String.Escape
+  .sh,     // String.Heredoc
+  .si,     // String.Interpol
+  .sx,     // String.Other
+  .sr,     // String.Regex
+  .s1,     // String.Single
+  .ss      // String.Symbol
+  { color: oklch(0.72 0.11 55); }
+
+  .m,      // Number
+  .mf,     // Number.Float
+  .mh,     // Number.Hex
+  .mi,     // Number.Integer
+  .mo,     // Number.Oct
+  .mb,     // Number.Bin
+  .mx,     // Number.IntegerLong
+  .il      // Number.Integer.Long
+  { color: oklch(0.72 0.12 150); }
+
+  .na,     // Name.Attribute
+  .nb      // Name.Builtin
+  { color: oklch(0.70 0.08 210); }
+
+  .nc,     // Name.Class
+  .nd,     // Name.Decorator
+  .ni,     // Name.Entity
+  .ne,     // Name.Exception
+  .nf,     // Name.Function
+  .nl      // Name.Label
+  { color: oklch(0.78 0.10 250); }
+
+  .no      // Name.Constant
+  { color: oklch(0.70 0.12 35); }
+
+  .nn      // Name.Namespace
+  { color: var(--text-primary); }
+
+  .nt      // Name.Tag
+  { color: oklch(0.68 0.10 250); }
+
+  .nv,     // Name.Variable
+  .vc,     // Variable.Class
+  .vg,     // Variable.Global
+  .vi      // Variable.Instance
+  { color: oklch(0.75 0.08 200); }
+
+  .o,      // Operator
+  .ow      // Operator.Word
+  { color: oklch(0.65 0.06 260); }
+
+  .p       // Punctuation
+  { color: var(--text-secondary); }
+
+  .gd      // Generic.Deleted
+  { color: oklch(0.62 0.18 25); background: oklch(0.16 0.03 25); }
+
+  .gi      // Generic.Inserted
+  { color: oklch(0.72 0.14 150); background: oklch(0.16 0.03 150); }
+
+  .gh,     // Generic.Heading
+  .gu      // Generic.Subheading
+  { color: var(--text-primary); font-weight: 650; }
+
+  .ge      // Generic.Emph
+  { font-style: italic; }
+
+  .gs      // Generic.Strong
+  { font-weight: 650; }
+
+  .gl      // Generic.Lineno
+  { color: var(--text-tertiary); }
+
+  .w       // Text.Whitespace
+  { color: transparent; }
+
+  .err     // Error
+  { color: oklch(0.70 0.18 25); }
+}
+
+// ── Responsive code scroll ──────────────────────
+
+@media (max-width: 640px) {
+  pre {
+    border-radius: 0;
+    margin-left: calc(-1 * var(--space-xl));
+    margin-right: calc(-1 * var(--space-xl));
+    padding-left: var(--space-xl);
+    padding-right: var(--space-xl);
+  }
+}

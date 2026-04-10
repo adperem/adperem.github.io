@@ -1,0 +1,48 @@
+---
+layout: default
+title: Blog
+permalink: /blog/
+---
+
+<div class="container">
+  <div class="page-header">
+    <h1 class="page-title">Blog</h1>
+    <p class="page-desc">Writeups, research, and technical deep-dives.</p>
+  </div>
+
+  {% assign all_categories = "" | split: "" %}
+  {% for post in site.posts %}
+    {% for cat in post.categories %}
+      {% unless all_categories contains cat %}
+        {% assign all_categories = all_categories | push: cat %}
+      {% endunless %}
+    {% endfor %}
+  {% endfor %}
+  {% assign all_categories = all_categories | sort %}
+
+  <div class="filter-bar" id="filter-bar">
+    <button class="tag active" data-filter="all">All</button>
+    {% for cat in all_categories %}
+    <button class="tag" data-filter="{{ cat | downcase }}">{{ cat }}</button>
+    {% endfor %}
+  </div>
+
+  <div id="post-list">
+    {% for post in site.posts %}
+    <a href="{{ post.url | relative_url }}" class="post-row" data-categories="{{ post.categories | join: ' ' | downcase }}">
+      <div class="post-row__title">{{ post.title }}</div>
+      <div class="post-row__excerpt">{{ post.description | default: post.excerpt | strip_html | truncate: 180 }}</div>
+      <div class="post-row__meta">
+        <span>{{ post.categories | join: ' / ' }}</span>
+        <span class="meta-sep">&middot;</span>
+        <time datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: "%B %-d, %Y" }}</time>
+        <span class="meta-sep">&middot;</span>
+        {% assign words = post.content | number_of_words %}
+        {% assign minutes = words | divided_by: 200 %}
+        {% if minutes < 1 %}{% assign minutes = 1 %}{% endif %}
+        <span>{{ minutes }} min</span>
+      </div>
+    </a>
+    {% endfor %}
+  </div>
+</div>

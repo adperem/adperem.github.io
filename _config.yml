@@ -1,111 +1,45 @@
-# The Site Configuration
-
-# Import the theme
-theme: jekyll-theme-chirpy
-
-default_lang: "en"
-
-exclude_from_localization:
-  - "assets"
-  - "node_modules"
-  - "Gemfile"
-  - "Gemfile.lock"
-  - "README.md"
-  - "LICENSE"
-
-# The language of the webpage
-lang: en
-
-# Timezone
-timezone: Europe/Madrid
-
-# Plugins
-plugins:
-  - jekyll-include-cache
-  - jekyll-sitemap
-  - jekyll-feed
-  - jekyll-archives
-  - jekyll-paginate
-  - jekyll-seo-tag
-
-
-# jekyll-seo-tag settings
-title: "Adperem Cybersecurity Blog"
-tagline: "Cybersecurity Blog & Tools"
+# ── Site ──────────────────────────────────────────
+title: Adperem
+tagline: Cybersecurity Research & Tools
 description: >-
-  Cybersecurity blog sharing writeups, tools and more
-
+  Cybersecurity research, writeups, and open-source tools by Adperem.
 url: "https://adperem.github.io"
-
-github:
-  username: adperem
-
-social:
-  name: adperem
-  email: adperem@proton.me
-  links:
-    - https://github.com/adperem
-    - https://www.linkedin.com/in/adrian-perez-moreno
-    - https://tryhackme.com/p/adperem
-    - https://app.hackthebox.com/users/738315
-
-google_site_verification: 8s5oLHEhOziP4VnLDtXIlQA-SvO_20iBkt31-ilT1yU
-
-analytics:
-  google:
-    id: G-XHSHZJQBW2
-
-theme_mode: dark
-
-cdn:
-
-avatar: assets/img/avatar.jpg
-
-toc: true
-
-comments:
-  provider:
-  disqus:
-    shortname:
-  utterances:
-    repo:
-    issue_term:
-  giscus:
-    repo:
-    repo_id:
-    category:
-    category_id:
-    mapping:
-    strict:
-    input_position:
-    lang:
-    reactions_enabled:
-
-assets:
-  self_host:
-    enabled:
-
-pwa:
-  enabled: true
-
-paginate: 10
-
 baseurl: ""
 
+# ── Author ───────────────────────────────────────
+author:
+  name: Adperem
+  email: adperem@proton.me
+
+social:
+  github:    https://github.com/adperem
+  linkedin:  https://www.linkedin.com/in/adrian-perez-moreno
+  hackthebox: https://app.hackthebox.com/users/738315
+  tryhackme: https://tryhackme.com/p/adperem
+  email:     adperem@proton.me
+
+# ── Build ────────────────────────────────────────
+timezone: Europe/Madrid
+lang: en
+
+markdown: kramdown
 kramdown:
   syntax_highlighter: rouge
   syntax_highlighter_opts:
     css_class: highlight
-    span:
-      line_numbers: false
     block:
-      line_numbers: true
-      start_line: 1
+      line_numbers: false
 
-collections:
-  tabs:
-    output: true
-    sort_by: order
+sass:
+  style: compressed
+
+plugins:
+  - jekyll-feed
+  - jekyll-sitemap
+  - jekyll-seo-tag
+
+# ── Permalinks ───────────────────────────────────
+permalink: /posts/:title/
 
 defaults:
   - scope:
@@ -113,55 +47,26 @@ defaults:
       type: posts
     values:
       layout: post
-      comments: true
       toc: true
-      permalink: /posts/:title/
-  - scope:
-      path: _drafts
-    values:
-      comments: false
-  - scope:
-      path: ""
-      type: tabs
-    values:
-      layout: page
-      permalink: /:title/
-  - scope:
-      path: assets/img/favicons
-    values:
-      swcache: true
-  - scope:
-      path: assets/js/dist
-    values:
-      swcache: true
 
-sass:
-  style: compressed
+# ── SEO / Analytics ─────────────────────────────
+google_site_verification: 8s5oLHEhOziP4VnLDtXIlQA-SvO_20iBkt31-ilT1yU
+google_analytics: G-XHSHZJQBW2
 
-compress_html:
-  clippings: all
-  comments: all
-  endings: all
-  profile: false
-  blanklines: false
-  ignore:
-    envs: [development]
+avatar: /assets/img/avatar.jpg
 
+# ── Exclude ──────────────────────────────────────
 exclude:
   - "*.gem"
   - "*.gemspec"
-  - docs
   - tools
   - README.md
   - LICENSE
-  - rollup.config.js
-  - package*.json
-
-jekyll-archives:
-  enabled: [categories, tags]
-  layouts:
-    category: category
-    tag: tag
-  permalinks:
-    tag: /tags/:name/
-    category: /categories/:name/
+  - Gemfile.lock
+  - node_modules
+  - vendor
+  - minijuego
+  - sanvalentin
+  - skills-lock.json
+  - .claude
+  - .agents

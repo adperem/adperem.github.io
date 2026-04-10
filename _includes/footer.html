@@ -1,0 +1,30 @@
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-brand">Adperem</div>
+        <p class="footer-desc">Cybersecurity research, writeups, and open-source offensive security tools.</p>
+      </div>
+      <div>
+        <div class="footer-heading">Navigate</div>
+        <ul class="footer-links">
+          <li><a href="{{ '/blog/' | relative_url }}" class="footer-link">Blog</a></li>
+          <li><a href="{{ '/projects/' | relative_url }}" class="footer-link">Projects</a></li>
+          <li><a href="{{ '/about/' | relative_url }}" class="footer-link">About</a></li>
+          <li><a href="{{ '/feed.xml' | relative_url }}" class="footer-link">RSS</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="footer-heading">Connect</div>
+        <ul class="footer-links">
+          <li><a href="{{ site.social.github }}" class="footer-link" target="_blank" rel="noopener">GitHub</a></li>
+          <li><a href="{{ site.social.linkedin }}" class="footer-link" target="_blank" rel="noopener">LinkedIn</a></li>
+          <li><a href="{{ site.social.hackthebox }}" class="footer-link" target="_blank" rel="noopener">HackTheBox</a></li>
+          <li><a href="{{ site.social.tryhackme }}" class="footer-link" target="_blank" rel="noopener">TryHackMe</a></li>
+          <li><a href="mailto:{{ site.social.email }}" class="footer-link">Email</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-copy">&copy; {{ 'now' | date: "%Y" }} Adperem</div>
+  </div>
+</footer>

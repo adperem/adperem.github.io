@@ -1,0 +1,67 @@
+// ── Color Tokens (OKLCH) ────────────────────────
+// Neutrals tinted toward brand hue (260° blue)
+:root {
+  --surface-0:      oklch(0.13 0.008 260);
+  --surface-1:      oklch(0.16 0.010 260);
+  --surface-2:      oklch(0.20 0.012 260);
+  --surface-3:      oklch(0.28 0.014 260);
+
+  --text-primary:   oklch(0.93 0.006 260);
+  --text-secondary: oklch(0.65 0.008 260);
+  --text-tertiary:  oklch(0.45 0.006 260);
+
+  --accent:         oklch(0.65 0.14 250);
+  --accent-hover:   oklch(0.72 0.12 250);
+  --accent-subtle:  oklch(0.22 0.04 250);
+
+  --signal-warm:    oklch(0.72 0.14 55);
+  --signal-red:     oklch(0.62 0.18 25);
+
+  --border:         oklch(0.24 0.010 260);
+  --border-light:   oklch(0.30 0.012 260);
+
+  --code-bg:        oklch(0.11 0.010 260);
+
+  // ── Typography ──────────────────────────────────
+  --font-display: 'General Sans', system-ui, -apple-system, sans-serif;
+  --font-body:    'Satoshi', system-ui, -apple-system, sans-serif;
+  --font-mono:    'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+
+  // ── Type Scale (fluid, ratio >= 1.25) ───────────
+  --text-xs:    clamp(0.75rem, 0.7rem + 0.25vw, 0.8rem);
+  --text-sm:    clamp(0.82rem, 0.77rem + 0.3vw, 0.9rem);
+  --text-base:  clamp(0.95rem, 0.9rem + 0.25vw, 1.05rem);
+  --text-lg:    clamp(1.15rem, 1.05rem + 0.5vw, 1.3rem);
+  --text-xl:    clamp(1.45rem, 1.25rem + 1vw, 1.75rem);
+  --text-2xl:   clamp(1.8rem, 1.5rem + 1.5vw, 2.4rem);
+  --text-3xl:   clamp(2.2rem, 1.8rem + 2vw, 3.2rem);
+  --text-hero:  clamp(2.8rem, 2rem + 3vw, 4.5rem);
+
+  // ── Spacing (4pt scale, semantic) ───────────────
+  --space-xs:   4px;
+  --space-sm:   8px;
+  --space-md:   12px;
+  --space-lg:   16px;
+  --space-xl:   24px;
+  --space-2xl:  32px;
+  --space-3xl:  48px;
+  --space-4xl:  64px;
+  --space-5xl:  96px;
+  --space-6xl:  128px;
+
+  // ── Layout ──────────────────────────────────────
+  --max-width:  1200px;
+  --content-width: 68ch;
+
+  // ── Motion ──────────────────────────────────────
+  --ease-out:   cubic-bezier(0.16, 1, 0.3, 1);
+  --duration:   200ms;
+  --duration-slow: 400ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --duration: 0ms;
+    --duration-slow: 0ms;
+  }
+}
