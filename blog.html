@@ -30,17 +30,24 @@ permalink: /blog/
   <div id="post-list">
     {% for post in site.posts %}
     <a href="{{ post.url | relative_url }}" class="post-row" data-categories="{{ post.categories | join: ' ' | downcase }}">
-      <div class="post-row__title">{{ post.title }}</div>
-      <div class="post-row__excerpt">{{ post.description | default: post.excerpt | strip_html | truncate: 180 }}</div>
-      <div class="post-row__meta">
-        <span>{{ post.categories | join: ' / ' }}</span>
-        <span class="meta-sep">&middot;</span>
-        <time datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: "%B %-d, %Y" }}</time>
-        <span class="meta-sep">&middot;</span>
-        {% assign words = post.content | number_of_words %}
-        {% assign minutes = words | divided_by: 200 %}
-        {% if minutes < 1 %}{% assign minutes = 1 %}{% endif %}
-        <span>{{ minutes }} min</span>
+      {% if post.image %}
+      <div class="post-row__thumb">
+        <img src="{{ post.image.path | relative_url }}" alt="{{ post.image.alt | default: post.title }}" loading="lazy">
+      </div>
+      {% endif %}
+      <div class="post-row__body">
+        <div class="post-row__title">{{ post.title }}</div>
+        <div class="post-row__excerpt">{{ post.description | default: post.excerpt | strip_html | truncate: 180 }}</div>
+        <div class="post-row__meta">
+          <span>{{ post.categories | join: ' / ' }}</span>
+          <span class="meta-sep">&middot;</span>
+          <time datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: "%B %-d, %Y" }}</time>
+          <span class="meta-sep">&middot;</span>
+          {% assign words = post.content | number_of_words %}
+          {% assign minutes = words | divided_by: 200 %}
+          {% if minutes < 1 %}{% assign minutes = 1 %}{% endif %}
+          <span>{{ minutes }} min</span>
+        </div>
       </div>
     </a>
     {% endfor %}

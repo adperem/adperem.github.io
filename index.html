@@ -20,12 +20,19 @@ title: Home
     {% assign recent = site.posts | slice: 0, 4 %}
     {% for post in recent %}
     <a href="{{ post.url | relative_url }}" class="post-row fade-up">
-      <div class="post-row__title">{{ post.title }}</div>
-      <div class="post-row__excerpt">{{ post.description | default: post.excerpt | strip_html | truncate: 160 }}</div>
-      <div class="post-row__meta">
-        <span>{{ post.categories | first }}</span>
-        <span class="meta-sep">&middot;</span>
-        <time datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: "%b %Y" }}</time>
+      {% if post.image %}
+      <div class="post-row__thumb">
+        <img src="{{ post.image.path | relative_url }}" alt="{{ post.image.alt | default: post.title }}" loading="lazy">
+      </div>
+      {% endif %}
+      <div class="post-row__body">
+        <div class="post-row__title">{{ post.title }}</div>
+        <div class="post-row__excerpt">{{ post.description | default: post.excerpt | strip_html | truncate: 160 }}</div>
+        <div class="post-row__meta">
+          <span>{{ post.categories | first }}</span>
+          <span class="meta-sep">&middot;</span>
+          <time datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: "%b %Y" }}</time>
+        </div>
       </div>
     </a>
     {% endfor %}
@@ -44,19 +51,28 @@ title: Home
       </div>
       <div>
         <div class="project-item fade-up">
-          <div class="project-item__name"><a href="https://github.com/adperem/fuzzstorm" target="_blank" rel="noopener">Fuzzstorm</a></div>
-          <div class="project-item__desc">Fuzzing tool with soft 404 detection and HTML reports for web application testing.</div>
-          <div class="project-item__tech">Python &middot; CLI</div>
+          <div class="project-item__icon"><img src="/assets/img/fuzzstorm/fuzzstorm-logo.png" alt="Fuzzstorm" loading="lazy"></div>
+          <div class="project-item__body">
+            <div class="project-item__name"><a href="https://github.com/adperem/fuzzstorm" target="_blank" rel="noopener">Fuzzstorm</a></div>
+            <div class="project-item__desc">Fuzzing tool with soft 404 detection and HTML reports for web application testing.</div>
+            <div class="project-item__tech">Python &middot; CLI</div>
+          </div>
         </div>
         <div class="project-item fade-up">
-          <div class="project-item__name"><a href="https://github.com/adperem/loxs" target="_blank" rel="noopener">loxs</a></div>
-          <div class="project-item__desc">Enhanced automation utility with Tor traffic routing for privacy-focused workflows.</div>
-          <div class="project-item__tech">Python &middot; CLI</div>
+          <div class="project-item__icon"><img src="/assets/img/loxs/icon.png" alt="loxs" loading="lazy"></div>
+          <div class="project-item__body">
+            <div class="project-item__name"><a href="https://github.com/adperem/loxs" target="_blank" rel="noopener">loxs</a></div>
+            <div class="project-item__desc">Enhanced automation utility with Tor traffic routing for privacy-focused workflows.</div>
+            <div class="project-item__tech">Python &middot; CLI</div>
+          </div>
         </div>
         <div class="project-item fade-up">
-          <div class="project-item__name"><a href="https://github.com/adperem/recon_subdomains" target="_blank" rel="noopener">Recon Subdomains</a></div>
-          <div class="project-item__desc">Subdomain enumeration combining chaos, subfinder, amass and more.</div>
-          <div class="project-item__tech">Bash &middot; CLI</div>
+          <div class="project-item__icon"><img src="/assets/img/recon_subdomains/recon_subdomains-logo.png" alt="Recon Subdomains" loading="lazy"></div>
+          <div class="project-item__body">
+            <div class="project-item__name"><a href="https://github.com/adperem/recon_subdomains" target="_blank" rel="noopener">Recon Subdomains</a></div>
+            <div class="project-item__desc">Subdomain enumeration combining chaos, subfinder, amass and more.</div>
+            <div class="project-item__tech">Bash &middot; CLI</div>
+          </div>
         </div>
         <div style="margin-top: var(--space-2xl);" class="fade-up">
           <a href="/projects/" class="link-arrow">All projects</a>
@@ -68,9 +84,14 @@ title: Home
 
 <section class="section">
   <div class="container">
-    <p class="about-intro fade-up">I'm Adperem &mdash; a cybersecurity enthusiast focused on web security, CTF challenges, and building tools that make offensive security workflows faster.</p>
-    <div class="fade-up">
-      <a href="/about/" class="link-arrow">More about me</a>
+    <div class="about-block fade-up">
+      <div class="about-avatar">
+        <img src="/assets/img/avatar.jpg" alt="Adperem" loading="lazy">
+      </div>
+      <div>
+        <p class="about-intro">I'm Adperem &mdash; a cybersecurity enthusiast focused on web security, CTF challenges, and building tools that make offensive security workflows faster.</p>
+        <a href="/about/" class="link-arrow">More about me</a>
+      </div>
     </div>
   </div>
 </section>
