@@ -19,6 +19,18 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   min-height: 100vh;
+
+  // Layered background: gradient base + grain texture
+  background:
+    // Grain texture (subtle noise for tactile depth)
+    url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E"),
+    // Radial glow top-right (accent-tinted, very soft)
+    radial-gradient(ellipse 60% 50% at 80% 0%, oklch(0.18 0.04 250) 0%, transparent 70%),
+    // Radial glow bottom-left (warm tint, even subtler)
+    radial-gradient(ellipse 50% 40% at 10% 100%, oklch(0.16 0.025 280) 0%, transparent 60%),
+    // Base gradient (not flat — slight shift top to bottom)
+    linear-gradient(180deg, oklch(0.14 0.010 260) 0%, oklch(0.11 0.006 255) 100%);
+  background-attachment: fixed;
 }
 
 // ── Typography ──────────────────────────────────

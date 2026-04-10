@@ -223,6 +223,20 @@
 
 .hero {
   padding: var(--space-5xl) 0 var(--space-4xl);
+  position: relative;
+
+  // Soft ambient glow behind the hero text
+  &::before {
+    content: '';
+    position: absolute;
+    top: -20%;
+    left: -10%;
+    width: 60%;
+    height: 140%;
+    background: radial-gradient(ellipse at center, oklch(0.20 0.06 250 / 0.4) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: -1;
+  }
 
   @media (min-width: 768px) {
     padding: var(--space-6xl) 0 var(--space-5xl);

@@ -46,10 +46,10 @@
   position: sticky;
   top: 0;
   z-index: 100;
-  background: oklch(0.13 0.008 260 / 0.85);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border-bottom: 1px solid var(--border);
+  background: oklch(0.13 0.010 260 / 0.8);
+  backdrop-filter: blur(16px) saturate(1.2);
+  -webkit-backdrop-filter: blur(16px) saturate(1.2);
+  border-bottom: 1px solid oklch(0.25 0.012 260 / 0.5);
 }
 
 .nav-inner {
@@ -187,6 +187,7 @@
   border-top: 1px solid var(--border);
   padding: var(--space-4xl) 0 var(--space-3xl);
   margin-top: var(--space-6xl);
+  background: linear-gradient(180deg, oklch(0.12 0.008 260) 0%, oklch(0.09 0.005 255) 100%);
 }
 
 .footer-grid {
@@ -259,10 +260,18 @@
 
 .section {
   padding: var(--space-5xl) 0;
+  position: relative;
 
   @media (max-width: 640px) {
     padding: var(--space-4xl) 0;
   }
+}
+
+// Alternate sections get a slightly different surface tone
+.section--elevated {
+  background: oklch(0.15 0.010 260 / 0.6);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
 }
 
 .section-label {
