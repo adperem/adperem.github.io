@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "Skimmer Hunter v2.0: Building an Advanced Card Skimmer Detector with ESP32"
-date: 2025-04-13 14:00
+date: 2026-04-13 14:00
 categories: [Projects, Hardware, Security]
 tags: [esp32, skimmer, bluetooth, hardware, security, arduino, iot]
 image:

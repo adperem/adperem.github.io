@@ -17,7 +17,7 @@ title: Home
 <section class="section">
   <div class="container">
     <div class="section-label fade-up">Latest Research</div>
-    {% assign recent = site.posts | slice: 0, 4 %}
+    {% assign recent = site.posts | slice: 0, 6 %}
     {% for post in recent %}
     <a href="{{ post.url | relative_url }}" class="post-row fade-up">
       {% if post.image %}
