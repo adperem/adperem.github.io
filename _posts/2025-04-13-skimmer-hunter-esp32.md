@@ -37,11 +37,13 @@ The core issue? **They all rely on a single signal.** A criminal who changes the
 
 Skimmer Hunter uses a **multi-layer scoring system** where each layer contributes points. The total score determines the threat level:
 
+{% raw %}
 ```
 Score ≥ 5  →  🔴 HIGH ALERT (likely skimmer)
 Score 3-4  →  🟡 SUSPICIOUS (use caution)
 Score < 3  →  🟢 CLEAN (no threats detected)
 ```
+{% endraw %}
 
 Here's what each layer does:
 
@@ -49,6 +51,7 @@ Here's what each layer does:
 
 This is critical. Most skimmers use **Bluetooth Classic SPP** (Serial Port Profile), not BLE. The ESP32 is one of the few microcontrollers that supports both. We use the ESP-IDF GAP API to perform a full inquiry scan:
 
+{% raw %}
 ```cpp
 void scanBluetoothClassic() {
   esp_bt_gap_register_callback(bt_gap_cb);
@@ -57,6 +60,7 @@ void scanBluetoothClassic() {
   // Wait for results via callback...
 }
 ```
+{% endraw %}
 
 The callback captures **name, MAC address, RSSI, and Class of Device (CoD)** for every discovered device — all four are used in subsequent layers.
 
@@ -64,6 +68,7 @@ The callback captures **name, MAC address, RSSI, and Class of Device (CoD)** for
 
 Complementary to BT Classic. Some newer skimmer variants use BLE modules. We run a 10-second active scan:
 
+{% raw %}
 ```cpp
 void scanBLE() {
   BLEDevice::init("SkimmerHunter");
@@ -73,11 +78,13 @@ void scanBLE() {
   BLEScanResults foundDevices = pBLEScan->start(BLE_SCAN_TIME_SEC, false);
 }
 ```
+{% endraw %}
 
 ### Layer 3 — Suspicious Name Matching (+2 to +3 points)
 
 We maintain a database of **known skimmer module names**, not just HC-05:
 
+{% raw %}
 ```cpp
 const char* SUSPICIOUS_NAMES[] = {
   "HC-03", "HC-05", "HC-06", "HC-08",
@@ -89,6 +96,7 @@ const char* SUSPICIOUS_NAMES[] = {
   NULL
 };
 ```
+{% endraw %}
 
 An **exact match** gives +3 points, a **partial match** (e.g., name contains "HC-") gives +2. This catches variants even if the criminal added a suffix.
 
@@ -96,6 +104,7 @@ An **exact match** gives +3 points, a **partial match** (e.g., name contains "HC
 
 This is where it gets interesting. The first 3 bytes of any Bluetooth MAC address identify the **manufacturer** (OUI — Organizationally Unique Identifier). Cheap Chinese HC-05/HC-06 modules have specific, known OUIs:
 
+{% raw %}
 ```cpp
 const OUI_Entry SUSPICIOUS_OUI[] = {
   {{0x98, 0xD3, 0x31}, "Shenzhen HC-Module",     3},
@@ -106,6 +115,7 @@ const OUI_Entry SUSPICIOUS_OUI[] = {
   // ... more entries
 };
 ```
+{% endraw %}
 
 **Why this matters:** Even if a criminal renames the device, **the MAC prefix cannot be changed** on these cheap modules. A device with name "MyHeadphones" but OUI `98:D3:31` is still an HC-05 module — and has no business being inside an ATM.
 
@@ -113,6 +123,7 @@ const OUI_Entry SUSPICIOUS_OUI[] = {
 
 Signal strength tells us how far the device is:
 
+{% raw %}
 ```cpp
 int analyzeRSSI(int rssi) {
   if (rssi > -50) return 2;  // Very close (<1m) - inside the machine
@@ -120,6 +131,7 @@ int analyzeRSSI(int rssi) {
   return 0;                   // Far away - probably not in this terminal
 }
 ```
+{% endraw %}
 
 If an HC-05 module is broadcasting at **-35 dBm** while you're standing at a gas pump, it's almost certainly inside that pump. A signal at -85 dBm is probably someone's car Bluetooth adapter in the parking lot.
 
@@ -127,6 +139,7 @@ If an HC-05 module is broadcasting at **-35 dBm** while you're standing at a gas
 
 Bluetooth Classic devices advertise a CoD field identifying their type (phone, headset, computer, etc.). Skimmer modules are **never configured properly** — they show up as "Uncategorized":
 
+{% raw %}
 ```cpp
 int analyzeCOD(uint32_t cod) {
   if (cod == 0) return 1;  // No CoD at all
@@ -136,6 +149,7 @@ int analyzeCOD(uint32_t cod) {
   return 0;
 }
 ```
+{% endraw %}
 
 A legitimate Bluetooth headset will always report as "Audio" class. A cheap HC-05 inside a skimmer won't.
 
@@ -146,6 +160,7 @@ Some modern skimmers have evolved beyond Bluetooth and use **WiFi** to exfiltrat
 - **Hidden networks** with strong signals near payment terminals
 - **Suspicious SSIDs** containing "ESP", "HC-", "arduino", or "module"
 
+{% raw %}
 ```cpp
 void scanWiFiAnomalies() {
   int n = WiFi.scanNetworks(false, true); // include hidden
@@ -157,11 +172,13 @@ void scanWiFiAnomalies() {
   }
 }
 ```
+{% endraw %}
 
 ### Layer 8 — Active Handshake Test (+5 points) 🎯
 
 This is the **kill shot**. If a device scores ≥3 on the previous layers, we attempt to connect to it and verify it's a skimmer:
 
+{% raw %}
 ```cpp
 bool attemptHandshake(uint8_t* mac) {
   // Try default passwords: 1234, 0000, 1111, 6789
@@ -176,6 +193,7 @@ bool attemptHandshake(uint8_t* mac) {
   return false;
 }
 ```
+{% endraw %}
 
 The reason this works: the vast majority of Bluetooth skimmers use the **exact same firmware** — a cookie-cutter design based on cheap PIC18F4550 microcontrollers. When you send the character `P`, the skimmer firmware responds with `M` to acknowledge a data download request. This test alone is practically a **100% confirmation**.
 
@@ -230,6 +248,7 @@ Compare this to a false positive scenario:
 
 ### Wiring
 
+{% raw %}
 ```
 ESP32 Pin    →    Component
 ─────────────────────────────
@@ -244,6 +263,7 @@ GPIO32       →    Button MODE (to GND)
 3V3          →    OLED VCC
 GND          →    OLED GND, Buzzer (-), LED cathode, Buttons
 ```
+{% endraw %}
 
 > 💡 **Tip:** Use the ESP32's internal pull-up resistors for the buttons (`INPUT_PULLUP`) — no external pull-ups needed.
 
@@ -259,12 +279,14 @@ GND          →    OLED GND, Buzzer (-), LED cathode, Buttons
 ### 2. Board configuration
 
 In Arduino IDE:
+{% raw %}
 ```
 Board:           ESP32 Dev Module
 Partition Scheme: Default 4MB with spiffs
 Flash Size:      4MB
 Upload Speed:    921600
 ```
+{% endraw %}
 
 ### 3. Flash
 
@@ -331,11 +353,13 @@ The full source code is available on GitHub:
 
 🔗 **[Skimmer Hunter v2.0 — GitHub Repository](https://github.com/adperem/skimmer-hunter-esp32)**
 
+{% raw %}
 ```bash
 git clone https://github.com/adperem/skimmer-hunter-esp32.git
 cd skimmer-hunter-esp32
 # Open SkimmerHunter.ino in Arduino IDE and flash to your ESP32
 ```
+{% endraw %}
 
 ---
 
