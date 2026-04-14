@@ -10,26 +10,57 @@ html {
   scroll-behavior: smooth;
 }
 
+// ── Aurora animation layer ───────────────────────
+// A fixed ::before on body handles the slow breathing pulse;
+// painting order: body background → body::before → body content.
+body {
+  position: relative;
+
+  &::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background:
+      radial-gradient(ellipse 80% 70% at -5% 8%, oklch(0.58 0.16 185 / 0.18) 0%, transparent 62%),
+      radial-gradient(ellipse 70% 60% at 105% 5%, oklch(0.44 0.18 295 / 0.14) 0%, transparent 58%);
+    animation: aurora-breathe 20s ease-in-out infinite alternate;
+  }
+}
+
+@keyframes aurora-breathe {
+  from { opacity: 0.6; }
+  to   { opacity: 1.0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body::before { animation: none; }
+}
+
 body {
   font-family: var(--font-body);
   font-size: var(--text-base);
   line-height: 1.65;
   color: var(--text-primary);
-  background: var(--surface-0);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   min-height: 100vh;
 
-  // Layered background: gradient base + grain texture
+  // Aurora background: multi-color layered glows + grain
   background:
-    // Grain texture (subtle noise for tactile depth)
-    url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E"),
-    // Radial glow top-right (accent-tinted, very soft)
-    radial-gradient(ellipse 60% 50% at 80% 0%, oklch(0.18 0.04 250) 0%, transparent 70%),
-    // Radial glow bottom-left (warm tint, even subtler)
-    radial-gradient(ellipse 50% 40% at 10% 100%, oklch(0.16 0.025 280) 0%, transparent 60%),
-    // Base gradient (not flat — slight shift top to bottom)
-    linear-gradient(180deg, oklch(0.14 0.010 260) 0%, oklch(0.11 0.006 255) 100%);
+    // Grain texture — fine noise, adds tactile premium depth
+    url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.78' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.048'/%3E%3C/svg%3E"),
+    // Teal aurora — top-left (primary band, cybersec terminal green-teal)
+    radial-gradient(ellipse 75% 65% at -10% 5%, oklch(0.55 0.15 185 / 0.28) 0%, transparent 65%),
+    // Violet aurora — top-right (secondary band, premium depth)
+    radial-gradient(ellipse 65% 55% at 110% 7%, oklch(0.42 0.17 295 / 0.22) 0%, transparent 60%),
+    // Emerald shimmer — left-center (mid-page color continuation)
+    radial-gradient(ellipse 45% 55% at 2% 70%, oklch(0.50 0.13 168 / 0.12) 0%, transparent 68%),
+    // Indigo depth — bottom-right (grounding, prevents void feel)
+    radial-gradient(ellipse 55% 40% at 98% 92%, oklch(0.34 0.11 265 / 0.16) 0%, transparent 58%),
+    // Base gradient (barely-perceptible directional shift)
+    linear-gradient(158deg, oklch(0.11 0.010 218) 0%, oklch(0.08 0.005 240) 55%, oklch(0.09 0.008 212) 100%);
   background-attachment: fixed;
 }
 

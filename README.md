@@ -1,43 +1,58 @@
-# Chirpy Starter
+# adperem.github.io
 
-[![Gem Version](https://img.shields.io/gem/v/jekyll-theme-chirpy)][gem]&nbsp;
-[![GitHub license](https://img.shields.io/github/license/cotes2020/chirpy-starter.svg?color=blue)][mit]
+Personal site of Adrian Perez — a hybrid GitHub Pages project combining a cybersecurity blog and an interactive health education mini-game for children.
 
-When installing the [**Chirpy**][chirpy] theme through [RubyGems.org][gem], Jekyll can only read files in the folders
-`_data`, `_layouts`, `_includes`, `_sass` and `assets`, as well as a small part of options of the `_config.yml` file
-from the theme's gem. If you have ever installed this theme gem, you can use the command
-`bundle info --path jekyll-theme-chirpy` to locate these files.
+## Structure
 
-The Jekyll team claims that this is to leave the ball in the user’s court, but this also results in users not being
-able to enjoy the out-of-the-box experience when using feature-rich themes.
-
-To fully use all the features of **Chirpy**, you need to copy the other critical files from the theme's gem to your
-Jekyll site. The following is a list of targets:
-
-```shell
+```
 .
-├── _config.yml
-├── _plugins
-├── _tabs
-└── index.html
+├── _posts/           # Blog articles (CTF writeups, vulnerability research)
+├── _tabs/            # Static pages (About, Archives, Categories, Tags)
+├── _sass/            # Custom SCSS — variables, base, layout, components, post, syntax
+├── assets/
+│   ├── css/          # main.scss (imports from _sass/)
+│   └── img/posts/    # Post images (prefer WebP)
+├── _data/contact.yml # Social links config
+├── _config.yml       # Site config (timezone: Europe/Madrid, dark theme, GA)
+└── minijuego/        # Spanish-language interactive health mini-game (Three.js)
+    ├── index.html    # 3D scene entry point
+    ├── src/          # menu.js, storage.js, parts.js
+    └── activities/   # ojos, cerebro, estomago, pulmones, corazon
 ```
 
-To save you time, and also in case you lose some files while copying, we extract those files/configurations of the
-latest version of the **Chirpy** theme and the [CD][CD] workflow to here, so that you can start writing in minutes.
+## Blog
 
-## Usage
+Jekyll site using a custom theme built from the [Chirpy](https://github.com/cotes2020/jekyll-theme-chirpy) base. Posts cover:
 
-Check out the [theme's docs](https://github.com/cotes2020/jekyll-theme-chirpy/wiki).
+- CTF writeups
+- Vulnerability research and analysis
+- Cybersecurity tooling
 
-## Contributing
+Post filename format: `YYYY-MM-DD-title.md`. Required frontmatter: `title`, `date`, `categories`, `tags`.
 
-This repository is automatically updated with new releases from the theme repository. If you encounter any issues or want to contribute to its improvement, please visit the [theme repository][chirpy] to provide feedback.
+## Minijuego
+
+3D interactive menu using Three.js with a GLTF human body model. Clicking body parts opens activity sub-pages covering different health topics (eyes, brain, stomach, lungs, heart). All content is in Spanish.
+
+- No bundler — vanilla ES6 modules served directly
+- Progress tracked via localStorage (`storage.js`)
+- UI style: glassmorphism (backdrop-filter blur, semi-transparent panels)
+
+## Development
+
+```bash
+# Serve locally with live reload (localhost:4000)
+bash tools/run.sh
+
+# Bind to all interfaces
+bash tools/run.sh -H 0.0.0.0
+
+# Production build + link validation
+bash tools/test.sh
+```
+
+CI/CD via GitHub Actions (`.github/workflows/pages-deploy.yml`) — deploys automatically on push to `main`.
 
 ## License
 
-This work is published under [MIT][mit] License.
-
-[gem]: https://rubygems.org/gems/jekyll-theme-chirpy
-[chirpy]: https://github.com/cotes2020/jekyll-theme-chirpy/
-[CD]: https://en.wikipedia.org/wiki/Continuous_deployment
-[mit]: https://github.com/cotes2020/chirpy-starter/blob/master/LICENSE
+[MIT](LICENSE)

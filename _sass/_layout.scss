@@ -46,10 +46,10 @@
   position: sticky;
   top: 0;
   z-index: 100;
-  background: oklch(0.13 0.010 260 / 0.8);
-  backdrop-filter: blur(16px) saturate(1.2);
-  -webkit-backdrop-filter: blur(16px) saturate(1.2);
-  border-bottom: 1px solid oklch(0.25 0.012 260 / 0.5);
+  background: oklch(0.11 0.010 215 / 0.82);
+  backdrop-filter: blur(20px) saturate(1.4);
+  -webkit-backdrop-filter: blur(20px) saturate(1.4);
+  border-bottom: 1px solid oklch(0.25 0.012 210 / 0.45);
 }
 
 .nav-inner {
@@ -187,7 +187,7 @@
   border-top: 1px solid var(--border);
   padding: var(--space-4xl) 0 var(--space-3xl);
   margin-top: var(--space-6xl);
-  background: linear-gradient(180deg, oklch(0.12 0.008 260) 0%, oklch(0.09 0.005 255) 100%);
+  background: linear-gradient(180deg, oklch(0.10 0.009 215) 0%, oklch(0.07 0.005 230) 100%);
 }
 
 .footer-grid {
@@ -269,7 +269,7 @@
 
 // Alternate sections get a slightly different surface tone
 .section--elevated {
-  background: oklch(0.15 0.010 260 / 0.6);
+  background: oklch(0.14 0.010 215 / 0.55);
   border-top: 1px solid var(--border);
   border-bottom: 1px solid var(--border);
 }
