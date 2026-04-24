@@ -69,3 +69,5 @@ exclude:
   - skills-lock.json
   - .claude
   - .agents
+  - SEO-PLAN.md
+  - CLAUDE.md
