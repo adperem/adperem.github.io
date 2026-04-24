@@ -65,7 +65,6 @@ exclude:
   - Gemfile.lock
   - node_modules
   - vendor
-  - minijuego
   - sanvalentin
   - skills-lock.json
   - .claude
