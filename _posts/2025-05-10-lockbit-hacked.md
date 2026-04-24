@@ -1,11 +1,11 @@
 ---
 layout: post
 title: "How the LockBit Group Operates with Its Victims: An Analysis of Their Conversations"
-date: 2025-05-9 00:01
+date: 2025-05-09 00:01
 categories: [Cybersecurity, Ransomware, Data Leaks]
 tags: [lockbit, ransomware, cybercrime, data breach, analysis]
-image:  
-  path: /assets/img/lockbit-logo.png  
+image:
+  path: /assets/img/lockbit-logo.png
   alt: "LockBit Ransomware"
 description: An in-depth analysis of the LockBit ransomware group's tactics, victim negotiations, and affected companies based on leaked documents.
 ---

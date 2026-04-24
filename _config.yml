@@ -37,6 +37,7 @@ plugins:
   - jekyll-feed
   - jekyll-sitemap
   - jekyll-seo-tag
+  - jekyll-redirect-from
 
 # ── Permalinks ───────────────────────────────────
 permalink: /posts/:title/
@@ -54,6 +55,9 @@ google_site_verification: 8s5oLHEhOziP4VnLDtXIlQA-SvO_20iBkt31-ilT1yU
 google_analytics: G-XHSHZJQBW2
 
 avatar: /assets/img/avatar.jpg
+logo: /assets/img/avatar.jpg
+# TODO: replace with a dedicated 1200x630 OG image (see SEO-PLAN.md)
+# image: /assets/img/og-default.png
 
 # ── Exclude ──────────────────────────────────────
 exclude:

@@ -7,7 +7,7 @@ tags: [subdomains, recon, bash, automation, bugbounty]
 image:
   path: /assets/img/recon_subdomains/recon_subdomains-logo.png
   alt: "recon_subdomains logo"
-summary: "Understand each tool used in our Bash script for subdomain enumeration and learn how to automate recon with ease. Full script and explanation included."
+description: "Understand each tool used in our Bash script for subdomain enumeration and learn how to automate recon with ease. Full script and explanation included."
 ---
 
 ## 🔍 Introduction
