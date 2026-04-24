@@ -1,0 +1,49 @@
+---
+layout: default
+title: Categories
+description: Browse all posts grouped by topic.
+permalink: /categories/
+---
+
+<div class="container">
+  <div class="page-header">
+    <h1 class="page-title">Categories</h1>
+    <p class="page-desc">Browse all posts grouped by topic.</p>
+  </div>
+
+  {% assign all_categories = "" | split: "" %}
+  {% for post in site.posts %}
+    {% for cat in post.categories %}
+      {% unless all_categories contains cat %}
+        {% assign all_categories = all_categories | push: cat %}
+      {% endunless %}
+    {% endfor %}
+  {% endfor %}
+  {% assign all_categories = all_categories | sort_natural %}
+
+  {% for cat in all_categories %}
+  <section class="section" id="{{ cat | slugify }}">
+    <h2 class="section-heading">{{ cat }}
+      <span class="section-count">
+        {%- assign count = 0 -%}
+        {%- for post in site.posts -%}{%- if post.categories contains cat -%}{%- assign count = count | plus: 1 -%}{%- endif -%}{%- endfor -%}
+        {{ count }}
+      </span>
+    </h2>
+    {% for post in site.posts %}
+      {% if post.categories contains cat %}
+      <a href="{{ post.url | relative_url }}" class="post-row">
+        <div class="post-row__body">
+          <div class="post-row__title">{{ post.title }}</div>
+          <div class="post-row__meta">
+            <span>{{ post.categories | join: ' / ' }}</span>
+            <span class="meta-sep">&middot;</span>
+            <time datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: "%B %-d, %Y" }}</time>
+          </div>
+        </div>
+      </a>
+      {% endif %}
+    {% endfor %}
+  </section>
+  {% endfor %}
+</div>

@@ -2,8 +2,8 @@
 layout: post
 title: "TryHackMe Billing Writeup"
 date: 2025-04-20 10:00:00 +0000
-categories: [CTF, TryHackMe]
-tags: [tryhackme, billing, walkthrough, hacking, ctf]
+categories: [CTF]
+tags: [tryhackme, billing, walkthrough, magnusbilling, privilege-escalation]
 description: Walkthrough of the Billing machine showing enumeration, exploitation of MagnusBilling for a shell, and privilege escalation via fail2ban.
 image:
   path: /assets/img/billing/billing.png

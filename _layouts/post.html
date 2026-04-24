@@ -5,7 +5,17 @@ layout: default
 <div class="reading-progress" id="reading-progress"></div>
 
 <div class="container">
-  <a href="{{ '/blog/' | relative_url }}" class="back-link">Back to blog</a>
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <ol class="breadcrumb__list">
+      <li class="breadcrumb__item"><a href="{{ '/' | relative_url }}">Home</a></li>
+      <li class="breadcrumb__item"><a href="{{ '/blog/' | relative_url }}">Blog</a></li>
+      {% if page.categories.size > 0 %}
+      {% assign primary_cat = page.categories | first %}
+      <li class="breadcrumb__item"><a href="{{ '/categories/' | relative_url }}#{{ primary_cat | slugify }}">{{ primary_cat }}</a></li>
+      {% endif %}
+      <li class="breadcrumb__item breadcrumb__item--current" aria-current="page">{{ page.title | truncate: 40 }}</li>
+    </ol>
+  </nav>
 
   <article>
     <header class="post-header">

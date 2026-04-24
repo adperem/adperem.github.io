@@ -23,13 +23,13 @@ permalink: /blog/
   <div class="filter-bar" id="filter-bar">
     <button class="tag active" data-filter="all">All</button>
     {% for cat in all_categories %}
-    <button class="tag" data-filter="{{ cat | downcase }}">{{ cat }}</button>
+    <button class="tag" data-filter="{{ cat | slugify }}">{{ cat }}</button>
     {% endfor %}
   </div>
 
   <div id="post-list">
     {% for post in site.posts %}
-    <a href="{{ post.url | relative_url }}" class="post-row" data-categories="{{ post.categories | join: ' ' | downcase }}">
+    <a href="{{ post.url | relative_url }}" class="post-row" data-categories="{% for c in post.categories %}{{ c | slugify }}{% unless forloop.last %} {% endunless %}{% endfor %}">
       {% if post.image %}
       <div class="post-row__thumb">
         <img src="{{ post.image.path | relative_url }}" alt="{{ post.image.alt | default: post.title }}" loading="lazy">

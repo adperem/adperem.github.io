@@ -1,0 +1,34 @@
+---
+layout: default
+title: Archive
+description: All posts in reverse chronological order.
+permalink: /archive/
+---
+
+<div class="container">
+  <div class="page-header">
+    <h1 class="page-title">Archive</h1>
+    <p class="page-desc">All posts in reverse chronological order.</p>
+  </div>
+
+  {% assign posts_by_year = site.posts | group_by_exp: "post", "post.date | date: '%Y'" %}
+  {% for year in posts_by_year %}
+  <section class="section" id="year-{{ year.name }}">
+    <h2 class="section-heading">{{ year.name }}
+      <span class="section-count">{{ year.items | size }}</span>
+    </h2>
+    {% for post in year.items %}
+    <a href="{{ post.url | relative_url }}" class="post-row">
+      <div class="post-row__body">
+        <div class="post-row__title">{{ post.title }}</div>
+        <div class="post-row__meta">
+          <span>{{ post.categories | join: ' / ' }}</span>
+          <span class="meta-sep">&middot;</span>
+          <time datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: "%B %-d" }}</time>
+        </div>
+      </div>
+    </a>
+    {% endfor %}
+  </section>
+  {% endfor %}
+</div>

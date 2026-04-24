@@ -1,0 +1,103 @@
+{%- comment -%}
+  Complementary JSON-LD. jekyll-seo-tag already emits BlogPosting + basic
+  Person. Here we add entities it does not cover: BreadcrumbList on posts and
+  secondary pages, a richer Person with sameAs on home/about, and a WebSite
+  schema on the home page.
+{%- endcomment -%}
+
+{%- assign site_url = site.url | append: site.baseurl -%}
+{%- assign author_id = site_url | append: '/#person' -%}
+{%- assign website_id = site_url | append: '/#website' -%}
+
+{%- if page.url == '/' -%}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebSite",
+      "@id": "{{ website_id }}",
+      "url": "{{ site_url }}/",
+      "name": {{ site.title | jsonify }},
+      "description": {{ site.description | strip_newlines | jsonify }},
+      "inLanguage": "{{ site.lang | default: 'en' }}",
+      "publisher": { "@id": "{{ author_id }}" }
+    },
+    {
+      "@type": "Person",
+      "@id": "{{ author_id }}",
+      "name": {{ site.author.name | jsonify }},
+      "url": "{{ site_url }}/",
+      "image": "{{ site_url }}{{ site.avatar }}",
+      "jobTitle": "Cybersecurity Researcher",
+      "description": {{ site.description | strip_newlines | jsonify }},
+      "sameAs": [
+        {{ site.social.github | jsonify }},
+        {{ site.social.linkedin | jsonify }},
+        {{ site.social.hackthebox | jsonify }},
+        {{ site.social.tryhackme | jsonify }}
+      ]
+    }
+  ]
+}
+</script>
+{%- endif -%}
+
+{%- if page.url == '/about/' -%}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Person",
+  "@id": "{{ author_id }}",
+  "name": {{ site.author.name | jsonify }},
+  "url": "{{ site_url }}/about/",
+  "image": "{{ site_url }}{{ site.avatar }}",
+  "jobTitle": "Cybersecurity Researcher",
+  "description": {{ page.description | default: site.description | strip_newlines | jsonify }},
+  "sameAs": [
+    {{ site.social.github | jsonify }},
+    {{ site.social.linkedin | jsonify }},
+    {{ site.social.hackthebox | jsonify }},
+    {{ site.social.tryhackme | jsonify }}
+  ]
+}
+</script>
+{%- endif -%}
+
+{%- comment -%} BreadcrumbList for posts and secondary pages (not home) {%- endcomment -%}
+{%- if page.url != '/' -%}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": "{{ site_url }}/"
+    }{%- if page.layout == 'post' -%},
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Blog",
+      "item": "{{ site_url }}/blog/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": {{ page.title | jsonify }},
+      "item": "{{ site_url }}{{ page.url }}"
+    }
+    {%- else -%},
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": {{ page.title | default: 'Page' | jsonify }},
+      "item": "{{ site_url }}{{ page.url }}"
+    }
+    {%- endif -%}
+  ]
+}
+</script>
+{%- endif -%}

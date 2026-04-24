@@ -2,7 +2,7 @@
 layout: post
 title: "User Manual for loxs (adperem Fork)"
 date: 2025-04-20 12:30
-categories: [Manual, Open Source, loxs]
+categories: [Tools]
 tags: [loxs, automation, tor, open-source, guide]
 image:
   path: /assets/img/loxs/icon.svg

@@ -75,3 +75,4 @@ exclude:
   - .agents
   - SEO-PLAN.md
   - CLAUDE.md
+  - docs

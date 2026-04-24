@@ -2,8 +2,8 @@
 layout: post
 title: "Subdomain Recon Script: combining chaos, subfinder, amass and more"
 date: 2025-07-16
-categories: [recon, automation, bugbounty]
-tags: [subdomains, recon, bash, automation, bugbounty]
+categories: [Tools, Bug Bounty]
+tags: [subdomain-enumeration, recon, bash, automation, bug-bounty]
 image:
   path: /assets/img/recon_subdomains/recon_subdomains-logo.png
   alt: "recon_subdomains logo"

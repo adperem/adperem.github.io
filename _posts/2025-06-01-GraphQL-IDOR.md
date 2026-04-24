@@ -2,8 +2,8 @@
 layout: post
 title: "Critical IDOR in GraphQL: From Nuclei Scan to Full Cart Takeover"
 date: 2025-06-01 18:45:00
-categories: [Cybersecurity, GraphQL, Bug Bounty]
-tags: [idor, graphql, shopify, bug bounty, insecure direct object reference]
+categories: [Bug Bounty, Cybersecurity]
+tags: [idor, graphql, shopify, insecure-direct-object-reference, web-security]
 image:
   path: /assets/img/IDOR/graphql-idor.png
   alt: "GraphQL IDOR diagram"

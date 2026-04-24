@@ -2,8 +2,8 @@
 layout: post
 title: "TryHackMe Smol Writeup"
 date: 2025-04-23 10:00:00 +0000
-categories: [CTF, TryHackMe]
-tags: [tryhackme, Smol, walkthrough, hacking, ctf]
+categories: [CTF]
+tags: [tryhackme, smol, walkthrough, wordpress, privilege-escalation]
 description: Step-by-step guide to compromising the Smol machine via a vulnerable WordPress plugin and escalating through multiple users to root.
 image:
   path: /assets/img/smol/smol.png

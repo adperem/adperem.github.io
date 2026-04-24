@@ -1,8 +1,8 @@
 ---
 title: "Why Oniux Beats VPNs: The Ultimate Linux Privacy Tool from Tor"
 date: 2025-05-20 17:02:00
-categories: [Privacy, Security, Linux, Tor]
-tags: [oniux, tor, linux, vpn alternatives, privacy tools, anonymous browsing]
+categories: [Privacy]
+tags: [oniux, tor, linux, vpn-alternative, privacy-tools, anonymous-browsing]
 description: "Tired of VPNs selling your data? Discover Oniux, a Linux tool that isolates apps and routes all traffic through Tor for real, leak-proof privacy."
 layout: post
 image:

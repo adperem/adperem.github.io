@@ -2,8 +2,8 @@
 layout: post
 title: "Claude 4 Opus: Ultimate Cybersecurity Guardian or Silent Enemy?"
 date: 2025-05-31 10:00:00
-categories: [Artificial Intelligence, Cybersecurity, Technology]
-tags: [claude 4 opus, anthropic, ai security, autonomous ai, cybersecurity risks, ethical ai]
+categories: [AI, Cybersecurity]
+tags: [claude-4-opus, anthropic, ai-security, autonomous-ai, ethical-ai]
 description: "Anthropic’s Claude 4 Opus isn’t just advanced AI: it’s an autonomous agent that could shield your data or tear down your defenses. What happens when your greatest tech ally becomes your worst nightmare?"
 image:
   path: /assets/img/claude-logo-png.png
