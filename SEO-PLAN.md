@@ -10,7 +10,7 @@ Diagnóstico actual y hoja de ruta priorizada para aumentar tráfico orgánico y
 | 2. Indexación + metadatos | Hecho | JSON-LD, /categories/, /tags/, /archive/, taxonomía |
 | 3. Arquitectura de contenido | Hecho | /guides/ + 3 pillars, related posts, minijuego SEO |
 | 4. Calendario editorial | Entregables listos | `docs/keyword-research.md`, `docs/editorial-calendar.md`, 4 stubs en `_drafts/` |
-| 5. Off-page | Pendiente | Manual: cross-posts, Reddit, HN, backlinks |
+| 5. Off-page | Entregables listos | `docs/off-page-playbook.md`, `docs/outreach-templates.md`, `docs/post-promo-copy.md`, `docs/backlink-opportunities.md`, `docs/backlink-tracker.csv` |
 | 6. Core Web Vitals | Pendiente | Lighthouse CI, WebP, critical CSS |
 | 7. Medición | Pendiente | Eventos GA4, KPIs 90d |
 
