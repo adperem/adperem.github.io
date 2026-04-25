@@ -2,6 +2,18 @@
 
 Diagnóstico actual y hoja de ruta priorizada para aumentar tráfico orgánico y alcance.
 
+## Progreso
+
+| Fase | Estado | Commit / Notas |
+|------|--------|---------------|
+| 1. Quick wins técnicos | Hecho | Frontmatter, renames, redirects, head, hero LCP |
+| 2. Indexación + metadatos | Hecho | JSON-LD, /categories/, /tags/, /archive/, taxonomía |
+| 3. Arquitectura de contenido | Hecho | /guides/ + 3 pillars, related posts, minijuego SEO |
+| 4. Calendario editorial | Entregables listos | `docs/keyword-research.md`, `docs/editorial-calendar.md`, 4 stubs en `_drafts/` |
+| 5. Off-page | Pendiente | Manual: cross-posts, Reddit, HN, backlinks |
+| 6. Core Web Vitals | Pendiente | Lighthouse CI, WebP, critical CSS |
+| 7. Medición | Pendiente | Eventos GA4, KPIs 90d |
+
 ---
 
 ## 1. Estado actual (auditoría)
