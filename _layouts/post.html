@@ -63,6 +63,45 @@ layout: default
           </div>
           {% endif %}
 
+          {%- comment -%} Related posts: shared category first, filled by shared tags {%- endcomment -%}
+          {% assign primary = page.categories | first %}
+          {% assign related = "" | split: "" %}
+          {% for p in site.posts %}
+            {% if p.url != page.url and p.categories contains primary %}
+              {% assign related = related | push: p %}
+            {% endif %}
+            {% if related.size >= 3 %}{% break %}{% endif %}
+          {% endfor %}
+          {% if related.size < 3 %}
+            {% for p in site.posts %}
+              {% if p.url == page.url %}{% continue %}{% endif %}
+              {% assign already = false %}
+              {% for r in related %}{% if r.url == p.url %}{% assign already = true %}{% endif %}{% endfor %}
+              {% if already %}{% continue %}{% endif %}
+              {% assign shared = 0 %}
+              {% for t in p.tags %}{% if page.tags contains t %}{% assign shared = shared | plus: 1 %}{% endif %}{% endfor %}
+              {% if shared >= 1 %}
+                {% assign related = related | push: p %}
+              {% endif %}
+              {% if related.size >= 3 %}{% break %}{% endif %}
+            {% endfor %}
+          {% endif %}
+
+          {% if related.size > 0 %}
+          <section class="related" aria-label="Related posts">
+            <h2 class="related__title">Related</h2>
+            <div class="related__list">
+              {% for r in related %}
+              <a href="{{ r.url | relative_url }}" class="related__item">
+                <div class="related__cat">{{ r.categories | first }}</div>
+                <div class="related__headline">{{ r.title }}</div>
+                <div class="related__excerpt">{{ r.description | default: r.excerpt | strip_html | truncate: 120 }}</div>
+              </a>
+              {% endfor %}
+            </div>
+          </section>
+          {% endif %}
+
           {% assign sorted = site.posts %}
           {% assign post_index = nil %}
           {% for p in sorted %}

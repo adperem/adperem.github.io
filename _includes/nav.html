@@ -5,6 +5,7 @@
 
       <ul class="nav-links">
         <li><a href="{{ '/blog/' | relative_url }}" class="nav-link{% if page.url == '/blog/' %} active{% endif %}">Blog</a></li>
+        <li><a href="{{ '/guides/' | relative_url }}" class="nav-link{% if page.url contains '/guides/' %} active{% endif %}">Guides</a></li>
         <li><a href="{{ '/projects/' | relative_url }}" class="nav-link{% if page.url == '/projects/' %} active{% endif %}">Projects</a></li>
         <li><a href="{{ '/about/' | relative_url }}" class="nav-link{% if page.url == '/about/' %} active{% endif %}">About</a></li>
         <li>
@@ -21,6 +22,7 @@
 
     <div class="nav-mobile" id="nav-mobile">
       <a href="{{ '/blog/' | relative_url }}" class="nav-mobile-link{% if page.url == '/blog/' %} active{% endif %}">Blog</a>
+      <a href="{{ '/guides/' | relative_url }}" class="nav-mobile-link{% if page.url contains '/guides/' %} active{% endif %}">Guides</a>
       <a href="{{ '/projects/' | relative_url }}" class="nav-mobile-link{% if page.url == '/projects/' %} active{% endif %}">Projects</a>
       <a href="{{ '/about/' | relative_url }}" class="nav-mobile-link{% if page.url == '/about/' %} active{% endif %}">About</a>
       <a href="https://github.com/adperem" class="nav-mobile-link" target="_blank" rel="noopener">GitHub</a>
