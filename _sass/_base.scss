@@ -35,7 +35,29 @@ body {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
   body::before { animation: none; }
+
+  // Skip the staggered entrance — show content immediately.
+  .fade-up,
+  .fade-up.is-visible {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+
+  // Silence every infinite / decorative animation and shorten transitions
+  // so users who opt out of motion never see a moving page.
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
 }
 
 body {

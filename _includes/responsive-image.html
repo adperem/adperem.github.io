@@ -1,0 +1,51 @@
+{%- comment -%}
+  Renders <picture> with AVIF + WebP sources whenever sibling files exist
+  next to the original. Generate them with `tools/optimize-images.sh`.
+
+  Usage:
+    {% include responsive-image.html
+       src="/assets/img/path/hero.png"
+       alt="Descriptive alt"
+       eager=true
+       class="post-image__img"
+       sizes="(min-width: 720px) 720px, 100vw" %}
+
+  Optional params:
+    eager  -> loading=eager + fetchpriority=high (use only for LCP)
+    class  -> class attribute on the <img>
+    sizes  -> sizes attribute (defaults to 100vw)
+{%- endcomment -%}
+
+{%- assign src = include.src -%}
+{%- assign ext = src | split: "." | last -%}
+{%- assign base = src | replace: "." | append: ext, "" -%}
+{%- comment -%} portable basename: strip the .ext suffix {%- endcomment -%}
+{%- assign suffix = "." | append: ext -%}
+{%- assign base = src | remove_first: suffix -%}
+
+{%- assign webp_path = base | append: ".webp" -%}
+{%- assign avif_path = base | append: ".avif" -%}
+
+{%- assign avif_exists = false -%}
+{%- assign webp_exists = false -%}
+{%- for f in site.static_files -%}
+  {%- if f.path == avif_path -%}{%- assign avif_exists = true -%}{%- endif -%}
+  {%- if f.path == webp_path -%}{%- assign webp_exists = true -%}{%- endif -%}
+{%- endfor -%}
+
+{%- assign sizes = include.sizes | default: "100vw" -%}
+{%- if include.eager -%}
+  {%- assign loading_attr = 'loading="eager" fetchpriority="high"' -%}
+{%- else -%}
+  {%- assign loading_attr = 'loading="lazy"' -%}
+{%- endif -%}
+
+<picture>
+  {%- if avif_exists -%}
+  <source srcset="{{ avif_path | relative_url }}" type="image/avif" sizes="{{ sizes }}">
+  {%- endif -%}
+  {%- if webp_exists -%}
+  <source srcset="{{ webp_path | relative_url }}" type="image/webp" sizes="{{ sizes }}">
+  {%- endif -%}
+  <img src="{{ src | relative_url }}" alt="{{ include.alt }}" {{ loading_attr }} decoding="async"{% if include.class %} class="{{ include.class }}"{% endif %}{% if include.width %} width="{{ include.width }}"{% endif %}{% if include.height %} height="{{ include.height }}"{% endif %}>
+</picture>
