@@ -12,7 +12,7 @@ Diagnóstico actual y hoja de ruta priorizada para aumentar tráfico orgánico y
 | 4. Calendario editorial | Entregables listos | `docs/keyword-research.md`, `docs/editorial-calendar.md`, 4 stubs en `_drafts/` |
 | 5. Off-page | Entregables listos | `docs/off-page-playbook.md`, `docs/outreach-templates.md`, `docs/post-promo-copy.md`, `docs/backlink-opportunities.md`, `docs/backlink-tracker.csv` |
 | 6. Core Web Vitals | Hecho (parcial) | Lighthouse CI, prefers-reduced-motion, optimize-images.sh, `<picture>` include. Follow-ups en `docs/cwv-followups.md` |
-| 7. Medición | Pendiente | Eventos GA4, KPIs 90d |
+| 7. Medición | Hecho | Eventos GA4 + Web Vitals RUM en `assets/js/main.js`. Setup, dashboards y KPIs en `docs/measurement.md` |
 
 ---
 
