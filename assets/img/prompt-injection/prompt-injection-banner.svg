@@ -57,8 +57,8 @@
     <text x="0" y="220" font-family="Segoe UI, Arial, sans-serif" font-size="66" font-weight="800" fill="#ffffff">PROMPT</text>
     <text x="0" y="292" font-family="Segoe UI, Arial, sans-serif" font-size="66" font-weight="800" fill="#ffffff">INJECTION</text>
     <rect x="2" y="315" width="320" height="5" rx="2.5" fill="url(#accent)"/>
-    <text x="0" y="372" font-family="Segoe UI, Arial, sans-serif" font-size="25" fill="#c3cce6" font-weight="600">The #1 threat to LLM apps</text>
-    <text x="0" y="408" font-family="Segoe UI, Arial, sans-serif" font-size="25" fill="#c3cce6" font-weight="600">— attack &amp; defense</text>
+    <text x="0" y="372" font-family="Segoe UI, Arial, sans-serif" font-size="25" fill="#c3cce6" font-weight="600">The #1 threat to LLM apps.</text>
+    <text x="0" y="408" font-family="Segoe UI, Arial, sans-serif" font-size="25" fill="#c3cce6" font-weight="600">Attack &amp; defense.</text>
 
     <g transform="translate(0,450)">
       <rect width="150" height="40" rx="20" fill="#7c3aed22" stroke="#7c3aed" stroke-width="1.5"/>
@@ -68,5 +68,5 @@
     </g>
   </g>
 
-  <text x="80" y="560" font-family="Segoe UI, Arial, sans-serif" font-size="20" fill="#5b678a">adperem.github.io — Cybersecurity Research &amp; Tools</text>
+  <text x="80" y="560" font-family="Segoe UI, Arial, sans-serif" font-size="20" fill="#5b678a">adperem.github.io · Cybersecurity Research &amp; Tools</text>
 </svg>
