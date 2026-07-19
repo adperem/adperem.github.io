@@ -22,6 +22,16 @@ This post covers how prompt injection actually works, some real attack payloads,
 
 ---
 
+## Key takeaways
+
+- Prompt injection is an attack where attacker-controlled text makes an LLM ignore its developer instructions and follow the attacker's instead.
+- It ranks number one on the OWASP Top 10 for LLM Applications and is often described as the SQL injection of the AI era.
+- **Direct injection** comes from the user typing into the chat. **Indirect injection** hides in external content (web pages, emails, PDFs) that the model reads on the victim's behalf, and it is the more dangerous of the two.
+- There is no known 100% fix, because natural language has no reliable syntax to separate trusted commands from untrusted data.
+- The most effective defenses are architectural: least privilege for tools, human approval for high-impact actions, an egress allowlist, and treating every model output as untrusted.
+
+---
+
 ## What is prompt injection?
 
 An LLM prompt is usually a sandwich of three things:
@@ -152,6 +162,91 @@ If any two of these are "yes," you have a real, exploitable prompt-injection sur
 Prompt injection isn't a bug you patch once. It's a fundamental property of how LLMs work today: they follow persuasive text, wherever it comes from. The winning strategy isn't making the model "smarter about ignoring bad instructions." It's architecting the system so that even a fully compromised model can't do real damage. That means least privilege, human approval on dangerous actions, tight egress, and zero trust in model output.
 
 Build like the model is going to be hijacked, and prompt injection drops from a catastrophe to an inconvenience.
+
+---
+
+## Frequently asked questions
+
+### What is prompt injection in simple terms?
+
+Prompt injection is an attack where malicious text tricks a large language model into ignoring the instructions its developer gave it and following the attacker's instructions instead. Because the model reads developer instructions, user input, and external data as one stream of text, it cannot reliably tell which parts are trusted commands and which are untrusted data.
+
+### Is prompt injection the same as jailbreaking?
+
+No, though they overlap. Jailbreaking specifically means getting a model to bypass its own safety guardrails. Prompt injection is broader: it means overriding whatever instructions the application relies on, which may be safety rules, business logic, or access controls. A jailbreak is one possible outcome of a prompt-injection attack.
+
+### What is the difference between direct and indirect prompt injection?
+
+In direct injection the attacker types the malicious prompt straight into the chat, so the impact is usually limited to their own session. In indirect injection the payload hides inside external content, such as a web page, email, or document, that the model later reads on behalf of a victim. Indirect injection is more dangerous because the victim never types anything malicious.
+
+### Can prompt injection be fully prevented?
+
+No. There is currently no known 100% fix, because natural language offers no reliable way to separate trusted instructions from untrusted data. The practical goal is to reduce the attack surface by layering defenses such as least privilege, human approval for risky actions, output sanitization, and an egress allowlist.
+
+### Why is prompt injection ranked number one in the OWASP LLM Top 10?
+
+Because it is both easy to attempt and high in impact. Almost every LLM application accepts external input or takes actions through tools, which gives attackers a way in, and a successful injection can lead to data exfiltration, unauthorized actions, or full agent hijacking. Its combination of prevalence and severity keeps it at the top of the list.
+
+### What tools can I use to test my app for prompt injection?
+
+Open-source and vendor tools such as the `garak` LLM vulnerability scanner and Microsoft's PyRIT red-teaming toolkit let you fuzz your own application for injection weaknesses. Pair them with the OWASP Top 10 for LLM Applications as a checklist.
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is prompt injection in simple terms?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Prompt injection is an attack where malicious text tricks a large language model into ignoring the instructions its developer gave it and following the attacker's instructions instead. Because the model reads developer instructions, user input, and external data as one stream of text, it cannot reliably tell which parts are trusted commands and which are untrusted data."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Is prompt injection the same as jailbreaking?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No, though they overlap. Jailbreaking specifically means getting a model to bypass its own safety guardrails. Prompt injection is broader: it means overriding whatever instructions the application relies on, which may be safety rules, business logic, or access controls. A jailbreak is one possible outcome of a prompt-injection attack."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is the difference between direct and indirect prompt injection?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "In direct injection the attacker types the malicious prompt straight into the chat, so the impact is usually limited to their own session. In indirect injection the payload hides inside external content, such as a web page, email, or document, that the model later reads on behalf of a victim. Indirect injection is more dangerous because the victim never types anything malicious."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can prompt injection be fully prevented?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No. There is currently no known 100% fix, because natural language offers no reliable way to separate trusted instructions from untrusted data. The practical goal is to reduce the attack surface by layering defenses such as least privilege, human approval for risky actions, output sanitization, and an egress allowlist."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Why is prompt injection ranked number one in the OWASP LLM Top 10?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Because it is both easy to attempt and high in impact. Almost every LLM application accepts external input or takes actions through tools, which gives attackers a way in, and a successful injection can lead to data exfiltration, unauthorized actions, or full agent hijacking. Its combination of prevalence and severity keeps it at the top of the list."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What tools can I use to test my app for prompt injection?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Open-source and vendor tools such as the garak LLM vulnerability scanner and Microsoft's PyRIT red-teaming toolkit let you fuzz your own application for injection weaknesses. Pair them with the OWASP Top 10 for LLM Applications as a checklist."
+      }
+    }
+  ]
+}
+</script>
 
 ---
 
