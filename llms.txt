@@ -1,0 +1,46 @@
+# Adperem: Cybersecurity Research & Tools
+
+> Blog and toolbox by Adrián Pérez Moreno covering offensive and defensive
+> security: CTF writeups, web vulnerabilities (IDOR, GraphQL), recon
+> automation, AI security, malware analysis, and hardware hacking projects.
+> Content is written in English and aimed at bug bounty hunters, red teamers,
+> and security engineers.
+
+All URLs below are absolute and stable. Each post is a self-contained article.
+
+## Featured
+
+- [Prompt Injection Explained: The #1 AI Security Threat of 2026](https://adperem.github.io/posts/prompt-injection-attacks/): How direct and indirect prompt injection hijack LLM apps and AI agents, with real payloads and seven concrete defenses.
+- [Claude 4 Opus: Ultimate Cybersecurity Guardian or Silent Enemy?](https://adperem.github.io/posts/claude-4-opus/): Analysis of Claude 4 Opus capabilities and risks from a cybersecurity perspective.
+- [Skimmer Hunter v2.0: Advanced Card Skimmer Detector with ESP32](https://adperem.github.io/posts/skimmer-hunter-esp32/): Building a pocket-sized card skimmer detector with an ESP32 using eight independent detection layers.
+
+## AI Security
+
+- [Prompt Injection Explained: The #1 AI Security Threat of 2026](https://adperem.github.io/posts/prompt-injection-attacks/): Attack and defense guide to prompt injection for LLM applications and AI agents, mapped to the OWASP Top 10 for LLM Applications.
+- [Claude 4 Opus: Ultimate Cybersecurity Guardian or Silent Enemy?](https://adperem.github.io/posts/claude-4-opus/): Dual-use analysis of a frontier LLM for security work.
+
+## Web Security & Bug Bounty
+
+- [Critical IDOR in GraphQL: From Nuclei Scan to Full Cart Takeover](https://adperem.github.io/posts/GraphQL-IDOR/): Real-world IDOR exploitation chain in a GraphQL API.
+- [Subdomain Recon Script: chaos, subfinder, amass and more](https://adperem.github.io/posts/recon_subdomains/): Automating subdomain enumeration by combining passive, active, and API-based sources.
+- [p0wny-shell: full control with a simple PHP web shell](https://adperem.github.io/posts/p0wny@shell/): How the p0wny-shell PHP web shell works.
+
+## CTF Writeups
+
+- [TryHackMe Billing Writeup](https://adperem.github.io/posts/billing-writeup/): Exploiting Magnus Billing (CVE-2023-30258) for a reverse shell and privilege escalation.
+- [TryHackMe Smol Writeup](https://adperem.github.io/posts/smol-writeup/): WordPress-based CTF machine walkthrough.
+
+## Tools
+
+- [Introducing Fuzzstorm: Fuzzing Tool with Soft 404 Detection](https://adperem.github.io/posts/fuzzstorm/): A fuzzing tool with soft-404 detection and HTML reports.
+- [User Manual for loxs (adperem Fork)](https://adperem.github.io/posts/losx-user-manual/): Usage guide for the loxs vulnerability scanner fork.
+
+## Privacy & Threat Intel
+
+- [Why Oniux Beats VPNs: Linux Privacy Tool from Tor](https://adperem.github.io/posts/introducing-oniux/): Routing any Linux app through Tor with kernel-level namespace isolation.
+- [How the LockBit Group Operates with Its Victims](https://adperem.github.io/posts/lockbit-hacked/): Analysis of leaked LockBit ransomware negotiation conversations.
+
+## About
+
+- [About the author](https://adperem.github.io/about/): Background and contact.
+- [Projects](https://adperem.github.io/projects/): Open-source security tools and hardware projects.
