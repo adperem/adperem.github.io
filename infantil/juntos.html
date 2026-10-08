@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Crecemos juntos · Jugamos y aprendemos</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/infantil.css">
+  <style>
+    .campo { width: 100%; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 12px; min-height: calc(100vh - 230px); }
+    .mano {
+      justify-self: center; width: clamp(120px, 26vw, 220px); aspect-ratio: 1; border-radius: 50%; border: 0;
+      font-size: clamp(4rem, 12vw, 7rem); cursor: pointer; touch-action: none; box-shadow: 0 12px 0 rgba(0, 0, 0, .15);
+      transition: transform .1s, box-shadow .1s;
+    }
+    .mano.a { background: #bfe0ff; }
+    .mano.b { background: #ffe9a8; }
+    .mano.pulsada { transform: translateY(8px) scale(.96); box-shadow: 0 4px 0 rgba(0, 0, 0, .15); outline: 8px solid var(--ok); }
+    .centro { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+    .planta { font-size: clamp(5rem, 18vw, 10rem); transition: transform .3s; }
+    .planta.crece { animation: pop .6s; }
+    .barra-crecer { width: clamp(120px, 24vw, 220px); height: 26px; background: #fff; border-radius: 999px; box-shadow: var(--shadow); overflow: hidden; }
+    .barra-crecer i { display: block; height: 100%; width: 0; background: linear-gradient(90deg, #8bc34a, #43a047); border-radius: 999px; }
+    .pista { font-size: 15px; color: var(--muted); text-align: center; max-width: 640px; }
+  </style>
+</head>
+<body>
+  <main class="zona-juego" id="app"></main>
+
+  <script type="module">
+    import { cabecera, pantallaInicio, pantallaFinal, hablar, sonidoAcierto, nota, el } from './js/comun.js';
+    import { empezarSesion, terminarSesion } from './js/storage.js';
+    import { E } from './js/dibujos.js';
+
+    const FASES = ['🌰', '🌱', '🌿', '🪴', '🌳', 'manzano'];
+    const INTRO = 'Este juego es para dos amigos. Para que crezca el árbol, tenéis que apretar las dos manos a la vez. ¡Juntos!';
+    const app = document.getElementById('app');
+    cabecera({ titulo: 'Crecemos juntos', onRepetir: () => hablar(INTRO) });
+
+    pantallaInicio(app, {
+      icono: '🤝',
+      titulo: 'Crecemos juntos',
+      onEmpezar: () => {
+        empezarSesion('juntos');
+        hablar(INTRO);
+        jugar();
+      }
+    });
+
+    function jugar() {
+      const campo = el(`
+        <div class="campo">
+          <button class="mano a" type="button" aria-label="Mano del amigo azul">${E('🖐️')}</button>
+          <div class="centro">
+            <div class="planta">${E(FASES[0])}</div>
+            <div class="barra-crecer"><i></i></div>
+          </div>
+          <button class="mano b" type="button" aria-label="Mano del amigo amarillo">${E('🖐️')}</button>
+        </div>`);
+      const pista = el('<p class="pista">Pensado para pizarra digital o tablet: cada niño aprieta su mano. Con teclado: teclas A y L a la vez.</p>');
+      app.append(campo, pista);
+
+      const manos = [...campo.querySelectorAll('.mano')];
+      const planta = campo.querySelector('.planta');
+      const relleno = campo.querySelector('.barra-crecer i');
+      const pulsada = [false, false];
+      let fase = 0;
+      let carga = 0;
+      let avisoSolo = 0;
+      let terminado = false;
+
+      manos.forEach((m, k) => {
+        const on = e => { e.preventDefault(); m.setPointerCapture?.(e.pointerId); pulsada[k] = true; m.classList.add('pulsada'); };
+        const off = () => { pulsada[k] = false; m.classList.remove('pulsada'); };
+        m.addEventListener('pointerdown', on);
+        m.addEventListener('pointerup', off);
+        m.addEventListener('pointercancel', off);
+        m.addEventListener('lostpointercapture', off);
+        m.addEventListener('contextmenu', e => e.preventDefault());
+      });
+      const teclas = { a: 0, l: 1 };
+      addEventListener('keydown', e => { const k = teclas[e.key.toLowerCase()]; if (k !== undefined) { pulsada[k] = true; manos[k].classList.add('pulsada'); } });
+      addEventListener('keyup', e => { const k = teclas[e.key.toLowerCase()]; if (k !== undefined) { pulsada[k] = false; manos[k].classList.remove('pulsada'); } });
+
+      let antes = performance.now();
+      function bucle(ahora) {
+        const dt = (ahora - antes) / 1000;
+        antes = ahora;
+        if (terminado) return;
+        if (pulsada[0] && pulsada[1]) {
+          carga += dt / 1.4; // 1,4 s apretando juntos por fase
+          if (Math.random() < dt * 6) nota(500 + fase * 80 + Math.random() * 60, 0, 0.1, { tipo: 'sine', vol: 0.05 });
+        } else {
+          carga = Math.max(0, carga - dt * 0.4);
+          if ((pulsada[0] || pulsada[1]) && ahora - avisoSolo > 6000) {
+            avisoSolo = ahora;
+            hablar('¡Falta tu amigo! Tenéis que apretar los dos.');
+          }
+        }
+        if (carga >= 1) {
+          carga = 0;
+          fase++;
+          planta.innerHTML = E(FASES[fase]);
+          planta.classList.remove('crece');
+          void planta.offsetWidth;
+          planta.classList.add('crece');
+          sonidoAcierto();
+          if (fase === FASES.length - 1) {
+            terminado = true;
+            terminarSesion();
+            setTimeout(() => pantallaFinal({ mensaje: '¡Lo habéis conseguido juntos!', criterios: ['ca5'] }), 900);
+            return;
+          }
+          hablar(['¡Está creciendo!', '¡Muy bien, juntos!', '¡Un poco más!', '¡Ya casi!'][fase - 1] || '');
+        }
+        relleno.style.width = carga * 100 + '%';
+        requestAnimationFrame(bucle);
+      }
+      requestAnimationFrame(bucle);
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>El cuento de Otoñita · Jugamos y aprendemos</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/infantil.css">
+  <style>
+    .pagina {
+      width: min(100%, 820px);
+      background: #fff;
+      border-radius: 36px;
+      box-shadow: var(--shadow);
+      padding: 24px;
+      text-align: center;
+      animation: entra .5s ease-out;
+    }
+    .ilustracion { font-size: clamp(4rem, 15vw, 8rem); display: flex; justify-content: center; align-items: flex-end; gap: 12px; min-height: 1.3em; }
+    .ilustracion > * { display: inline-block; animation: flota 3s ease-in-out infinite; }
+    .ilustracion > :nth-child(2) { animation-delay: .6s; }
+    .ilustracion > :nth-child(3) { animation-delay: 1.2s; }
+    .texto { font-size: clamp(1.1rem, 3.2vw, 1.5rem); line-height: 1.5; margin: 18px 0 0; color: var(--ink); }
+    .silencio { display: flex; align-items: center; gap: 10px; color: var(--muted); font-size: 1.1rem; }
+    .silencio .emo { font-size: 2.2rem; }
+    .nav { display: flex; gap: 18px; }
+    .puntos { display: flex; gap: 8px; }
+    .puntos i { width: 14px; height: 14px; border-radius: 50%; background: var(--line); }
+    .puntos i.on { background: var(--de); }
+  </style>
+</head>
+<body>
+  <main class="zona-juego" id="app"></main>
+
+  <script type="module">
+    import { cabecera, pantallaInicio, pantallaFinal, hablar, callar, el } from './js/comun.js';
+    import { ejecutarRondas } from './js/rondas.js';
+    import { E, COLORES, forma } from './js/dibujos.js';
+    import { empezarSesion, terminarSesion } from './js/storage.js';
+
+    const PAGINAS = [
+      { dibujo: ['🌳', '🍃'], texto: 'En un árbol muy grande vivía una hojita verde que se llamaba Otoñita.' },
+      { dibujo: ['🌬️'], texto: 'Un día llegó el otoño. Hacía fresquito y soplaba el viento: ¡uuuuh, uuuuh!' },
+      { dibujo: ['🍁'], texto: 'Y Otoñita cambió de color. ¡Se puso roja, roja, como una manzana!' },
+      { dibujo: ['bosque-otono', '🍁'], texto: 'El viento sopló muy fuerte y Otoñita se soltó del árbol. Bajó despacito, despacito, hasta el suelo.' },
+      { dibujo: ['🍁'], texto: 'Otoñita estaba un poco triste. «¿Dónde estoy?», decía. «Estoy solita».' },
+      { dibujo: ['ardilla-castana'], texto: 'Entonces llegó una ardilla con una castaña. «No estés triste, Otoñita. ¡Ven a jugar conmigo!».' },
+      { dibujo: ['🐿️', '🍁'], texto: 'La ardilla y Otoñita jugaron juntas en el bosque, y Otoñita se puso muy contenta. Y colorín colorado, este cuento se ha acabado.' }
+    ];
+
+    const op = (html, ok = false) => ({ html, ok });
+    const PREGUNTAS = [
+      { voz: '¿Quién ayudó a Otoñita?', opciones: [op(E('🐿️'), true), op(E('🐘')), op(E('🐟'))] },
+      { voz: '¿De qué color se puso Otoñita?', opciones: [op(forma('circulo', COLORES.rojo, 'rojo'), true), op(forma('circulo', COLORES.azul, 'azul')), op(forma('circulo', COLORES.morado, 'morado'))] },
+      { voz: 'Al final del cuento, ¿cómo estaba Otoñita?', opciones: [op(E('😀'), true), op(E('😢'))] }
+    ];
+
+    const app = document.getElementById('app');
+    let repetir = () => {};
+    cabecera({ titulo: 'El cuento de Otoñita', onRepetir: () => repetir() });
+
+    pantallaInicio(app, {
+      icono: '📖',
+      titulo: 'El cuento de Otoñita',
+      onEmpezar: async () => {
+        empezarSesion('cuento');
+        await hablar('Ahora vamos a escuchar un cuento. Nos sentamos, cerramos la boquita y escuchamos en silencio.');
+        leer();
+      }
+    });
+
+    function leer() {
+      const silencio = el('<div class="silencio"><span class="emo">🤫</span> Escuchamos en silencio</div>');
+      const pagina = el('<article class="pagina"></article>');
+      const nav = el(`
+        <div class="nav">
+          <button class="btn-redondo" type="button" data-a="atras" aria-label="Página anterior">⬅️</button>
+          <div class="puntos" aria-hidden="true">${'<i></i>'.repeat(PAGINAS.length)}</div>
+          <button class="btn-redondo" type="button" data-a="pausa" aria-label="Pausa">⏸️</button>
+          <button class="btn-redondo" type="button" data-a="adelante" aria-label="Página siguiente">➡️</button>
+        </div>`);
+      app.append(silencio, pagina, nav);
+
+      let i = 0;
+      let pausado = false;
+      let turno = 0; // invalida lecturas anteriores al cambiar de página
+
+      async function mostrar() {
+        const p = PAGINAS[i];
+        const mio = ++turno;
+        pagina.innerHTML = `<div class="ilustracion">${p.dibujo.map(d => E(d)).join('')}</div><p class="texto">${p.texto}</p>`;
+        pagina.style.animation = 'none';
+        void pagina.offsetWidth;
+        pagina.style.animation = '';
+        nav.querySelectorAll('.puntos i').forEach((x, k) => x.classList.toggle('on', k <= i));
+        repetir = () => { pausado = false; mostrar(); };
+        await hablar(p.texto);
+        await new Promise(r => setTimeout(r, 900));
+        if (mio !== turno || pausado) return;
+        avanzar(1);
+      }
+
+      function avanzar(paso) {
+        const j = i + paso;
+        if (j < 0) return;
+        if (j >= PAGINAS.length) { terminarLectura(); return; }
+        i = j;
+        mostrar();
+      }
+
+      function terminarLectura() {
+        turno++;
+        callar();
+        silencio.remove();
+        pagina.remove();
+        nav.remove();
+        preguntas();
+      }
+
+      nav.addEventListener('click', e => {
+        const a = e.target.closest('button')?.dataset.a;
+        if (a === 'atras') { pausado = false; avanzar(-1); }
+        if (a === 'adelante') { pausado = false; avanzar(1); }
+        if (a === 'pausa') {
+          pausado = !pausado;
+          e.target.closest('button').textContent = pausado ? '▶️' : '⏸️';
+          if (pausado) { turno++; callar(); } else mostrar();
+        }
+      });
+
+      mostrar();
+    }
+
+    async function preguntas() {
+      await hablar('¡Qué cuento tan bonito! Ahora te hago unas preguntas.');
+      const partida = ejecutarRondas({
+        contenedor: app,
+        rondas: PREGUNTAS,
+        criterio: 'cr4',
+        onFin: ({ aciertos, total }) => {
+          terminarSesion();
+          pantallaFinal({
+            mensaje: '¡Muy bien escuchado!',
+            detalle: `Preguntas acertadas a la primera: ${aciertos} de ${total}. Anota abajo si escuchó en silencio.`,
+            criterios: ['cr4', 'cr1']
+          });
+        }
+      });
+      repetir = partida.repetir;
+    }
+  </script>
+</body>
+</html>

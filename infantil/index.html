@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Jugamos y aprendemos</title>
+  <meta name="description" content="Minijuegos para evaluar el primer trimestre de 1º de Educación Infantil.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/infantil.css">
+  <style>
+    .portada { text-align: center; padding: 24px 16px 8px; }
+    .portada h1 { margin: 0; font-size: clamp(2rem, 7vw, 3.4rem); }
+    .portada p { margin: 6px 0 0; color: var(--muted); font-size: clamp(1.1rem, 3.5vw, 1.5rem); }
+    .contenido { max-width: 1100px; margin: 0 auto; padding: 8px 16px 60px; }
+
+    .avatares { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 18px; margin-top: 16px; }
+    .avatar {
+      border: 0; background: #fff; border-radius: 28px; box-shadow: var(--shadow);
+      padding: 16px 8px 12px; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 6px;
+      font-size: 1.1rem; font-weight: 600;
+    }
+    .avatar .emo, .avatar img { font-size: 4.2rem; }
+    .avatar:active { transform: translateY(5px); box-shadow: var(--shadow-press); }
+    .avatar.invitado { background: transparent; box-shadow: none; border: 3px dashed var(--line); color: var(--muted); }
+
+    .yo { display: flex; align-items: center; justify-content: center; gap: 14px; margin: 8px 0 4px; }
+    .yo .emo, .yo img { font-size: 3.4rem; }
+    .yo b { font-size: 1.6rem; }
+
+    .area { margin-top: 28px; }
+    .area h2 {
+      display: inline-block; margin: 0 0 14px; padding: 6px 18px; border-radius: 999px;
+      background: var(--c); color: #fff; font-size: clamp(1rem, 3vw, 1.3rem);
+    }
+    .juegos { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 16px; }
+    .tile {
+      position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;
+      aspect-ratio: 1; padding: 12px; border-radius: 28px; text-decoration: none; color: var(--ink);
+      background: #fff; box-shadow: 0 8px 0 color-mix(in srgb, var(--c) 45%, transparent);
+      border: 4px solid color-mix(in srgb, var(--c) 30%, white); text-align: center; font-weight: 600; font-size: 1.05rem;
+    }
+    .tile > .emo, .tile > img { font-size: clamp(3.2rem, 9vw, 4.4rem); }
+    .tile:active { transform: translateY(5px); box-shadow: 0 3px 0 color-mix(in srgb, var(--c) 45%, transparent); }
+    .tile .hecho { position: absolute; top: 8px; right: 10px; font-size: 1.6rem; }
+    .tile .grupo-tag { position: absolute; top: 8px; left: 10px; font-size: 1.3rem; }
+
+    .aviso { background: #fff; border-radius: 24px; padding: 20px; box-shadow: var(--shadow); text-align: center; margin-top: 20px; font-size: 1.1rem; }
+    .aviso a { color: var(--cr); font-weight: 600; }
+    .esquina { display: table; margin: 0 auto 32px; font-size: 15px; background: #fff; padding: 10px 16px; border-radius: 999px; box-shadow: var(--shadow); color: var(--muted); text-decoration: none; font-weight: 600; }
+    .creditos { text-align: center; font-size: 13px; margin: 0 0 24px; }
+    .creditos a { color: var(--muted); }
+    [hidden] { display: none !important; }
+  </style>
+</head>
+<body>
+  <header class="portada">
+    <h1><span class="emo">🌈</span> Jugamos y aprendemos</h1>
+    <p id="subtitulo">¿Quién eres?</p>
+  </header>
+
+  <main class="contenido">
+    <section id="vista-quien">
+      <div class="avatares" id="avatares"></div>
+      <div class="aviso" id="sin-alumnos" hidden>
+        Todavía no hay alumnos. <a href="profesor.html">Entra en el panel del profe</a> para añadir la clase.
+      </div>
+    </section>
+
+    <section id="vista-menu" hidden>
+      <div class="yo">
+        <span class="emo" id="yo-avatar"></span>
+        <b id="yo-nombre"></b>
+        <button class="btn-redondo" id="cambiar" type="button" aria-label="Cambiar de niño">🔄</button>
+      </div>
+      <div id="areas"></div>
+    </section>
+  </main>
+
+  <a class="esquina" href="profesor.html">👩‍🏫 Panel del profe</a>
+  <p class="creditos"><a href="creditos.html">Créditos de las fotos</a></p>
+
+  <script type="module">
+    import { AREAS, ACTIVIDADES } from './js/datos.js';
+    import { alumnos, alumnoActual, fijarAlumnoActual, completados } from './js/storage.js';
+    import { hablar, audio, sonidoPop } from './js/comun.js';
+    import { E } from './js/dibujos.js';
+
+    const $ = s => document.querySelector(s);
+    // "Invitado" juega sin guardar resultados.
+    let invitado = sessionStorage.getItem('infantil-invitado') === '1';
+
+    function vistaQuien() {
+      $('#vista-quien').hidden = false;
+      $('#vista-menu').hidden = true;
+      $('#subtitulo').textContent = '¿Quién eres?';
+      const lista = alumnos();
+      $('#sin-alumnos').hidden = lista.length > 0;
+      $('#avatares').innerHTML = lista.map(a => `
+        <button class="avatar" type="button" data-id="${a.id}">
+          ${E(a.avatar)}${a.nombre}
+        </button>`).join('') + `
+        <button class="avatar invitado" type="button" data-id="">
+          <span class="emo">👀</span>Probar sin guardar
+        </button>`;
+    }
+
+    function vistaMenu() {
+      const a = alumnoActual();
+      $('#vista-quien').hidden = true;
+      $('#vista-menu').hidden = false;
+      $('#subtitulo').textContent = '¿A qué jugamos?';
+      $('#yo-avatar').innerHTML = a ? E(a.avatar) : '👀';
+      $('#yo-nombre').textContent = a ? a.nombre : 'Invitado';
+      const hechos = a ? completados(a.id) : new Set();
+      $('#areas').innerHTML = AREAS.map(area => `
+        <section class="area" style="--c:${area.color}">
+          <h2>${area.nombre}</h2>
+          <div class="juegos">
+            ${ACTIVIDADES.filter(x => x.area === area.id).map(x => `
+              <a class="tile" href="${x.url}" data-titulo="${x.titulo}">
+                ${x.grupo ? '<span class="grupo-tag emo" title="Actividad en grupo">👫</span>' : ''}
+                ${hechos.has(x.id) ? '<span class="hecho emo" title="Ya jugado">⭐</span>' : ''}
+                ${E(x.icono)}${x.titulo}
+              </a>`).join('')}
+          </div>
+        </section>`).join('');
+    }
+
+    $('#avatares').addEventListener('click', e => {
+      const b = e.target.closest('.avatar');
+      if (!b) return;
+      audio();
+      sonidoPop();
+      fijarAlumnoActual(b.dataset.id || null);
+      invitado = !b.dataset.id;
+      sessionStorage.setItem('infantil-invitado', invitado ? '1' : '0');
+      const a = alumnoActual();
+      hablar(a ? `¡Hola, ${a.nombre}! ¿A qué jugamos?` : '¡Hola! ¿A qué jugamos?');
+      vistaMenu();
+    });
+
+    $('#cambiar').addEventListener('click', () => {
+      fijarAlumnoActual(null);
+      invitado = false;
+      sessionStorage.removeItem('infantil-invitado');
+      vistaQuien();
+    });
+
+    if (alumnoActual() || invitado) vistaMenu();
+    else vistaQuien();
+  </script>
+</body>
+</html>

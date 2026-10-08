@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Jugamos y aprendemos</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/infantil.css">
+</head>
+<body>
+  <main class="zona-juego" id="app"></main>
+
+  <script type="module">
+    import { JUEGOS_QUIZ } from './js/quiz-juegos.js';
+    import { ejecutarRondas } from './js/rondas.js';
+    import { cabecera, pantallaInicio, pantallaFinal, hablar, params } from './js/comun.js';
+    import { empezarSesion, terminarSesion } from './js/storage.js';
+
+    const id = params().get('j');
+    const juego = JUEGOS_QUIZ[id];
+    if (!juego) {
+      location.replace('index.html');
+      throw new Error(`Juego desconocido: ${id}`);
+    }
+
+    document.title = `${juego.titulo} · Jugamos y aprendemos`;
+    const app = document.getElementById('app');
+    let partida = null;
+
+    cabecera({ titulo: juego.titulo, onRepetir: () => partida?.repetir() });
+
+    pantallaInicio(app, {
+      icono: juego.icono,
+      titulo: juego.titulo,
+      onEmpezar: () => {
+        empezarSesion(id);
+        partida = ejecutarRondas({
+          esperar: hablar(juego.intro),
+          contenedor: app,
+          rondas: juego.rondas(),
+          criterio: juego.criterio,
+          onFin: ({ aciertos, total }) => {
+            terminarSesion();
+            pantallaFinal({ detalle: `Aciertos a la primera: ${aciertos} de ${total}` });
+          }
+        });
+      }
+    });
+  </script>
+</body>
+</html>

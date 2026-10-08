@@ -1,0 +1,278 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pintamos · Jugamos y aprendemos</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/infantil.css">
+  <style>
+    .taller { width: 100%; display: grid; grid-template-columns: auto 1fr; gap: 14px; align-items: start; }
+    .colores { display: flex; flex-direction: column; gap: 10px; }
+    .color { width: 58px; height: 58px; border-radius: 50%; border: 5px solid #fff; box-shadow: var(--shadow); cursor: pointer; }
+    .color.activo { outline: 5px solid var(--ink); transform: scale(1.08); }
+    .hoja {
+      position: relative; width: 100%; height: calc(100vh - 250px); min-height: 360px;
+      background: #fff; border-radius: 28px; box-shadow: var(--shadow); overflow: hidden; touch-action: none;
+    }
+    .hoja canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+    .hoja .plantilla { pointer-events: none; }
+    .herramientas { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; width: 100%; }
+    .sellos { display: none; gap: 8px; flex-wrap: wrap; justify-content: center; width: 100%; }
+    .sellos.ver { display: flex; }
+    .sellos button { font-size: 2rem; width: 58px; height: 58px; border-radius: 18px; border: 0; background: #fff; box-shadow: var(--shadow); cursor: pointer; }
+    .sellos button.activo { background: var(--sol); }
+    .separa { width: 2px; background: var(--line); margin: 0 4px; }
+    @media (max-width: 600px) {
+      .taller { grid-template-columns: 1fr; }
+      .colores { flex-direction: row; flex-wrap: wrap; justify-content: center; }
+      .color { width: 46px; height: 46px; }
+      .hoja { height: calc(100vh - 330px); }
+    }
+  </style>
+</head>
+<body>
+  <main class="zona-juego" id="app">
+    <div class="taller">
+      <div class="colores" id="colores"></div>
+      <div class="hoja" id="hoja"><canvas id="pintura"></canvas><canvas class="plantilla" id="plantilla"></canvas></div>
+    </div>
+    <div class="herramientas" id="herramientas">
+      <button class="btn-redondo activo" data-h="dedo" aria-label="Pintar con el dedo">👆</button>
+      <button class="btn-redondo" data-h="puntos" aria-label="Pintar con puntitos">✨</button>
+      <button class="btn-redondo" data-h="sello" aria-label="Sellos">⭐</button>
+      <button class="btn-redondo" data-h="goma" aria-label="Goma">🧽</button>
+      <span class="separa"></span>
+      <button class="btn-redondo" data-g="grosor" aria-label="Cambiar grosor">🖌️</button>
+      <button class="btn-redondo" data-p="ficha" aria-label="Cambiar ficha">🖼️</button>
+      <button class="btn-redondo" data-a="borrar" aria-label="Borrar todo">🗑️</button>
+      <button class="btn-redondo" data-a="guardar" aria-label="Guardar dibujo">💾</button>
+    </div>
+    <div class="sellos" id="sellos"></div>
+  </main>
+
+  <script type="module">
+    import { cabecera, hablar, cajaProfe, sonidoPop, audio } from './js/comun.js';
+    import { empezarSesion, terminarSesion } from './js/storage.js';
+    import { E } from './js/dibujos.js';
+    import { cargarFoto } from './js/fotos.js';
+
+    const COLORES = ['#e53935', '#fb8c00', '#fdd835', '#43a047', '#1e88e5', '#8e24aa', '#6d4c41', '#212121'];
+    const SELLOS = ['🍂', '🍁', '🍎', '🌰', '🍄', '🍇', '🐞', '🐿️'];
+    const GROSORES = [10, 22, 40];
+    const FICHAS = ['nada', 'manzana', 'hoja', 'circulo'];
+    const NOMBRES_FICHA = { nada: 'Hoja en blanco', manzana: 'Pinta la manzana de rojo', hoja: 'Pinta la hoja de otoño', circulo: 'Pinta el círculo' };
+
+    const INTRO = 'Vamos a pintar. Elige un color y pinta con el dedo. Prueba los puntitos y los sellos.';
+    cabecera({ titulo: 'Pintamos', onRepetir: () => hablar(INTRO) });
+    empezarSesion('pintar');
+
+    const $ = s => document.querySelector(s);
+    const hoja = $('#hoja');
+    const lienzo = $('#pintura');
+    const capa = $('#plantilla');
+    const c = lienzo.getContext('2d');
+    const p = capa.getContext('2d');
+    let color = COLORES[0];
+    let herramienta = 'dedo';
+    let grosor = 1;
+    let sello = SELLOS[0];
+    let ficha = 0;
+    let ultimo = null;
+    let haPintado = false;
+
+    $('#colores').innerHTML = COLORES.map((col, k) =>
+      `<button class="color${k === 0 ? ' activo' : ''}" style="background:${col}" data-c="${col}" aria-label="Color"></button>`).join('');
+    $('#sellos').innerHTML = SELLOS.map((s, k) =>
+      `<button type="button" class="${k === 0 ? 'activo' : ''}" data-s="${s}">${E(s)}</button>`).join('');
+
+    function medir() {
+      const dpr = window.devicePixelRatio || 1;
+      const copia = document.createElement('canvas');
+      copia.width = lienzo.width;
+      copia.height = lienzo.height;
+      if (lienzo.width) copia.getContext('2d').drawImage(lienzo, 0, 0);
+      for (const cv of [lienzo, capa]) {
+        cv.width = hoja.clientWidth * dpr;
+        cv.height = hoja.clientHeight * dpr;
+        cv.getContext('2d').setTransform(dpr, 0, 0, dpr, 0, 0);
+      }
+      if (copia.width) c.drawImage(copia, 0, 0, hoja.clientWidth, hoja.clientHeight);
+      dibujarFicha();
+    }
+
+    function dibujarFicha() {
+      const w = hoja.clientWidth;
+      const h = hoja.clientHeight;
+      const r = Math.min(w, h) * 0.34;
+      p.clearRect(0, 0, w, h);
+      p.lineWidth = 8;
+      p.strokeStyle = '#3b2f4a';
+      p.lineJoin = 'round';
+      p.lineCap = 'round';
+      const cx = w / 2;
+      const cy = h / 2 + r * 0.08;
+      p.beginPath();
+      switch (FICHAS[ficha]) {
+        case 'manzana':
+          p.moveTo(cx, cy - r * 0.7);
+          p.bezierCurveTo(cx - r * 0.3, cy - r * 1.05, cx - r * 1.15, cy - r * 0.85, cx - r * 1.0, cy + r * 0.1);
+          p.bezierCurveTo(cx - r * 0.9, cy + r * 0.85, cx - r * 0.35, cy + r * 1.05, cx, cy + r * 0.85);
+          p.bezierCurveTo(cx + r * 0.35, cy + r * 1.05, cx + r * 0.9, cy + r * 0.85, cx + r * 1.0, cy + r * 0.1);
+          p.bezierCurveTo(cx + r * 1.15, cy - r * 0.85, cx + r * 0.3, cy - r * 1.05, cx, cy - r * 0.7);
+          p.moveTo(cx, cy - r * 0.7);
+          p.quadraticCurveTo(cx + r * 0.05, cy - r * 1.0, cx + r * 0.15, cy - r * 1.15);
+          p.moveTo(cx + r * 0.08, cy - r * 0.95);
+          p.quadraticCurveTo(cx + r * 0.5, cy - r * 1.25, cx + r * 0.65, cy - r * 0.95);
+          p.quadraticCurveTo(cx + r * 0.35, cy - r * 0.8, cx + r * 0.08, cy - r * 0.95);
+          break;
+        case 'hoja':
+          p.moveTo(cx, cy - r * 1.05);
+          p.quadraticCurveTo(cx + r * 1.1, cy - r * 0.4, cx, cy + r * 0.8);
+          p.quadraticCurveTo(cx - r * 1.1, cy - r * 0.4, cx, cy - r * 1.05);
+          p.moveTo(cx, cy - r * 0.9);
+          p.lineTo(cx, cy + r * 1.15);
+          p.moveTo(cx, cy - r * 0.2); p.lineTo(cx + r * 0.4, cy - r * 0.5);
+          p.moveTo(cx, cy - r * 0.2); p.lineTo(cx - r * 0.4, cy - r * 0.5);
+          p.moveTo(cx, cy + r * 0.25); p.lineTo(cx + r * 0.38, cy - r * 0.05);
+          p.moveTo(cx, cy + r * 0.25); p.lineTo(cx - r * 0.38, cy - r * 0.05);
+          break;
+        case 'circulo':
+          p.arc(cx, cy, r, 0, Math.PI * 2);
+          break;
+      }
+      p.stroke();
+    }
+
+    const pos = e => {
+      const r = lienzo.getBoundingClientRect();
+      return [e.clientX - r.left, e.clientY - r.top];
+    };
+
+    function pintar(pt, inicio) {
+      const g = GROSORES[grosor];
+      haPintado = true;
+      if (herramienta === 'dedo' || herramienta === 'goma') {
+        c.globalCompositeOperation = herramienta === 'goma' ? 'destination-out' : 'source-over';
+        c.strokeStyle = color;
+        c.lineWidth = herramienta === 'goma' ? g * 2 : g;
+        c.lineCap = 'round';
+        c.lineJoin = 'round';
+        c.beginPath();
+        c.moveTo(...(ultimo || pt));
+        c.lineTo(...pt);
+        c.stroke();
+        c.globalCompositeOperation = 'source-over';
+      } else if (herramienta === 'puntos') {
+        c.fillStyle = color;
+        for (let k = 0; k < 14; k++) {
+          const a = Math.random() * Math.PI * 2;
+          const d = Math.random() * g * 1.6;
+          c.beginPath();
+          c.arc(pt[0] + Math.cos(a) * d, pt[1] + Math.sin(a) * d, 1.5 + Math.random() * g * 0.12, 0, Math.PI * 2);
+          c.fill();
+        }
+      } else if (herramienta === 'sello' && inicio) {
+        const tam = g * 3;
+        const s = sello;
+        cargarFoto(s).then(im => {
+          if (im) {
+            const k = tam / Math.max(im.width, im.height);
+            c.drawImage(im, pt[0] - im.width * k / 2, pt[1] - im.height * k / 2, im.width * k, im.height * k);
+          } else {
+            c.font = `${tam * 0.8}px "Segoe UI Emoji","Apple Color Emoji","Noto Color Emoji",sans-serif`;
+            c.textAlign = 'center';
+            c.textBaseline = 'middle';
+            c.fillText(s, ...pt);
+          }
+        });
+        sonidoPop();
+      }
+      ultimo = pt;
+    }
+
+    lienzo.addEventListener('pointerdown', e => {
+      audio();
+      lienzo.setPointerCapture(e.pointerId);
+      ultimo = null;
+      pintar(pos(e), true);
+    });
+    lienzo.addEventListener('pointermove', e => { if (e.buttons || e.pointerType === 'touch') { if (ultimo) pintar(pos(e), false); } });
+    const soltar = () => { ultimo = null; };
+    lienzo.addEventListener('pointerup', soltar);
+    lienzo.addEventListener('pointercancel', soltar);
+
+    $('#colores').addEventListener('click', e => {
+      const b = e.target.closest('[data-c]');
+      if (!b) return;
+      color = b.dataset.c;
+      document.querySelectorAll('.color').forEach(x => x.classList.toggle('activo', x === b));
+      if (herramienta === 'goma' || herramienta === 'sello') elegirHerramienta('dedo');
+      sonidoPop();
+    });
+
+    function elegirHerramienta(h) {
+      herramienta = h;
+      document.querySelectorAll('[data-h]').forEach(x => x.classList.toggle('activo', x.dataset.h === h));
+      $('#sellos').classList.toggle('ver', h === 'sello');
+    }
+
+    $('#sellos').addEventListener('click', e => {
+      const b = e.target.closest('[data-s]');
+      if (!b) return;
+      sello = b.dataset.s;
+      document.querySelectorAll('[data-s]').forEach(x => x.classList.toggle('activo', x === b));
+    });
+
+    $('#herramientas').addEventListener('click', e => {
+      const b = e.target.closest('button');
+      if (!b) return;
+      audio();
+      if (b.dataset.h) elegirHerramienta(b.dataset.h);
+      if (b.dataset.g) {
+        grosor = (grosor + 1) % GROSORES.length;
+        b.style.fontSize = ['1.4rem', '2rem', '2.6rem'][grosor];
+      }
+      if (b.dataset.p) {
+        ficha = (ficha + 1) % FICHAS.length;
+        dibujarFicha();
+        hablar(NOMBRES_FICHA[FICHAS[ficha]]);
+      }
+      if (b.dataset.a === 'borrar') c.clearRect(0, 0, lienzo.width, lienzo.height);
+      if (b.dataset.a === 'guardar') guardar();
+    });
+
+    function guardar() {
+      const out = document.createElement('canvas');
+      out.width = lienzo.width;
+      out.height = lienzo.height;
+      const o = out.getContext('2d');
+      o.fillStyle = '#fff';
+      o.fillRect(0, 0, out.width, out.height);
+      o.drawImage(lienzo, 0, 0);
+      o.drawImage(capa, 0, 0);
+      const a = document.createElement('a');
+      a.download = `dibujo-${new Date().toISOString().slice(0, 10)}.png`;
+      a.href = out.toDataURL('image/png');
+      a.click();
+      hablar('¡Qué dibujo tan bonito!');
+    }
+
+    // Se marca como jugado al salir si ha pintado algo.
+    window.addEventListener('pagehide', () => { if (haPintado) terminarSesion(); });
+
+    let ancho = 0;
+    window.addEventListener('resize', () => {
+      if (Math.abs(hoja.clientWidth - ancho) < 2) return;
+      ancho = hoja.clientWidth;
+      medir();
+    });
+    ancho = hoja.clientWidth;
+    medir();
+    cajaProfe(document.getElementById('app'), ['cr5']);
+    setTimeout(() => hablar(INTRO), 400);
+  </script>
+</body>
+</html>

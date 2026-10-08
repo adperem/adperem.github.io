@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Música clásica · Jugamos y aprendemos</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/infantil.css">
+  <style>
+    .piezas { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; width: min(100%, 860px); }
+    .pieza {
+      border: 0; border-radius: 28px; background: #fff; box-shadow: var(--shadow); padding: 16px 10px; cursor: pointer;
+      display: flex; flex-direction: column; align-items: center; gap: 6px; font-weight: 600; font-size: 1rem;
+    }
+    .pieza > img, .pieza > .emo { font-size: clamp(3rem, 10vw, 4.6rem); }
+    .pieza small { color: var(--muted); font-weight: 400; font-size: .8rem; }
+    .pieza.sonando { background: var(--sol); }
+    .pieza:active { transform: translateY(5px); box-shadow: var(--shadow-press); }
+    .sala {
+      position: relative; width: min(100%, 860px); height: clamp(220px, 40vh, 360px); background: #fff; border-radius: 36px;
+      box-shadow: var(--shadow); overflow: hidden; display: grid; place-items: center; cursor: pointer; touch-action: manipulation;
+    }
+    .bailarin { font-size: clamp(6rem, 20vw, 10rem); transition: transform .15s; }
+    .bailarin.paso { transform: translateY(-18px) rotate(var(--giro, 8deg)); }
+    .notita { position: absolute; font-size: 2.4rem; animation: sube 2s ease-out forwards; pointer-events: none; }
+    @keyframes sube { to { transform: translateY(-160px) scale(1.4); opacity: 0; } }
+    .sala .pista { position: absolute; bottom: 10px; font-size: 14px; color: var(--muted); }
+    @media (max-width: 520px) { .pieza small { display: none; } }
+  </style>
+</head>
+<body>
+  <main class="zona-juego" id="app">
+    <div class="piezas" id="piezas"></div>
+    <div class="sala" id="sala">
+      <span class="bailarin" id="bailarin"></span>
+      <span class="pista">Toca aquí para hacer notas mientras suena la música</span>
+    </div>
+    <button class="btn-grande" id="parar" type="button" aria-label="Parar la música" hidden>⏹️</button>
+  </main>
+
+  <script type="module">
+    import { cabecera, hablar, audio, nota, cajaProfe, pick, sonidoPop } from './js/comun.js';
+    import { empezarSesion, terminarSesion } from './js/storage.js';
+    import { E } from './js/dibujos.js';
+
+    // Notas -> frecuencia
+    const F = { C4: 261.63, D4: 293.66, E4: 329.63, F4: 349.23, G4: 392.0, A4: 440.0, B4: 493.88, C5: 523.25, D5: 587.33, G3: 196.0, C3: 130.81, F3: 174.61 };
+
+    // [nota, pulsos]. Melodías de dominio público, simplificadas.
+    const PIEZAS = [
+      {
+        id: 'beethoven', titulo: 'Himno de la alegría', autor: 'Beethoven', icono: '🎻', bailarin: '🐻', bpm: 112,
+        notas: 'E4 E4 F4 G4 G4 F4 E4 D4 C4 C4 D4 E4 E4:1.5 D4:.5 D4:2 E4 E4 F4 G4 G4 F4 E4 D4 C4 C4 D4 E4 D4:1.5 C4:.5 C4:2',
+        bajo: 'C3:4 G3:4 C3:4 G3:4 C3:4 G3:4 C3:2 G3:2 C3:4'
+      },
+      {
+        id: 'mozart', titulo: 'Estrellita', autor: 'Mozart', icono: '🌟', bailarin: '🐰', bpm: 100,
+        notas: 'C4 C4 G4 G4 A4 A4 G4:2 F4 F4 E4 E4 D4 D4 C4:2 G4 G4 F4 F4 E4 E4 D4:2 G4 G4 F4 F4 E4 E4 D4:2 C4 C4 G4 G4 A4 A4 G4:2 F4 F4 E4 E4 D4 D4 C4:2',
+        bajo: 'C3:4 F3:2 C3:2 F3:2 C3:2 G3:2 C3:2 C3:2 F3:2 C3:2 G3:2 C3:2 F3:2 C3:2 G3:2 C3:4 F3:2 C3:2 F3:2 C3:2 G3:2 C3:2'
+      },
+      {
+        id: 'brahms', titulo: 'Canción de cuna', autor: 'Brahms', icono: '🌙', bailarin: '🐨', bpm: 84,
+        notas: 'E4:.5 E4:.5 G4:2 E4:.5 E4:.5 G4:2 E4:.5 G4:.5 C5:1 B4:1.5 A4:.5 A4:1 G4:1 D4:.5 E4:.5 F4:1 D4:1 D4:.5 E4:.5 F4:2 D4:.5 F4:.5 B4:.5 A4:.5 G4:1 B4:1 C5:3',
+        bajo: 'C3:3 C3:3 C3:3 F3:3 G3:3 G3:3 G3:3 C3:3'
+      }
+    ];
+
+    const parse = s => s.split(' ').map(t => { const [n, d] = t.split(':'); return [F[n], Number(d || 1)]; });
+
+    const $ = s => document.querySelector(s);
+    let salida = null;
+    let pasos = [];
+    let fin = null;
+    let sonando = null;
+    let jugado = false;
+
+    cabecera({ titulo: 'Música clásica', onRepetir: () => hablar('Elige una música y escucha. ¡Puedes bailar!') });
+
+    $('#piezas').innerHTML = PIEZAS.map(p => `
+      <button class="pieza" type="button" data-id="${p.id}">
+        ${E(p.icono)}${p.titulo}<small>${p.autor}</small>
+      </button>`).join('');
+
+    function parar() {
+      if (salida) {
+        const g = salida;
+        g.gain.setTargetAtTime(0, audio().currentTime, 0.05);
+        setTimeout(() => g.disconnect(), 300);
+      }
+      salida = null;
+      pasos.forEach(clearTimeout);
+      pasos = [];
+      clearTimeout(fin);
+      sonando = null;
+      document.querySelectorAll('.pieza').forEach(x => x.classList.remove('sonando'));
+      $('#parar').hidden = true;
+    }
+
+    function tocar(p) {
+      parar();
+      if (!jugado) { jugado = true; empezarSesion('musica'); terminarSesion(); }
+      const c = audio();
+      salida = c.createGain();
+      salida.gain.value = 1;
+      salida.connect(c.destination);
+      sonando = p.id;
+      document.querySelector(`[data-id="${p.id}"]`).classList.add('sonando');
+      $('#parar').hidden = false;
+      $('#bailarin').innerHTML = E(p.bailarin);
+
+      const pulso = 60 / p.bpm;
+      let t = 0.3;
+      parse(p.notas).forEach(([f, d], k) => {
+        nota(f, t, d * pulso * 0.95, { tipo: 'triangle', vol: 0.2, destino: salida });
+        nota(f * 2, t, d * pulso * 0.5, { tipo: 'sine', vol: 0.03, destino: salida });
+        pasos.push(setTimeout(() => bailar(k), t * 1000));
+        t += d * pulso;
+      });
+      let tb = 0.3;
+      parse(p.bajo).forEach(([f, d]) => {
+        nota(f, tb, d * pulso * 0.9, { tipo: 'sine', vol: 0.12, destino: salida });
+        tb += d * pulso;
+      });
+      fin = setTimeout(() => { parar(); hablar('¿Te ha gustado? ¡Elige otra música!'); }, (t + 0.6) * 1000);
+    }
+
+    function bailar(k) {
+      const b = $('#bailarin');
+      b.style.setProperty('--giro', k % 2 ? '-10deg' : '10deg');
+      b.classList.add('paso');
+      setTimeout(() => b.classList.remove('paso'), 150);
+    }
+
+    $('#piezas').addEventListener('click', e => {
+      const b = e.target.closest('[data-id]');
+      if (!b) return;
+      const p = PIEZAS.find(x => x.id === b.dataset.id);
+      if (sonando === p.id) { parar(); return; }
+      tocar(p);
+    });
+
+    $('#parar').addEventListener('click', parar);
+
+    $('#sala').addEventListener('pointerdown', e => {
+      const r = e.currentTarget.getBoundingClientRect();
+      const n = document.createElement('span');
+      n.className = 'notita emo';
+      n.textContent = pick(['🎵', '🎶', '🎼', '⭐']);
+      n.style.left = e.clientX - r.left - 20 + 'px';
+      n.style.top = e.clientY - r.top - 20 + 'px';
+      e.currentTarget.append(n);
+      setTimeout(() => n.remove(), 2000);
+      if (!sonando) sonidoPop();
+    });
+
+    $('#bailarin').innerHTML = E('🐻');
+    cajaProfe($('#app'), ['cr7', 'cr8']);
+  </script>
+</body>
+</html>

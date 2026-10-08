@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>El tambor mágico · Jugamos y aprendemos</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/infantil.css">
+  <style>
+    body { transition: background-color .4s; }
+    body.deprisa { background: #ffe3d6; }
+    body.despacio { background: #dff3e6; }
+    body.quietos { background: #e7e3f7; }
+    .escenario { text-align: center; }
+    .bombo { font-size: clamp(7rem, 25vw, 12rem); display: inline-block; transition: transform .08s; }
+    .bombo.golpe { transform: scale(1.18) rotate(-4deg); }
+    .estado { font-size: clamp(2rem, 7vw, 3.4rem); font-weight: 700; min-height: 1.3em; margin: 0; }
+    .mandos { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; width: min(100%, 720px); }
+    .mando {
+      border: 0; border-radius: 28px; padding: 18px 10px; cursor: pointer; box-shadow: var(--shadow);
+      font-size: 1.3rem; font-weight: 700; display: flex; flex-direction: column; align-items: center; gap: 6px; background: #fff;
+    }
+    .mando > * { font-size: 3.4rem; }
+    .mando:active { transform: translateY(5px); box-shadow: var(--shadow-press); }
+    .mando.activo { outline: 6px solid var(--ink); }
+    .ayuda { max-width: 720px; font-size: 15px; color: var(--muted); text-align: left; background: #fff; border-radius: 16px; padding: 12px 16px; }
+  </style>
+</head>
+<body>
+  <main class="zona-juego" id="app">
+    <div class="escenario">
+      <div class="bombo" id="bombo"><span data-e="🥁"></span></div>
+      <p class="estado" id="estado">¡Preparados!</p>
+    </div>
+    <div class="mandos" id="mandos">
+      <button class="mando" data-m="deprisa" type="button"><span data-e="🐇"></span>Deprisa</button>
+      <button class="mando" data-m="despacio" type="button"><span data-e="🐢"></span>Despacio</button>
+      <button class="mando" data-m="quietos" type="button"><span data-e="🗿"></span>¡Estatuas!</button>
+      <button class="mando" data-m="sorpresa" type="button"><span data-e="🎲"></span>Sorpresa</button>
+    </div>
+    <p class="ayuda">
+      <b>Para el profe:</b> los niños se mueven por la clase al ritmo del tambor (deprisa como el conejo, despacio como la tortuga)
+      y se quedan quietos como estatuas cuando se para. «Sorpresa» cambia solo de ritmo cada pocos segundos.
+      Observa quién adapta su movimiento al ritmo (CA3) y quién distingue movimiento y reposo (CA4).
+    </p>
+  </main>
+
+  <script type="module">
+    import { cabecera, hablar, golpeTambor, audio, cajaProfe, pick, fotosEnHTML } from './js/comun.js';
+    import { empezarSesion, terminarSesion } from './js/storage.js';
+
+    const RITMOS = { deprisa: 200, despacio: 56 };
+    const TEXTOS = { deprisa: '¡Deprisa, deprisa!', despacio: 'Despacio, despacito…', quietos: '¡Estatuas! ¡Quietos!' };
+    const $ = s => document.querySelector(s);
+    let compas = null;
+    let sorpresa = null;
+    let empezado = false;
+
+    cabecera({ titulo: 'El tambor mágico' });
+    fotosEnHTML();
+
+    function golpe() {
+      golpeTambor(0, 0.9);
+      $('#bombo').classList.add('golpe');
+      setTimeout(() => $('#bombo').classList.remove('golpe'), 90);
+    }
+
+    function poner(modo, voz = true) {
+      clearInterval(compas);
+      document.body.className = modo;
+      $('#estado').textContent = TEXTOS[modo];
+      if (voz) hablar(TEXTOS[modo]);
+      if (modo !== 'quietos') {
+        // pequeña espera para que se oiga la consigna antes del ritmo
+        setTimeout(() => {
+          if (document.body.className !== modo) return;
+          golpe();
+          compas = setInterval(golpe, 60000 / RITMOS[modo]);
+        }, voz ? 1200 : 0);
+      }
+    }
+
+    function modoSorpresa() {
+      const siguiente = pick(['deprisa', 'despacio', 'quietos'].filter(m => m !== document.body.className));
+      poner(siguiente);
+      sorpresa = setTimeout(modoSorpresa, 4000 + Math.random() * 5000);
+    }
+
+    $('#mandos').addEventListener('click', e => {
+      const b = e.target.closest('[data-m]');
+      if (!b) return;
+      audio();
+      if (!empezado) { empezado = true; empezarSesion('tambor'); terminarSesion(); }
+      clearTimeout(sorpresa);
+      document.querySelectorAll('.mando').forEach(x => x.classList.toggle('activo', x === b));
+      if (b.dataset.m === 'sorpresa') modoSorpresa();
+      else poner(b.dataset.m);
+    });
+
+    cajaProfe($('#app'), ['ca3', 'ca4']);
+  </script>
+</body>
+</html>

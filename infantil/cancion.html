@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Cantamos · Jugamos y aprendemos</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/infantil.css">
+  <style>
+    .canciones { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
+    .cancion-btn {
+      border: 0; border-radius: 22px; background: #fff; box-shadow: var(--shadow); padding: 10px 18px; cursor: pointer;
+      display: flex; align-items: center; gap: 10px; font-size: 1.1rem; font-weight: 600;
+    }
+    .cancion-btn > * { font-size: 2.2rem; }
+    .cancion-btn.activo { background: var(--sol); }
+    .verso {
+      width: min(100%, 820px); background: #fff; border-radius: 36px; box-shadow: var(--shadow); padding: 22px; text-align: center;
+    }
+    .verso .picto { font-size: clamp(4.5rem, 16vw, 8rem); display: inline-block; animation: flota 2.4s ease-in-out infinite; }
+    .verso .letra { font-size: clamp(1.5rem, 5vw, 2.4rem); font-weight: 700; margin: 10px 0 4px; }
+    .verso .gesto { font-size: clamp(.95rem, 2.6vw, 1.15rem); color: var(--muted); margin: 0; }
+    .verso.entra { animation: entra .35s ease-out; }
+    .controles { display: flex; gap: 14px; flex-wrap: wrap; justify-content: center; }
+    .lista { width: min(100%, 820px); display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 8px; font-size: 15px; }
+    .lista button img, .lista button .emo { font-size: 1.6rem; }
+    .lista button { border: 2px solid var(--line); background: #fff; border-radius: 14px; padding: 8px; text-align: left; cursor: pointer; font-size: 15px; }
+    .lista button.activo { border-color: var(--cr); background: #f3ecff; }
+    .ritmo { font-size: 15px; color: var(--muted); display: flex; align-items: center; gap: 8px; }
+  </style>
+</head>
+<body>
+  <main class="zona-juego" id="app">
+    <div class="canciones" id="canciones"></div>
+    <article class="verso" id="verso"></article>
+    <div class="controles">
+      <button class="btn-redondo" type="button" data-a="atras" aria-label="Verso anterior">⬅️</button>
+      <button class="btn-redondo" type="button" data-a="leer" aria-label="Decir la letra">🗣️</button>
+      <button class="btn-redondo" type="button" data-a="auto" aria-label="Cantar con palmas">👏</button>
+      <button class="btn-redondo" type="button" data-a="adelante" aria-label="Verso siguiente">➡️</button>
+    </div>
+    <label class="ritmo">Velocidad de las palmas
+      <input type="range" id="tempo" min="60" max="130" value="90"> <span id="tempo-v">90</span>
+    </label>
+    <div class="lista" id="lista"></div>
+  </main>
+
+  <script type="module">
+    import { cabecera, hablar, callar, palmada, audio, cajaProfe } from './js/comun.js';
+    import { empezarSesion, terminarSesion } from './js/storage.js';
+    import { E } from './js/dibujos.js';
+
+    // Canciones populares tradicionales, con un pictograma y un gesto por verso.
+    const CANCIONES = [
+      {
+        titulo: 'Los pollitos dicen', icono: '🐥',
+        versos: [
+          ['🐥', 'Los pollitos dicen', 'Hacer un piquito con la mano'],
+          ['🐥', 'pío, pío, pío,', 'Abrir y cerrar el piquito'],
+          ['😋', 'cuando tienen hambre,', 'Tocarse la barriguita'],
+          ['🥶', 'cuando tienen frío.', 'Abrazarse y tiritar'],
+          ['🐔', 'La gallina busca', 'Mano en la frente, mirar a un lado y a otro'],
+          ['🌽', 'el maíz y el trigo,', 'Picotear con los dedos'],
+          ['🍽️', 'les da la comida', 'Hacer como que damos de comer'],
+          ['🧥', 'y les presta abrigo.', 'Abrir los brazos y abrazar'],
+          ['🐔', 'Bajo sus dos alas,', 'Mover los brazos como alas'],
+          ['🤗', 'acurrucaditos,', 'Hacerse una bolita'],
+          ['😴', 'duermen los pollitos', 'Manos juntas bajo la cara'],
+          ['☀️', 'hasta el otro día.', 'Estirarse y despertar']
+        ]
+      },
+      {
+        titulo: 'Cinco lobitos', icono: '🐺',
+        versos: [
+          ['🖐️', 'Cinco lobitos', 'Enseñar la mano abierta'],
+          ['🐺', 'tiene la loba,', 'Girar la mano despacito'],
+          ['🐺', 'blancos y negros', 'Enseñar la palma y luego el dorso'],
+          ['🧹', 'detrás de una escoba.', 'Esconder la mano detrás de la espalda'],
+          ['🖐️', 'Cinco tenía,', 'Mover los cinco dedos'],
+          ['🖐️', 'cinco criaba,', 'Abrir y cerrar la mano'],
+          ['👐', 'y a todos ellos', 'Abrir las dos manos'],
+          ['🍼', 'leche les daba.', 'Hacer como que damos el biberón']
+        ]
+      },
+      {
+        titulo: 'Debajo un botón', icono: '🐭',
+        versos: [
+          ['🔘', 'Debajo un botón, ton, ton,', 'Señalar abajo y dar dos palmadas'],
+          ['👦', 'que encontró Martín, tin, tin,', 'Señalar a un amigo y dos palmadas'],
+          ['🐭', 'había un ratón, ton, ton,', 'Manos en la cabeza como orejas de ratón'],
+          ['🤏', '¡ay, qué chiquitín, tin, tin!', 'Hacer «pequeñito» con los dedos'],
+          ['🤏', '¡Ay, qué chiquitín, tin, tin,', 'Hacer «pequeñito» con los dedos'],
+          ['🐭', 'era aquel ratón, ton, ton,', 'Orejas de ratón'],
+          ['👦', 'que encontró Martín, tin, tin,', 'Señalar a un amigo'],
+          ['🔘', 'debajo un botón, ton, ton!', 'Señalar abajo y dos palmadas']
+        ]
+      }
+    ];
+
+    const $ = s => document.querySelector(s);
+    let cancion = CANCIONES[0];
+    let i = 0;
+    let auto = null;
+    let pulso = 0;
+    let marcado = false;
+
+    cabecera({ titulo: 'Cantamos', onRepetir: () => leer() });
+
+    $('#canciones').innerHTML = CANCIONES.map((c, k) =>
+      `<button class="cancion-btn${k === 0 ? ' activo' : ''}" type="button" data-k="${k}">${E(c.icono)}${c.titulo}</button>`).join('');
+
+    function pintar() {
+      const [picto, letra, gesto] = cancion.versos[i];
+      const v = $('#verso');
+      v.innerHTML = `<span class="picto">${E(picto)}</span><p class="letra">${letra}</p><p class="gesto">✋ ${gesto}</p>`;
+      v.classList.remove('entra');
+      void v.offsetWidth;
+      v.classList.add('entra');
+      $('#lista').innerHTML = cancion.versos.map(([p, l], k) =>
+        `<button type="button" data-v="${k}" class="${k === i ? 'activo' : ''}">${E(p)} ${l}</button>`).join('');
+    }
+
+    function marcarJugado() {
+      if (marcado) return;
+      marcado = true;
+      empezarSesion('cancion');
+      terminarSesion();
+    }
+
+    const leer = () => hablar(cancion.versos[i][1]);
+    const ir = paso => { i = (i + paso + cancion.versos.length) % cancion.versos.length; pintar(); };
+
+    function pararAuto() {
+      clearInterval(auto);
+      auto = null;
+      document.querySelector('[data-a="auto"]').classList.remove('activo');
+    }
+
+    // Palmas a ritmo; cada 4 pulsos pasa al verso siguiente (el profe canta).
+    function empezarAuto() {
+      callar();
+      audio();
+      marcarJugado();
+      pulso = 0;
+      document.querySelector('[data-a="auto"]').classList.add('activo');
+      const tick = () => {
+        palmada();
+        if (pulso > 0 && pulso % 4 === 0) {
+          if (i === cancion.versos.length - 1) { pararAuto(); return; }
+          ir(1);
+        }
+        pulso++;
+      };
+      tick();
+      auto = setInterval(tick, 60000 / Number($('#tempo').value));
+    }
+
+    $('#canciones').addEventListener('click', e => {
+      const b = e.target.closest('[data-k]');
+      if (!b) return;
+      pararAuto();
+      cancion = CANCIONES[b.dataset.k];
+      i = 0;
+      document.querySelectorAll('.cancion-btn').forEach(x => x.classList.toggle('activo', x === b));
+      pintar();
+      hablar(cancion.titulo);
+    });
+
+    document.querySelector('.controles').addEventListener('click', e => {
+      const a = e.target.closest('button')?.dataset.a;
+      if (!a) return;
+      marcarJugado();
+      if (a === 'atras') { pararAuto(); ir(-1); }
+      if (a === 'adelante') { pararAuto(); ir(1); }
+      if (a === 'leer') { pararAuto(); leer(); }
+      if (a === 'auto') { if (auto) pararAuto(); else { i = 0; pintar(); empezarAuto(); } }
+    });
+
+    $('#lista').addEventListener('click', e => {
+      const b = e.target.closest('[data-v]');
+      if (!b) return;
+      pararAuto();
+      i = Number(b.dataset.v);
+      pintar();
+      leer();
+    });
+
+    $('#tempo').addEventListener('input', e => {
+      $('#tempo-v').textContent = e.target.value;
+      if (auto) { clearInterval(auto); auto = null; empezarAuto(); }
+    });
+
+    pintar();
+    cajaProfe($('#app'), ['cr6', 'cr1']);
+  </script>
+</body>
+</html>

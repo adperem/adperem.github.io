@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Recogemos la clase · Jugamos y aprendemos</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/infantil.css">
+  <style>
+    .suelo {
+      position: relative;
+      width: 100%;
+      height: calc(100vh - 170px);
+      min-height: 420px;
+      border-radius: 32px;
+      background: repeating-linear-gradient(90deg, #f4dfc0 0 80px, #efd6b2 80px 160px);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      touch-action: none;
+    }
+    .objeto {
+      position: absolute;
+      font-size: clamp(4rem, 11vw, 6rem);
+      cursor: grab;
+      touch-action: none;
+      filter: drop-shadow(0 6px 4px rgba(0, 0, 0, .15));
+      transition: transform .15s;
+      z-index: 2;
+    }
+    .objeto.arrastrando { transform: scale(1.2); cursor: grabbing; z-index: 5; transition: none; }
+    .objeto.vuelve { transition: left .4s, top .4s; }
+    .objeto.guardado { transition: all .35s; transform: scale(.2); opacity: 0; }
+    .destino {
+      position: absolute;
+      bottom: 16px;
+      width: clamp(130px, 26vw, 200px);
+      aspect-ratio: 1;
+      border-radius: 50%;
+      border: 5px dashed rgba(59, 47, 74, .25);
+      background: rgba(255, 255, 255, .55);
+      display: grid;
+      place-items: center;
+      font-size: clamp(4rem, 12vw, 6.5rem);
+    }
+    .destino.caja { left: 16px; }
+    .destino.papelera { right: 16px; }
+    .destino.encima { background: #fff; border-color: var(--ok); transform: scale(1.06); }
+    .destino.mal { animation: temblor .45s; border-color: var(--mal); }
+  </style>
+</head>
+<body>
+  <main class="zona-juego" id="app"></main>
+
+  <script type="module">
+    import { cabecera, pantallaInicio, pantallaFinal, hablar, sonidoAcierto, sonidoFallo, sonidoPop, sample, shuffle, pick, el, ELOGIOS } from './js/comun.js';
+    import { empezarSesion, registrarRonda, terminarSesion } from './js/storage.js';
+    import { E } from './js/dibujos.js';
+
+    const INTRO = '¡Qué desorden! Los juguetes van a la caja y los papeles a la papelera. Arrástralos con el dedo.';
+    const app = document.getElementById('app');
+    cabecera({ titulo: 'Recogemos la clase', onRepetir: () => hablar(INTRO) });
+
+    pantallaInicio(app, {
+      icono: '🧸',
+      titulo: 'Recogemos la clase',
+      onEmpezar: async () => {
+        empezarSesion('recoger');
+        jugar();
+        hablar(INTRO);
+      }
+    });
+
+    function jugar() {
+      const juguetes = sample(['🧸', 'coche-juguete', '⚽', '🧱', '🪀', '🚂', '🦖', '🪁'], 4).map(e => ({ e, destino: 'caja' }));
+      const papeles = sample(['📄', '🗞️', '📃'], 2).map(e => ({ e, destino: 'papelera' }));
+      const objetos = shuffle([...juguetes, ...papeles]);
+
+      const suelo = el(`
+        <div class="suelo">
+          <div class="destino caja" data-d="caja" aria-label="Caja de juguetes">${E('🧺')}</div>
+          <div class="destino papelera" data-d="papelera" aria-label="Papelera">${E('🗑️')}</div>
+        </div>`);
+      app.append(suelo);
+
+      const destinos = [...suelo.querySelectorAll('.destino')];
+      let pendientes = objetos.length;
+      let aciertos = 0;
+
+      // Repartir por la parte de arriba del suelo, en una rejilla con algo de azar.
+      const cols = 3;
+      objetos.forEach((o, k) => {
+        const n = el(`<span class="objeto" role="img">${E(o.e)}</span>`);
+        const fila = Math.floor(k / cols);
+        const col = k % cols;
+        o.x = (col + 0.2 + Math.random() * 0.5) / cols;
+        o.y = 0.05 + fila * 0.26 + Math.random() * 0.06;
+        n.style.left = o.x * 85 + '%';
+        n.style.top = o.y * 100 + '%';
+        o.n = n;
+        o.intentado = false;
+        suelo.append(n);
+        arrastrable(o);
+      });
+
+      function destinoBajo(n) {
+        const r = n.getBoundingClientRect();
+        const cx = r.left + r.width / 2;
+        const cy = r.top + r.height / 2;
+        return destinos.find(d => {
+          const b = d.getBoundingClientRect();
+          return cx > b.left - 20 && cx < b.right + 20 && cy > b.top - 20 && cy < b.bottom + 20;
+        });
+      }
+
+      function arrastrable(o) {
+        const n = o.n;
+        let desde = null;
+        n.addEventListener('pointerdown', e => {
+          n.setPointerCapture(e.pointerId);
+          n.classList.remove('vuelve');
+          n.classList.add('arrastrando');
+          const r = n.getBoundingClientRect();
+          desde = { dx: e.clientX - r.left, dy: e.clientY - r.top, left: n.style.left, top: n.style.top };
+          sonidoPop();
+        });
+        n.addEventListener('pointermove', e => {
+          if (!desde) return;
+          const s = suelo.getBoundingClientRect();
+          n.style.left = e.clientX - s.left - desde.dx + 'px';
+          n.style.top = e.clientY - s.top - desde.dy + 'px';
+          const d = destinoBajo(n);
+          destinos.forEach(x => x.classList.toggle('encima', x === d));
+        });
+        const soltar = () => {
+          if (!desde) return;
+          n.classList.remove('arrastrando');
+          destinos.forEach(x => x.classList.remove('encima'));
+          const d = destinoBajo(n);
+          if (d) {
+            const ok = d.dataset.d === o.destino;
+            if (!o.intentado) {
+              o.intentado = true;
+              registrarRonda('ca2', ok);
+              if (ok) aciertos++;
+            }
+            if (ok) {
+              n.classList.add('guardado');
+              n.style.left = d.offsetLeft + d.offsetWidth / 2 - n.offsetWidth / 2 + 'px';
+              n.style.top = d.offsetTop + d.offsetWidth / 2 - n.offsetHeight / 2 + 'px';
+              sonidoAcierto();
+              hablar(pick(ELOGIOS));
+              setTimeout(() => n.remove(), 400);
+              if (--pendientes === 0) setTimeout(fin, 900);
+            } else {
+              d.classList.add('mal');
+              setTimeout(() => d.classList.remove('mal'), 500);
+              sonidoFallo();
+              hablar(o.destino === 'caja' ? '¡Uy! Es un juguete. Va a la caja.' : '¡Uy! Es un papel. Va a la papelera.');
+              n.classList.add('vuelve');
+              n.style.left = desde.left;
+              n.style.top = desde.top;
+            }
+          }
+          desde = null;
+        };
+        n.addEventListener('pointerup', soltar);
+        n.addEventListener('pointercancel', soltar);
+      }
+
+      function fin() {
+        terminarSesion();
+        pantallaFinal({
+          mensaje: '¡La clase está ordenada!',
+          detalle: `Objetos al sitio correcto a la primera: ${aciertos} de ${objetos.length}`,
+          criterios: ['ca2']
+        });
+      }
+    }
+  </script>
+</body>
+</html>
