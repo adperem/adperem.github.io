@@ -1,86 +1,32 @@
 // Juegos de "escucha y toca": cada uno genera rondas nuevas (aleatorias) en cada partida.
 // Ronda: { voz, escena?, opciones: [{ html, ok }], criterio?, audio? }
 import { E, COLORES, caja, mesa, arbol, plato, forma, bola, hueco, arbolEstacion, grupo, numero } from './dibujos.js';
-import { shuffle, pick, sample, tambor } from './comun.js';
+import { shuffle, pick, sample } from './comun.js';
 
 const op = (html, ok = false) => ({ html, ok });
-const conTexto = (emoji, texto) => `${E(emoji)}<small>${texto}</small>`;
+// Botón con el nombre de la emoción (emoji dibujado, sin foto, para no confundirlo con la foto del enunciado).
+const emocionBoton = (emoji, texto) => `<span class="emo">${emoji}</span><b class="palabra">${texto}</b>`;
 
 export const JUEGOS_QUIZ = {
-  higiene: {
-    titulo: 'Limpios y sanos', icono: '🧼', criterio: 'ca1',
-    intro: 'Vamos a cuidarnos. Escucha y toca la respuesta.',
-    rondas: () => sample([
-      { voz: '¿Con qué nos lavamos las manos?', escena: E('🙌'), opciones: [op(E('🧼'), true), op(E('🍌')), op(E('🚗'))] },
-      { voz: '¿Con qué nos lavamos los dientes?', escena: E('😁'), opciones: [op(E('🪥'), true), op(E('✏️')), op(E('🥕'))] },
-      { voz: '¿Con qué comemos la sopa?', escena: E('🍲'), opciones: [op(E('🥄'), true), op(E('🧦')), op(E('🎲'))] },
-      { voz: '¿Qué alimento es más sano?', opciones: [op(E('🍎'), true), op(E('🍭')), op(E('🍩'))] },
-      { voz: 'Tenemos mocos. ¿Qué usamos para limpiarnos la nariz?', escena: E('🤧'), opciones: [op(E('🧻'), true), op(E('📕')), op(E('🍕'))] },
-      { voz: 'Tenemos sed. ¿Qué bebemos?', opciones: [op(E('💧'), true), op(E('🧽')), op(E('👟'))] }
-    ], 5)
-  },
-
-  deprisa: {
-    titulo: 'Deprisa y despacio', icono: '🐇', criterio: 'ca3',
-    intro: 'Unos van deprisa y otros van despacio. ¡Escucha bien!',
-    rondas: () => {
-      const visuales = sample([
-        ['deprisa', '🐇', '🐢'], ['despacio', '🐌', '🐆'], ['deprisa', '🚀', '🐌'],
-        ['despacio', '🐢', '🐎'], ['deprisa', '🏎️', '🚜']
-      ], 3).map(([p, bien, mal]) => ({ voz: `¿Quién va ${p}?`, opciones: [op(E(bien), true), op(E(mal))] }));
-      const auditivas = shuffle(['deprisa', 'despacio']).map(p => ({
-        voz: 'Escucha el tambor. ¿Va deprisa o despacio?',
-        escena: E('🥁'),
-        audio: () => (p === 'deprisa' ? tambor(220, 14) : tambor(52, 5)),
-        opciones: [op(conTexto('🐇', 'deprisa'), p === 'deprisa'), op(conTexto('🐢', 'despacio'), p === 'despacio')]
-      }));
-      return shuffle([...visuales, ...auditivas]);
-    }
-  },
-
-  reposo: {
-    titulo: '¿Quién se mueve?', icono: '🏃', criterio: 'ca4',
-    intro: 'Unos niños se mueven y otros están quietos, descansando.',
-    rondas: () => {
-      const mueven = ['🏃', '🚴', '🤸', '💃', '🏊', '⛹️'];
-      const quietos = ['🛌', '😴', '🧘'];
-      return shuffle(['quieto', 'quieto', 'mueve', 'mueve', pick(['quieto', 'mueve'])]).map(t => t === 'quieto'
-        ? { voz: 'Toca al que está quieto, descansando.', opciones: [op(E(pick(quietos)), true), ...sample(mueven, 2).map(m => op(E(m)))] }
-        : { voz: 'Toca al que se está moviendo.', opciones: [op(E(pick(mueven)), true), ...sample(quietos, 2).map(q => op(E(q)))] });
-    }
-  },
-
-  abrigo: {
-    titulo: 'Viste al osito', icono: '🧥', criterio: 'ca6',
-    intro: 'Vamos a ayudar al osito a vestirse.',
-    rondas: () => shuffle([
-      { voz: 'Hace frío y el osito sale al patio. ¿Qué se pone?', escena: `${E('🧸')}${E('nieve')}`, opciones: [op(E('🧥'), true), op(E('🩳')), op(E('🩴'))] },
-      { voz: 'Al osito se le enfrían las manos. ¿Qué se pone?', escena: `${E('🧸')}${E('✋')}`, opciones: [op(E('🧤'), true), op(E('👒')), op(E('🩴'))] },
-      { voz: 'Al osito le duele el cuello del frío. ¿Qué se pone?', escena: E('🧸'), opciones: [op(E('🧣'), true), op(E('🕶️')), op(E('👟'))] },
-      { voz: 'Ya está en clase. ¿Dónde cuelga el abrigo?', escena: `${E('🧸')}${E('🧥')}`, opciones: [op(E('🪝'), true), op(E('🗑️')), op(E('🛁'))] },
-      { voz: 'Hace calor. ¿Qué se quita el osito?', escena: `${E('🧸')}${E('☀️')}`, opciones: [op(E('🧥'), true), op(E('🦶')), op(E('👂'))] }
-    ])
-  },
-
   emociones: {
     titulo: 'Contento o triste', icono: '😀', criterio: 'ca7',
-    intro: 'A veces estamos contentos y a veces estamos tristes.',
+    intro: 'A veces sentimos alegría y a veces sentimos tristeza. Mira bien su cara.',
     rondas: () => {
-      const caras = () => [op(E('😀'), true), op(E('😢'))];
-      const triste = () => [op(E('😢'), true), op(E('😀'))];
-      const situaciones = sample([
-        { voz: '¡Es su cumpleaños! ¿Cómo está?', escena: E('cumpleanos'), opciones: caras() },
-        { voz: 'Se le ha caído el helado al suelo. ¿Cómo está?', escena: E('helado-caido'), opciones: triste() },
-        { voz: 'Su juguete se ha roto. ¿Cómo está?', escena: E('juguete-roto'), opciones: triste() },
-        { voz: 'Juega con sus amigos a la pelota. ¿Cómo está?', escena: E('jugar-pelota'), opciones: caras() },
-        { voz: 'Se ha caído y se ha hecho daño en la rodilla. ¿Cómo está?', escena: E('rodilla'), opciones: triste() },
-        { voz: 'Su abuela le da un abrazo muy grande. ¿Cómo está?', escena: E('abrazo-abuela'), opciones: caras() }
-      ], 3);
-      return shuffle([
-        { voz: 'Toca la cara contenta.', opciones: caras() },
-        { voz: 'Toca la cara triste.', opciones: triste() },
-        ...situaciones
-      ]);
+      const fotos = {
+        alegria: [['cumpleanos', 'este bebé'], ['cara-contenta', 'este niño'], ['nina-sonrie', 'esta niña'],
+          ['nino-rie', 'este niño'], ['nino-sonrie', 'este niño'], ['nina-contenta', 'esta niña']],
+        tristeza: [['cara-triste', 'esta niña'], ['nina-llora', 'esta niña'], ['nina-lagrima', 'esta niña'],
+          ['nino-llora', 'este niño'], ['bebe-pucheros', 'este bebé'], ['bebe-llora', 'este bebé']]
+      };
+      const quedan = { alegria: shuffle(fotos.alegria), tristeza: shuffle(fotos.tristeza) };
+      return shuffle(['alegria', 'alegria', 'tristeza', 'tristeza', pick(['alegria', 'tristeza'])]).map(emocion => {
+        const [foto, quien] = quedan[emocion].pop();
+        return {
+          voz: `¿Qué siente ${quien}? ¿Alegría o tristeza?`,
+          escena: `<span class="emocion">${E(foto)}</span>`,
+          opciones: [op(emocionBoton('😀', 'Alegría'), emocion === 'alegria'), op(emocionBoton('😢', 'Tristeza'), emocion === 'tristeza')]
+        };
+      });
     }
   },
 

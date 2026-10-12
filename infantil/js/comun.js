@@ -78,29 +78,6 @@ export const sonidoFallo = () => { nota(330, 0, 0.18, { tipo: 'sine', vol: 0.12 
 export const sonidoFin = () => [523, 659, 784, 1047, 784, 1047].forEach((f, i) => nota(f, i * 0.12, 0.35));
 export const sonidoPop = () => nota(880, 0, 0.12, { tipo: 'sine', vol: 0.12 });
 
-export function golpeTambor(inicio = 0, fuerte = 1) {
-  const c = audio();
-  const t = c.currentTime + inicio;
-  const o = c.createOscillator();
-  const g = c.createGain();
-  o.type = 'sine';
-  o.frequency.setValueAtTime(160, t);
-  o.frequency.exponentialRampToValueAtTime(55, t + 0.25);
-  g.gain.setValueAtTime(0.0001, t);
-  g.gain.exponentialRampToValueAtTime(0.6 * fuerte, t + 0.01);
-  g.gain.exponentialRampToValueAtTime(0.0001, t + 0.35);
-  o.connect(g).connect(c.destination);
-  o.start(t);
-  o.stop(t + 0.4);
-}
-
-// Toca `golpes` golpes de tambor a `bpm`. Devuelve la duración en segundos.
-export function tambor(bpm, golpes = 8) {
-  const paso = 60 / bpm;
-  for (let i = 0; i < golpes; i++) golpeTambor(i * paso, i % 4 === 0 ? 1 : 0.75);
-  return golpes * paso;
-}
-
 export function palmada(inicio = 0) {
   const c = audio();
   const t = c.currentTime + inicio;
