@@ -42,10 +42,6 @@ export function hablar(texto) {
   });
 }
 
-export function callar() {
-  if ('speechSynthesis' in window) speechSynthesis.cancel();
-}
-
 export const ELOGIOS = ['¡Muy bien!', '¡Genial!', '¡Eso es!', '¡Fantástico!', '¡Bravo!', '¡Lo has conseguido!'];
 export const ANIMOS = ['¡Uy! Prueba otra vez.', 'Casi. Inténtalo otra vez.', 'Mira bien y prueba otra vez.'];
 
@@ -77,23 +73,6 @@ export const sonidoAcierto = () => [523, 659, 784].forEach((f, i) => nota(f, i *
 export const sonidoFallo = () => { nota(330, 0, 0.18, { tipo: 'sine', vol: 0.12 }); nota(262, 0.15, 0.28, { tipo: 'sine', vol: 0.12 }); };
 export const sonidoFin = () => [523, 659, 784, 1047, 784, 1047].forEach((f, i) => nota(f, i * 0.12, 0.35));
 export const sonidoPop = () => nota(880, 0, 0.12, { tipo: 'sine', vol: 0.12 });
-
-export function palmada(inicio = 0) {
-  const c = audio();
-  const t = c.currentTime + inicio;
-  const buffer = c.createBuffer(1, c.sampleRate * 0.12, c.sampleRate);
-  const datos = buffer.getChannelData(0);
-  for (let i = 0; i < datos.length; i++) datos[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / datos.length, 3);
-  const src = c.createBufferSource();
-  const filtro = c.createBiquadFilter();
-  const g = c.createGain();
-  src.buffer = buffer;
-  filtro.type = 'bandpass';
-  filtro.frequency.value = 1400;
-  g.gain.value = 0.7;
-  src.connect(filtro).connect(g).connect(c.destination);
-  src.start(t);
-}
 
 // ---------- Azar ----------
 
@@ -231,11 +210,6 @@ export function cajaProfe(contenedor, criterios, { abierta = false } = {}) {
   select.addEventListener('change', () => { aviso.textContent = ''; pintar(); });
   pintar();
   return caja;
-}
-
-// Sustituye <span data-e="🐇"></span> del HTML estático por su foto.
-export function fotosEnHTML(raiz = document) {
-  raiz.querySelectorAll('[data-e]').forEach(n => { n.outerHTML = E(n.dataset.e); });
 }
 
 // Pantalla de inicio común: icono grande + botón de jugar (necesario para activar audio y voz).

@@ -1,6 +1,6 @@
 // Juegos de "escucha y toca": cada uno genera rondas nuevas (aleatorias) en cada partida.
 // Ronda: { voz, escena?, opciones: [{ html, ok }], criterio?, audio? }
-import { E, COLORES, caja, mesa, arbol, plato, forma, bola, hueco, arbolEstacion, grupo, numero } from './dibujos.js';
+import { E, COLORES, caja, mesa, arbol, plato, forma, bola, hueco, grupo, numero } from './dibujos.js';
 import { shuffle, pick, sample } from './comun.js';
 
 const op = (html, ok = false) => ({ html, ok });
@@ -167,36 +167,6 @@ export const JUEGOS_QUIZ = {
         opciones: [op(E(r), true), ...sample(['📕', '📦', 'porcion-pizza', '🧀', '🖼️'], 2).map(o => op(E(o)))]
       }));
       return shuffle([...formas, ...objetos]);
-    }
-  },
-
-  otono: {
-    titulo: 'Llega el otoño', icono: '🍂', criterio: 'de9',
-    intro: 'Ha llegado el otoño. ¿Qué cambia?',
-    rondas: () => shuffle([
-      { voz: '¿Qué árbol es de otoño?', opciones: [op(arbolEstacion('otono'), true), op(arbolEstacion('verano')), op(arbolEstacion('invierno'))] },
-      { voz: '¿Qué cae de los árboles en otoño?', escena: E('🌳'), opciones: [op(E('🍂'), true), op(E('❄️')), op(E('🍉'))] },
-      { voz: 'En otoño llueve. ¿Qué usamos?', escena: E('🌧️'), opciones: [op(E('☂️'), true), op(E('🕶️')), op(E('🩴'))] },
-      { voz: '¿Qué encontramos en el bosque en otoño?', opciones: [op(E(pick(['🌰', '🍄'])), true), op(E('⛄')), op(E('🏖️'))] },
-      { voz: 'En otoño hace fresquito. ¿Qué ropa nos ponemos?', opciones: [op(E('🧥'), true), op(E('🕶️')), op(E('🩳'))] }
-    ])
-  },
-
-  vocabulario: {
-    titulo: '¿Dónde está?', icono: '🗣️', criterio: 'cr1',
-    intro: 'Escucha la palabra y toca el dibujo.',
-    rondas: () => {
-      const palabras = [
-        ['🍂', 'la hoja'], ['🌰', 'la castaña'], ['🍄', 'la seta'], ['☂️', 'el paraguas'], ['🎒', 'la mochila'],
-        ['✏️', 'el lápiz'], ['📕', 'el libro'], ['🍎', 'la manzana'], ['🐿️', 'la ardilla'], ['✋', 'la mano'],
-        ['👁️', 'el ojo'], ['👃', 'la nariz'], ['👂', 'la oreja'], ['🦶', 'el pie'], ['🌳', 'el árbol'],
-        ['☁️', 'la nube'], ['🧥', 'el abrigo'], ['🪥', 'el cepillo de dientes']
-      ];
-      const objetivos = sample(palabras, 6);
-      return objetivos.map(([e, nombre]) => ({
-        voz: `¿Dónde está ${nombre}?`,
-        opciones: [op(E(e), true), ...sample(palabras.filter(p => p[0] !== e), 2).map(([o]) => op(E(o)))]
-      }));
     }
   }
 };

@@ -31,7 +31,7 @@ export const AREAS = [
       { id: 'de6', n: 6, texto: 'Diferencia la situación de los objetos: dentro / fuera.', tipo: 'juego' },
       { id: 'de7', n: 7, texto: 'Identifica la posición de los objetos: arriba / abajo.', tipo: 'juego' },
       { id: 'de8', n: 8, texto: 'Reconoce e identifica el círculo.', tipo: 'juego' },
-      { id: 'de9', n: 9, texto: 'Identifica los cambios en el entorno que se producen en el otoño.', tipo: 'juego' }
+      { id: 'de9', n: 9, texto: 'Identifica los cambios en el entorno que se producen en el otoño.', tipo: 'observacion' }
     ]
   },
   {
@@ -39,10 +39,10 @@ export const AREAS = [
     nombre: 'Comunicación y representación de la realidad',
     color: 'var(--cr)',
     criterios: [
-      { id: 'cr1', n: 1, texto: 'Utiliza el vocabulario trabajado.', tipo: 'juego' },
+      { id: 'cr1', n: 1, texto: 'Utiliza el vocabulario trabajado.', tipo: 'observacion' },
       { id: 'cr2', n: 2, texto: 'Realiza la grafía del número 1.', tipo: 'juego' },
       { id: 'cr3', n: 3, texto: 'Realiza trazos verticales y horizontales.', tipo: 'juego' },
-      { id: 'cr4', n: 4, texto: 'Sabe escuchar en silencio un cuento.', tipo: 'mixto' },
+      { id: 'cr4', n: 4, texto: 'Sabe escuchar en silencio un cuento.', tipo: 'observacion' },
       { id: 'cr5', n: 5, texto: 'Experimenta con las técnicas plásticas.', tipo: 'observacion' },
       { id: 'cr6', n: 6, texto: 'Aprende una canción y la canta con gestos y movimientos.', tipo: 'observacion' },
       { id: 'cr7', n: 7, texto: 'Desarrolla el gusto por las audiciones musicales y piezas clásicas.', tipo: 'observacion' },
@@ -75,15 +75,9 @@ export const ACTIVIDADES = [
   { id: 'dentro', titulo: 'Dentro y fuera', icono: '📦', area: 'de', criterios: ['de6'], url: q('dentro') },
   { id: 'arriba', titulo: 'Arriba y abajo', icono: '⬆️', area: 'de', criterios: ['de7'], url: q('arriba') },
   { id: 'circulo', titulo: 'El círculo', icono: '⭕', area: 'de', criterios: ['de8'], url: q('circulo') },
-  { id: 'otono', titulo: 'Llega el otoño', icono: '🍂', area: 'de', criterios: ['de9'], url: q('otono') },
 
-  { id: 'vocabulario', titulo: '¿Dónde está?', icono: '🗣️', area: 'cr', criterios: ['cr1'], url: q('vocabulario') },
   { id: 'trazo-uno', titulo: 'Escribo el 1', icono: '✏️', area: 'cr', criterios: ['cr2'], url: 'trazar.html?modo=uno' },
-  { id: 'trazos', titulo: 'Lluvia y caminos', icono: '🌧️', area: 'cr', criterios: ['cr3'], url: 'trazar.html?modo=lineas' },
-  { id: 'cuento', titulo: 'El cuento de Otoñita', icono: '📖', area: 'cr', criterios: ['cr4'], url: 'cuento.html' },
-  { id: 'pintar', titulo: 'Pintamos', icono: '🎨', area: 'cr', criterios: ['cr5'], url: 'pintar.html' },
-  { id: 'cancion', titulo: 'Cantamos', icono: '🎤', area: 'cr', criterios: ['cr6'], url: 'cancion.html', grupo: true },
-  { id: 'musica', titulo: 'Música clásica', icono: '🎻', area: 'cr', criterios: ['cr7'], url: 'musica.html' }
+  { id: 'trazos', titulo: 'Lluvia y caminos', icono: '🌧️', area: 'cr', criterios: ['cr3'], url: 'trazar.html?modo=lineas' }
 ];
 
 export const actividadesDe = criterio => ACTIVIDADES.filter(a => a.criterios.includes(criterio));

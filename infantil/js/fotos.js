@@ -4,25 +4,19 @@
 import { RECORTES, FOTOS_COMPLETAS } from './fotos-lista.js';
 
 const EMOJI = {
-  '🍎': 'manzana', '🍌': 'platano', '🚗': 'coche', '🪥': 'cepillo-dientes', '✏': 'lapiz', '🔨': 'martillo', '🍩': 'donut',
-  '📕': 'libro', '🧽': 'esponja', '🐇': 'conejo', '🐰': 'conejo', '🐢': 'tortuga', '🐎': 'caballo', '🐴': 'caballo',
-  '🦄': 'caballo', '😴': 'nino-dormido', '🧸': 'osito', '🥶': 'nino-frio', '🧥': 'abrigo', '🩳': 'pantalon-corto',
-  '👙': 'banador', '🩱': 'banador', '✋': 'mano', '🖐': 'mano', '👐': 'mano', '🤏': 'raton', '🩴': 'chanclas',
-  '🕶': 'gafas-sol', '🗑': 'papelera', '☀': 'sol', '🦶': 'pie', '👂': 'oreja', '👁': 'ojo', '👃': 'nariz',
-  '😀': 'cara-contenta', '😢': 'cara-triste', '🎂': 'cumpleanos', '🤗': 'abrazo', '👦': 'nino', '🧒': 'nino',
-  '🍓': 'fresa', '🍒': 'cerezas', '🍅': 'tomate', '🚒': 'camion-bomberos', '🌹': 'rosa', '🎈': 'globo', '🥦': 'brocoli',
-  '🍋': 'limon', '🐸': 'rana', '🌻': 'girasol', '🍇': 'uvas', '🐳': 'ballena', '🌽': 'maiz', '🍪': 'galleta', '🍐': 'pera',
-  '🍊': 'naranja', '🐘': 'elefante', '🐶': 'perro', '🐱': 'gato', '🌳': 'arbol', '🦒': 'jirafa', '🦆': 'pato', '🐟': 'pez',
-  '⚽': 'balon', '🐦': 'pajaro', '🐿': 'ardilla', '🕒': 'reloj', '📦': 'caja', '🧀': 'queso', '🖼': 'cuadro',
-  '🍂': 'hoja-seca', '🍁': 'hoja-roja', '🍃': 'hoja-verde', '❄': 'copo-nieve', '🍉': 'sandia', '🌧': 'lluvia',
-  '☂': 'paraguas', '🌰': 'castana', '🍄': 'seta', '⛄': 'muneco-nieve', '🏖': 'playa', '🎒': 'mochila', '☁': 'nube',
-  '🌬': 'viento', '🧱': 'bloques', '🪀': 'yoyo', '🚂': 'tren-juguete', '🦖': 'dinosaurio-juguete', '🪁': 'cometa',
-  '📄': 'folio', '🗞': 'periodico', '📃': 'papel-arrugado', '🧺': 'cesta', '🌷': 'tulipan', '🏠': 'casa', '🐝': 'abeja',
-  '🐥': 'pollito', '🐤': 'pollito', '😋': 'nino-comiendo', '🐔': 'gallina', '🌾': 'trigo', '🍽': 'plato-comida',
-  '🐺': 'lobo', '🧹': 'escoba', '🍼': 'biberon', '🔘': 'boton', '🐭': 'raton', '🎻': 'violin', '🌙': 'luna',
-  '🌟': 'noche-estrellas', '🐨': 'koala', '🗣': 'nino-hablando', '📖': 'libro-abierto', '🎨': 'paleta', '🎤': 'microfono',
-  '🦊': 'zorro', '🐻': 'oso', '🐼': 'panda', '🐯': 'tigre', '🦁': 'leon', '🐮': 'vaca', '🐷': 'cerdo', '🐵': 'mono',
-  '🐧': 'pinguino', '🐞': 'mariquita', '🦋': 'mariposa', '🐙': 'pulpo', '🐬': 'delfin', '🦉': 'buho', '🦔': 'erizo'
+  '🍎': 'manzana', '🍌': 'platano', '🚗': 'coche', '✏': 'lapiz', '🔨': 'martillo', '🍩': 'donut', '📕': 'libro',
+  '🧽': 'esponja', '🐇': 'conejo', '🐰': 'conejo', '🐢': 'tortuga', '🐎': 'caballo', '🐴': 'caballo', '🦄': 'caballo',
+  '🧸': 'osito', '👙': 'banador', '🩱': 'banador', '🗑': 'papelera', '👂': 'oreja', '😀': 'cara-contenta',
+  '😢': 'cara-triste', '🎂': 'cumpleanos', '🍓': 'fresa', '🍒': 'cerezas', '🍅': 'tomate', '🚒': 'camion-bomberos',
+  '🌹': 'rosa', '🎈': 'globo', '🥦': 'brocoli', '🍋': 'limon', '🐸': 'rana', '🌻': 'girasol', '🍇': 'uvas', '🐳': 'ballena',
+  '🌽': 'maiz', '🍪': 'galleta', '🍐': 'pera', '🍊': 'naranja', '🐘': 'elefante', '🐶': 'perro', '🐱': 'gato',
+  '🌳': 'arbol', '🦒': 'jirafa', '🦆': 'pato', '🐟': 'pez', '⚽': 'balon', '🐦': 'pajaro', '🐿': 'ardilla', '🕒': 'reloj',
+  '📦': 'caja', '🧀': 'queso', '🖼': 'cuadro', '🌧': 'lluvia', '☁': 'nube', '🧱': 'bloques', '🪀': 'yoyo',
+  '🚂': 'tren-juguete', '🦖': 'dinosaurio-juguete', '🪁': 'cometa', '📄': 'folio', '🗞': 'periodico',
+  '📃': 'papel-arrugado', '🧺': 'cesta', '🌷': 'tulipan', '🏠': 'casa', '🐝': 'abeja', '🐥': 'pollito', '🐤': 'pollito',
+  '🐔': 'gallina', '🌾': 'trigo', '🍽': 'plato-comida', '🐨': 'koala', '🦊': 'zorro', '🐻': 'oso', '🐼': 'panda',
+  '🐯': 'tigre', '🦁': 'leon', '🐮': 'vaca', '🐷': 'cerdo', '🐵': 'mono', '🐧': 'pinguino', '🐞': 'mariquita',
+  '🦋': 'mariposa', '🐙': 'pulpo', '🐬': 'delfin', '🦉': 'buho', '🦔': 'erizo'
 };
 
 const RECORTE = new Set(RECORTES);
