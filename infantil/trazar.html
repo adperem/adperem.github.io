@@ -11,7 +11,7 @@
   <style>
     .lienzo {
       position: relative;
-      width: min(92vw, calc(100vh - 230px), 640px);
+      width: min(92vw, calc(100vh - 300px), 640px);
       aspect-ratio: 1;
       background: #fff;
       border-radius: 32px;
@@ -19,8 +19,22 @@
       touch-action: none;
     }
     .lienzo canvas { position: absolute; inset: 0; width: 100%; height: 100%; border-radius: 32px; }
-    .controles { display: flex; gap: 18px; }
+    .controles { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 14px; }
     .lienzo.hecho { animation: bote .6s; outline: 6px solid var(--ok); }
+    /* Botones para que el profe diga si el niño ha llegado */
+    .valida { display: flex; gap: 10px; }
+    .valida button {
+      border: 0;
+      border-radius: 999px;
+      padding: 14px 20px;
+      font-size: clamp(1rem, 3.2vw, 1.2rem);
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: var(--shadow);
+    }
+    .valida button:active { transform: translateY(4px); box-shadow: var(--shadow-press); }
+    .valida .si { background: #e9fbf0; color: #1f7a48; }
+    .valida .no { background: #fdeceb; color: #b23b32; }
   </style>
 </head>
 <body>
@@ -92,7 +106,10 @@
       const controles = el(`
         <div class="controles">
           <button class="btn-redondo" type="button" data-a="borrar" aria-label="Borrar y empezar otra vez">🧽</button>
-          <button class="btn-redondo" type="button" data-a="saltar" aria-label="Saltar (para el profe)">⏭️</button>
+          <div class="valida" role="group" aria-label="Para el profe: ¿ha llegado?">
+            <button class="si" type="button" data-a="si">✅ Ha llegado</button>
+            <button class="no" type="button" data-a="no">❌ No ha llegado</button>
+          </div>
         </div>`);
       app.append(enunciado, lienzo, controles);
       const [guia, trazo] = lienzo.querySelectorAll('canvas');
@@ -102,11 +119,6 @@
       let W = 0;
       let i = 0;
       let aciertos = 0;
-      let muestras = [];   // puntos del camino que hay que cubrir
-      let cubiertas = [];
-      let dentro = 0;
-      let fuera = 0;
-      let trazos = 0;
       let dibujando = false;
       let ultimo = null;
       let terminado = false;
@@ -121,21 +133,6 @@
           c.height = W * dpr;
           c.getContext('2d').setTransform(dpr, 0, 0, dpr, 0, 0);
         }
-      }
-
-      function distSegmento(p, a, b) {
-        const dx = b[0] - a[0];
-        const dy = b[1] - a[1];
-        const l2 = dx * dx + dy * dy || 1;
-        const k = Math.max(0, Math.min(1, ((p[0] - a[0]) * dx + (p[1] - a[1]) * dy) / l2));
-        return Math.hypot(p[0] - a[0] - k * dx, p[1] - a[1] - k * dy);
-      }
-
-      function distCamino(p) {
-        const pts = rondaActual.puntos.map(px);
-        let d = Infinity;
-        for (let k = 0; k < pts.length - 1; k++) d = Math.min(d, distSegmento(p, pts[k], pts[k + 1]));
-        return d;
       }
 
       function pintarGuia(completo = false) {
@@ -193,29 +190,13 @@
       function prepararRonda() {
         rondaActual = modo.rondas[i];
         terminado = false;
-        dentro = 0;
-        fuera = 0;
-        trazos = 0;
         lienzo.classList.remove('hecho');
         t.clearRect(0, 0, W, W);
-        // muestras cada ~1,5 % del ancho a lo largo del camino
-        muestras = [];
-        const pts = rondaActual.puntos.map(px);
-        for (let k = 0; k < pts.length - 1; k++) {
-          const [a, b] = [pts[k], pts[k + 1]];
-          const n = Math.max(2, Math.round(Math.hypot(b[0] - a[0], b[1] - a[1]) / (W * 0.015)));
-          for (let s = 0; s <= n; s++) muestras.push([a[0] + (b[0] - a[0]) * s / n, a[1] + (b[1] - a[1]) * s / n]);
-        }
-        cubiertas = muestras.map(() => false);
         pintarGuia();
         enunciado.textContent = rondaActual.enunciado;
       }
 
       function anadirPunto(p) {
-        const tol = W * 0.065;
-        cubiertas = cubiertas.map((c, k) => c || Math.hypot(p[0] - muestras[k][0], p[1] - muestras[k][1]) < tol);
-        if (distCamino(p) > W * 0.1) fuera++;
-        else dentro++;
         t.strokeStyle = modo.color;
         t.lineWidth = W * 0.045;
         t.lineCap = 'round';
@@ -225,21 +206,20 @@
         t.lineTo(...p);
         t.stroke();
         ultimo = p;
-        if (!terminado && cubiertas.filter(Boolean).length / cubiertas.length >= 0.9) completar();
       }
 
-      function completar() {
+      // El profe mira el trazo y decide si el niño ha llegado.
+      function validar(ok) {
         terminado = true;
         dibujando = false;
-        // Bien hecho: casi todo el trazo dentro de la guía y como mucho 2 trazos.
-        const ok = fuera / Math.max(1, dentro + fuera) <= 0.25 && trazos <= 2;
         registrarRonda(modo.criterio, ok);
-        if (ok) aciertos++;
+        progreso.marcar(i);
+        if (!ok) { siguiente(); return; }
+        aciertos++;
         lienzo.classList.add('hecho');
         pintarGuia(true);
         sonidoAcierto();
-        progreso.marcar(i);
-        setTimeout(siguiente, 1800);
+        setTimeout(siguiente, 1500);
       }
 
       function siguiente() {
@@ -251,7 +231,7 @@
           controles.remove();
           progreso.el.remove();
           terminarSesion();
-          pantallaFinal({ detalle: `Trazos bien hechos: ${aciertos} de ${modo.rondas.length}` });
+          pantallaFinal({ detalle: `Ha llegado (según el profe): ${aciertos} de ${modo.rondas.length}` });
         }
       }
 
@@ -264,7 +244,6 @@
         if (terminado) return;
         trazo.setPointerCapture(e.pointerId);
         dibujando = true;
-        trazos++;
         ultimo = null;
         anadirPunto(posicion(e));
         nota(440 + Math.random() * 200, 0, 0.08, { tipo: 'sine', vol: 0.05 });
@@ -278,12 +257,7 @@
         const a = e.target.closest('button')?.dataset.a;
         if (!a || terminado) return;
         if (a === 'borrar') prepararRonda();
-        if (a === 'saltar') {
-          terminado = true;
-          registrarRonda(modo.criterio, false);
-          progreso.marcar(i);
-          siguiente();
-        }
+        if (a === 'si' || a === 'no') validar(a === 'si');
       });
 
       window.addEventListener('resize', () => {

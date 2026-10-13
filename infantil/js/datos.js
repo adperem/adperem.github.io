@@ -40,8 +40,8 @@ export const AREAS = [
     color: 'var(--cr)',
     criterios: [
       { id: 'cr1', n: 1, texto: 'Utiliza el vocabulario trabajado.', tipo: 'observacion' },
-      { id: 'cr2', n: 2, texto: 'Realiza la grafía del número 1.', tipo: 'juego' },
-      { id: 'cr3', n: 3, texto: 'Realiza trazos verticales y horizontales.', tipo: 'juego' },
+      { id: 'cr2', n: 2, texto: 'Realiza la grafía del número 1.', tipo: 'mixto' },
+      { id: 'cr3', n: 3, texto: 'Realiza trazos verticales y horizontales.', tipo: 'mixto' },
       { id: 'cr4', n: 4, texto: 'Sabe escuchar en silencio un cuento.', tipo: 'observacion' },
       { id: 'cr5', n: 5, texto: 'Experimenta con las técnicas plásticas.', tipo: 'observacion' },
       { id: 'cr6', n: 6, texto: 'Aprende una canción y la canta con gestos y movimientos.', tipo: 'observacion' },
