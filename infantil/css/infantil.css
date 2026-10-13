@@ -190,8 +190,9 @@ button { font-family: inherit; color: inherit; }
 .grupo { display: flex; flex-wrap: wrap; justify-content: center; gap: .1em; font-size: .55em; max-width: 2.4em; }
 .escena .grupo { font-size: 1em; max-width: none; }
 .num { font-weight: 700; font-size: 1.1em; color: var(--cr); line-height: 1; }
-.serie { display: flex; align-items: center; gap: 10px; }
-.serie .bola, .opcion .bola { width: clamp(44px, 9vw, 80px); height: clamp(44px, 9vw, 80px); }
+.serie { display: flex; align-items: center; gap: clamp(4px, 1.5vw, 10px); }
+.serie .bola, .opcion .bola { width: clamp(36px, 9vw, 80px); height: clamp(36px, 9vw, 80px); }
+.serie > img { width: clamp(36px, 9vw, 80px); height: clamp(36px, 9vw, 80px); }
 .opcion .bola { width: 70%; height: 70%; }
 .hueco {
   width: clamp(44px, 9vw, 80px);

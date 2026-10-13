@@ -73,8 +73,9 @@
     });
 
     function jugar() {
-      const juguetes = sample(['🧸', 'coche-juguete', '⚽', '🧱', '🪀', '🚂', '🦖', '🪁'], 4).map(e => ({ e, destino: 'caja' }));
-      const papeles = sample(['📄', '🗞️', '📃'], 2).map(e => ({ e, destino: 'papelera' }));
+      const juguetes = sample(['🧸', 'coche-juguete', '⚽', '🧱', '🪀', '🚂', '🦖', '🪁', 'pato-goma', 'muneca', 'avion-juguete', 'tambor', 'dado'], 4)
+        .map(e => ({ e, destino: 'caja' }));
+      const papeles = sample(['📄', '🗞️', '📃', 'sobre', 'bolsa-papel'], 2).map(e => ({ e, destino: 'papelera' }));
       const objetos = shuffle([...juguetes, ...papeles]);
 
       const suelo = el(`

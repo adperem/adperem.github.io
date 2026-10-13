@@ -27,29 +27,43 @@
   <main class="zona-juego" id="app"></main>
 
   <script type="module">
-    import { cabecera, pantallaInicio, pantallaFinal, hablar, params, sonidoAcierto, pick, el, ELOGIOS, Progreso, nota } from './js/comun.js';
+    import { cabecera, pantallaInicio, pantallaFinal, hablar, params, sonidoAcierto, pick, sample, el, ELOGIOS, Progreso, nota } from './js/comun.js';
     import { empezarSesion, registrarRonda, terminarSesion } from './js/storage.js';
     import { cargarFoto } from './js/fotos.js';
 
-    // Trazos en coordenadas normalizadas (0..1). inicio/fin: emoji de apoyo en los extremos.
+    // Trazos en coordenadas normalizadas (0..1). inicio/fin: emoji de apoyo en los extremos; apoyo: dibujo grande al lado.
+    const vertical = (voz, arriba, abajo) => ({ voz, puntos: [[0.5, 0.2], [0.5, 0.82]], inicio: [arriba, 0.5, 0.09], fin: [abajo, 0.5, 0.92] });
+    const tumbada = (voz, izq, der) => ({ voz, puntos: [[0.2, 0.5], [0.8, 0.5]], inicio: [izq, 0.09, 0.5], fin: [der, 0.91, 0.5] });
+    const verticales = sample([
+      vertical('Haz que caiga la lluvia de la nube a la flor. De arriba abajo.', '☁️', '🌷'),
+      vertical('La manzana cae del árbol a la cesta.', '🌳', '🧺'),
+      vertical('La lluvia cae de la nube al paraguas. De arriba abajo.', '☁️', 'paraguas'),
+      vertical('La ardilla baja del árbol al suelo.', '🌳', '🐿️')
+    ], 2);
+    const tumbadas = sample([
+      tumbada('Lleva el coche hasta la casa. Raya tumbada.', '🚗', '🏠'),
+      tumbada('Lleva la abeja hasta la flor.', '🐝', '🌻'),
+      tumbada('Lleva el conejo hasta la zanahoria. Raya tumbada.', '🐰', 'zanahoria'),
+      tumbada('Lleva el perro hasta la pelota.', '🐶', '⚽'),
+      tumbada('Lleva el ratón hasta el queso. Raya tumbada.', 'raton', '🧀')
+    ], 2);
     const MODOS = {
       lineas: {
         titulo: 'Lluvia y caminos', icono: '🌧️', criterio: 'cr3', color: '#1e88e5',
         intro: 'Vamos a hacer rayas con el dedo. Empieza en el punto verde.',
-        rondas: [
-          { voz: 'Haz que caiga la lluvia de la nube a la flor. De arriba abajo.', puntos: [[0.5, 0.2], [0.5, 0.82]], inicio: ['☁️', 0.5, 0.09], fin: ['🌷', 0.5, 0.92] },
-          { voz: 'Lleva el coche hasta la casa. Raya tumbada.', puntos: [[0.2, 0.5], [0.8, 0.5]], inicio: ['🚗', 0.09, 0.5], fin: ['🏠', 0.91, 0.5] },
-          { voz: 'La manzana cae del árbol a la cesta.', puntos: [[0.5, 0.2], [0.5, 0.82]], inicio: ['🌳', 0.5, 0.09], fin: ['🧺', 0.5, 0.92] },
-          { voz: 'Lleva la abeja hasta la flor.', puntos: [[0.2, 0.5], [0.8, 0.5]], inicio: ['🐝', 0.09, 0.5], fin: ['🌻', 0.91, 0.5] }
-        ]
+        rondas: [verticales[0], tumbadas[0], verticales[1], tumbadas[1]]
       },
       uno: {
         titulo: 'Escribo el 1', icono: '✏️', criterio: 'cr2', color: '#e53935',
         intro: 'Vamos a escribir el número uno. Empieza en el punto verde: sube un poquito y baja recto.',
-        rondas: [0, 1, 2].map(() => ({
-          voz: 'Haz el número uno. Sube un poquito y baja recto.',
+        rondas: sample([
+          ['🦆', 'un pato'], ['🍎', 'una manzana'], ['🎈', 'un globo'], ['🐟', 'un pez'], ['⚽', 'una pelota'],
+          ['🐢', 'una tortuga'], ['🧸', 'un osito'], ['pato-goma', 'un patito']
+        ], 3).map(([e, cosa]) => ({
+          voz: `Aquí hay ${cosa}. Haz el número uno. Sube un poquito y baja recto.`,
           puntos: [[0.36, 0.33], [0.56, 0.16], [0.56, 0.86]],
-          fin: ['⭐', 0.56, 0.94]
+          fin: ['⭐', 0.56, 0.94],
+          apoyo: [e, 0.82, 0.5, 0.24]
         }))
       }
     };
@@ -161,13 +175,13 @@
         g.textAlign = 'center';
         g.textBaseline = 'middle';
         const ronda = rondaActual;
-        for (const extra of [ronda.inicio, ronda.fin]) {
+        for (const extra of [ronda.inicio, ronda.fin, ronda.apoyo]) {
           if (!extra) continue;
-          const [e, x, y] = extra;
+          const [e, x, y, tam = 0.14] = extra;
           cargarFoto(e).then(im => {
             if (rondaActual !== ronda) return;
             if (!im) { g.fillText(e, x * W, y * W); return; }
-            const t = W * 0.14;
+            const t = W * tam;
             const k = t / Math.max(im.width, im.height);
             g.drawImage(im, x * W - im.width * k / 2, y * W - im.height * k / 2, im.width * k, im.height * k);
           });
