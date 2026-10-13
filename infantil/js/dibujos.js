@@ -87,8 +87,5 @@ export const bola = color =>
 
 export const hueco = '<span class="hueco" aria-label="¿cuál va aquí?">?</span>';
 
-// Foto de un árbol en otoño, verano o invierno.
-export const arbolEstacion = estacion => E(`arbol-${estacion}`);
-
 export const grupo = (obj, n) => `<span class="grupo">${E(obj).repeat(n)}</span>`;
 export const numero = n => `<span class="num">${n}</span>`;

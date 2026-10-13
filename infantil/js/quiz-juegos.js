@@ -1,86 +1,35 @@
-// Juegos de "escucha y toca": cada uno genera rondas nuevas (aleatorias) en cada partida.
-// Ronda: { voz, escena?, opciones: [{ html, ok }], criterio?, audio? }
-import { E, COLORES, caja, mesa, arbol, plato, forma, bola, hueco, arbolEstacion, grupo, numero } from './dibujos.js';
-import { shuffle, pick, sample, tambor } from './comun.js';
+// Juegos de "mira y toca": cada uno genera rondas nuevas (aleatorias) en cada partida.
+// Ronda: { enunciado, escena?, opciones: [{ html, ok }], criterio? }
+import { E, COLORES, caja, mesa, arbol, plato, forma, bola, hueco, grupo, numero } from './dibujos.js';
+import { shuffle, pick, sample } from './comun.js';
 
 const op = (html, ok = false) => ({ html, ok });
-const conTexto = (emoji, texto) => `${E(emoji)}<small>${texto}</small>`;
+const un = g => (g === 'a' ? 'una' : 'un');
+// Botón con el nombre de la emoción (emoji dibujado, sin foto, para no confundirlo con la foto del enunciado).
+const emocionBoton = (emoji, texto) => `<span class="emo">${emoji}</span><b class="palabra">${texto}</b>`;
 
 export const JUEGOS_QUIZ = {
-  higiene: {
-    titulo: 'Limpios y sanos', icono: '🧼', criterio: 'ca1',
-    intro: 'Vamos a cuidarnos. Escucha y toca la respuesta.',
-    rondas: () => sample([
-      { voz: '¿Con qué nos lavamos las manos?', escena: E('🙌'), opciones: [op(E('🧼'), true), op(E('🍌')), op(E('🚗'))] },
-      { voz: '¿Con qué nos lavamos los dientes?', escena: E('😁'), opciones: [op(E('🪥'), true), op(E('✏️')), op(E('🥕'))] },
-      { voz: '¿Con qué comemos la sopa?', escena: E('🍲'), opciones: [op(E('🥄'), true), op(E('🧦')), op(E('🎲'))] },
-      { voz: '¿Qué alimento es más sano?', opciones: [op(E('🍎'), true), op(E('🍭')), op(E('🍩'))] },
-      { voz: 'Tenemos mocos. ¿Qué usamos para limpiarnos la nariz?', escena: E('🤧'), opciones: [op(E('🧻'), true), op(E('📕')), op(E('🍕'))] },
-      { voz: 'Tenemos sed. ¿Qué bebemos?', opciones: [op(E('💧'), true), op(E('🧽')), op(E('👟'))] }
-    ], 5)
-  },
-
-  deprisa: {
-    titulo: 'Deprisa y despacio', icono: '🐇', criterio: 'ca3',
-    intro: 'Unos van deprisa y otros van despacio. ¡Escucha bien!',
-    rondas: () => {
-      const visuales = sample([
-        ['deprisa', '🐇', '🐢'], ['despacio', '🐌', '🐆'], ['deprisa', '🚀', '🐌'],
-        ['despacio', '🐢', '🐎'], ['deprisa', '🏎️', '🚜']
-      ], 3).map(([p, bien, mal]) => ({ voz: `¿Quién va ${p}?`, opciones: [op(E(bien), true), op(E(mal))] }));
-      const auditivas = shuffle(['deprisa', 'despacio']).map(p => ({
-        voz: 'Escucha el tambor. ¿Va deprisa o despacio?',
-        escena: E('🥁'),
-        audio: () => (p === 'deprisa' ? tambor(220, 14) : tambor(52, 5)),
-        opciones: [op(conTexto('🐇', 'deprisa'), p === 'deprisa'), op(conTexto('🐢', 'despacio'), p === 'despacio')]
-      }));
-      return shuffle([...visuales, ...auditivas]);
-    }
-  },
-
-  reposo: {
-    titulo: '¿Quién se mueve?', icono: '🏃', criterio: 'ca4',
-    intro: 'Unos niños se mueven y otros están quietos, descansando.',
-    rondas: () => {
-      const mueven = ['🏃', '🚴', '🤸', '💃', '🏊', '⛹️'];
-      const quietos = ['🛌', '😴', '🧘'];
-      return shuffle(['quieto', 'quieto', 'mueve', 'mueve', pick(['quieto', 'mueve'])]).map(t => t === 'quieto'
-        ? { voz: 'Toca al que está quieto, descansando.', opciones: [op(E(pick(quietos)), true), ...sample(mueven, 2).map(m => op(E(m)))] }
-        : { voz: 'Toca al que se está moviendo.', opciones: [op(E(pick(mueven)), true), ...sample(quietos, 2).map(q => op(E(q)))] });
-    }
-  },
-
-  abrigo: {
-    titulo: 'Viste al osito', icono: '🧥', criterio: 'ca6',
-    intro: 'Vamos a ayudar al osito a vestirse.',
-    rondas: () => shuffle([
-      { voz: 'Hace frío y el osito sale al patio. ¿Qué se pone?', escena: `${E('🧸')}${E('nieve')}`, opciones: [op(E('🧥'), true), op(E('🩳')), op(E('🩴'))] },
-      { voz: 'Al osito se le enfrían las manos. ¿Qué se pone?', escena: `${E('🧸')}${E('✋')}`, opciones: [op(E('🧤'), true), op(E('👒')), op(E('🩴'))] },
-      { voz: 'Al osito le duele el cuello del frío. ¿Qué se pone?', escena: E('🧸'), opciones: [op(E('🧣'), true), op(E('🕶️')), op(E('👟'))] },
-      { voz: 'Ya está en clase. ¿Dónde cuelga el abrigo?', escena: `${E('🧸')}${E('🧥')}`, opciones: [op(E('🪝'), true), op(E('🗑️')), op(E('🛁'))] },
-      { voz: 'Hace calor. ¿Qué se quita el osito?', escena: `${E('🧸')}${E('☀️')}`, opciones: [op(E('🧥'), true), op(E('🦶')), op(E('👂'))] }
-    ])
-  },
-
   emociones: {
     titulo: 'Contento o triste', icono: '😀', criterio: 'ca7',
-    intro: 'A veces estamos contentos y a veces estamos tristes.',
+    intro: 'A veces sentimos alegría y a veces sentimos tristeza. Mira bien su cara.',
     rondas: () => {
-      const caras = () => [op(E('😀'), true), op(E('😢'))];
-      const triste = () => [op(E('😢'), true), op(E('😀'))];
-      const situaciones = sample([
-        { voz: '¡Es su cumpleaños! ¿Cómo está?', escena: E('cumpleanos'), opciones: caras() },
-        { voz: 'Se le ha caído el helado al suelo. ¿Cómo está?', escena: E('helado-caido'), opciones: triste() },
-        { voz: 'Su juguete se ha roto. ¿Cómo está?', escena: E('juguete-roto'), opciones: triste() },
-        { voz: 'Juega con sus amigos a la pelota. ¿Cómo está?', escena: E('jugar-pelota'), opciones: caras() },
-        { voz: 'Se ha caído y se ha hecho daño en la rodilla. ¿Cómo está?', escena: E('rodilla'), opciones: triste() },
-        { voz: 'Su abuela le da un abrazo muy grande. ¿Cómo está?', escena: E('abrazo-abuela'), opciones: caras() }
-      ], 3);
-      return shuffle([
-        { voz: 'Toca la cara contenta.', opciones: caras() },
-        { voz: 'Toca la cara triste.', opciones: triste() },
-        ...situaciones
-      ]);
+      const fotos = {
+        alegria: [['cumpleanos', 'este bebé'], ['cara-contenta', 'este niño'], ['nina-sonrie', 'esta niña'],
+          ['nino-rie', 'este niño'], ['nino-sonrie', 'este niño'], ['nina-contenta', 'esta niña'], ['nino-gorro', 'este niño'],
+          ['nino-alegre', 'este niño'], ['nino-columpio', 'este niño'], ['nina-rie', 'esta niña']],
+        tristeza: [['cara-triste', 'esta niña'], ['nina-llora', 'esta niña'], ['nina-lagrima', 'esta niña'],
+          ['nino-llora', 'este niño'], ['bebe-pucheros', 'este bebé'], ['bebe-llora', 'este bebé'], ['bebe-triste', 'este bebé'],
+          ['nino-triste', 'este niño'], ['nino-cabizbajo', 'este niño']]
+      };
+      const quedan = { alegria: shuffle(fotos.alegria), tristeza: shuffle(fotos.tristeza) };
+      return shuffle(['alegria', 'alegria', 'tristeza', 'tristeza', pick(['alegria', 'tristeza'])]).map(emocion => {
+        const [foto, quien] = quedan[emocion].pop();
+        return {
+          enunciado: `¿Qué siente ${quien}? ¿Alegría o tristeza?`,
+          escena: `<span class="emocion">${E(foto)}</span>`,
+          opciones: [op(emocionBoton('😀', 'Alegría'), emocion === 'alegria'), op(emocionBoton('😢', 'Tristeza'), emocion === 'tristeza')]
+        };
+      });
     }
   },
 
@@ -88,11 +37,11 @@ export const JUEGOS_QUIZ = {
     titulo: 'El color rojo', icono: '🍎', criterio: 'de1',
     intro: 'Vamos a buscar el color rojo.',
     rondas: () => {
-      const rojos = sample(['🍎', '🍓', '🍒', '🍅', '🚒', '🌹', '🎈'], 3);
-      const otros = ['🍌', '🥦', '🍋', '🐸', '🌻', '🍇', '🐳', '🌽'];
-      const conObjetos = rojos.map(r => ({ voz: 'Toca lo que es de color rojo.', opciones: [op(E(r), true), ...sample(otros, 2).map(o => op(E(o)))] }));
+      const rojos = sample(['🍎', '🍓', '🍒', '🍅', '🚒', '🌹', '🎈', '🚗', 'pimiento', 'sandia', 'calcetin', 'gafas-sol'], 3);
+      const otros = ['🍌', '🥦', '🍋', '🐸', '🌻', '🍇', '🐳', '🌽', '🍐', '🐧', '🐢', '🐘', 'zapatilla', 'paraguas', 'pato-goma'];
+      const conObjetos = rojos.map(r => ({ enunciado: 'Toca lo que es de color rojo.', opciones: [op(E(r), true), ...sample(otros, 2).map(o => op(E(o)))] }));
       const conPelotas = [0, 1].map(() => ({
-        voz: 'Toca la pelota roja.',
+        enunciado: 'Toca la pelota roja.',
         opciones: [op(forma('circulo', COLORES.rojo, 'pelota')), ...sample(['azul', 'amarillo', 'verde', 'morado'], 2)
           .map(c => op(forma('circulo', COLORES[c], 'pelota')))].map((o, i) => ({ ...o, ok: i === 0 }))
       }));
@@ -104,12 +53,17 @@ export const JUEGOS_QUIZ = {
     titulo: 'Uno o ninguno', icono: '🍽️', criterio: 'de2',
     intro: 'Vamos a mirar los platos.',
     rondas: () => {
-      const cosas = shuffle([['🍎', 'manzana'], ['🍓', 'fresa'], ['🍪', 'galleta'], ['🍐', 'pera'], ['🍊', 'naranja']]);
+      const cosas = shuffle([
+        ['🍎', 'manzana', 'a'], ['🍓', 'fresa', 'a'], ['🍪', 'galleta', 'a'], ['🍐', 'pera', 'a'], ['🍊', 'naranja', 'a'],
+        ['🍩', 'donut', 'o'], ['zanahoria', 'zanahoria', 'a'], ['magdalena', 'magdalena', 'a'], ['pimiento', 'pimiento', 'o']
+      ]);
       const tipos = shuffle(['uno', 'uno', 'ninguno', 'ninguno', pick(['uno', 'ninguno'])]);
       return tipos.map((t, i) => {
-        const [e, nombre] = cosas[i];
+        const [e, nombre, g] = cosas[i];
         return {
-          voz: t === 'uno' ? `Toca el plato que tiene una ${nombre}.` : `Toca el plato que no tiene ninguna ${nombre}.`,
+          enunciado: t === 'uno'
+            ? `Toca el plato que tiene ${un(g)} ${nombre}.`
+            : `Toca el plato que no tiene ${g === 'a' ? 'ninguna' : 'ningún'} ${nombre}.`,
           opciones: [op(plato(1, e), t === 'uno'), op(plato(0, e), t === 'ninguno'), op(plato(3, e))]
         };
       });
@@ -122,13 +76,16 @@ export const JUEGOS_QUIZ = {
     rondas: () => {
       const cosas = sample([
         ['🐘', 'el elefante', 'o'], ['🐶', 'el perro', 'o'], ['🐱', 'el gato', 'o'], ['🎈', 'el globo', 'o'],
-        ['🍎', 'la manzana', 'a'], ['🌳', 'el árbol', 'o'], ['🚗', 'el coche', 'o'], ['🦒', 'la jirafa', 'a']
+        ['🍎', 'la manzana', 'a'], ['🌳', 'el árbol', 'o'], ['🚗', 'el coche', 'o'], ['🦒', 'la jirafa', 'a'],
+        ['🐻', 'el oso', 'o'], ['🦆', 'el pato', 'o'], ['🐰', 'el conejo', 'o'], ['🐢', 'la tortuga', 'a'], ['🐴', 'el caballo', 'o'],
+        ['🐮', 'la vaca', 'a'], ['🧸', 'el osito', 'o'], ['⚽', 'la pelota', 'a'], ['raton', 'el ratón', 'o'], ['caracol', 'el caracol', 'o'],
+        ['🐧', 'el pingüino', 'o'], ['muneca', 'la muñeca', 'a']
       ], 5);
       const tipos = shuffle(['grande', 'grande', 'pequeño', 'pequeño', pick(['grande', 'pequeño'])]);
       return cosas.map(([e, nombre, g], i) => {
         const grande = tipos[i] === 'grande';
         return {
-          voz: `Toca ${nombre} ${grande ? 'grande' : `pequeñ${g}`}.`,
+          enunciado: `Toca ${nombre} ${grande ? 'grande' : `pequeñ${g}`}.`,
           opciones: [op(E(e, '1em'), grande), op(E(e, '.38em'), !grande)]
         };
       });
@@ -139,18 +96,22 @@ export const JUEGOS_QUIZ = {
     titulo: 'El número 1', icono: '1️⃣', criterio: 'de4',
     intro: 'Vamos a buscar el número uno.',
     rondas: () => {
-      const cosas = shuffle([['🦆', 'pato'], ['🐟', 'pez'], ['⚽', 'balón'], ['🎈', 'globo'], ['🚗', 'coche']]);
+      const cosas = sample([
+        ['🦆', 'pato', 'o'], ['🐟', 'pez', 'o'], ['⚽', 'balón', 'o'], ['🎈', 'globo', 'o'], ['🚗', 'coche', 'o'], ['🐰', 'conejo', 'o'],
+        ['🐱', 'gato', 'o'], ['🐶', 'perro', 'o'], ['🐢', 'tortuga', 'a'], ['🍎', 'manzana', 'a'], ['🦋', 'mariposa', 'a'],
+        ['🍐', 'pera', 'a'], ['🧸', 'osito', 'o'], ['pato-goma', 'patito de goma', 'o'], ['raton', 'ratón', 'o']
+      ], 3);
       const grafia = [0, 1].map(() => ({
-        voz: 'Toca el número uno.',
+        enunciado: 'Toca el número uno.',
         opciones: [op(numero(1), true), ...sample(['3', '5', '7', '4', '8'], 2).map(n => op(numero(n)))]
       }));
-      const cantidad = cosas.slice(0, 2).map(([e, nombre]) => ({
-        voz: `¿Dónde hay un solo ${nombre}?`,
+      const cantidad = cosas.slice(0, 2).map(([e, nombre, g]) => ({
+        enunciado: `¿Dónde hay ${un(g)} sol${g} ${nombre}?`,
         opciones: [op(grupo(e, 1), true), op(grupo(e, 3)), op(grupo(e, 2))]
       }));
-      const [e, nombre] = cosas[2];
+      const [e, nombre, g] = cosas[2];
       const asociar = {
-        voz: `Mira: hay un ${nombre}. Toca el número uno.`,
+        enunciado: `Mira: hay ${un(g)} ${nombre}. Toca el número uno.`,
         escena: grupo(e, 1),
         opciones: [op(numero(1), true), ...sample(['3', '5', '4'], 2).map(n => op(numero(n)))]
       };
@@ -162,15 +123,19 @@ export const JUEGOS_QUIZ = {
     titulo: 'Series de colores', icono: '🔴', criterio: 'de5',
     intro: 'Mira los colores. ¿Cuál viene ahora?',
     rondas: () => {
-      const parejas = shuffle([['rojo', 'azul'], ['amarillo', 'verde'], ['rojo', 'amarillo'], ['azul', 'amarillo'], ['verde', 'rojo']]);
-      return parejas.map(([a, b], i) => {
-        const largo = [4, 5, 4, 3, 5][i];
-        const serie = Array.from({ length: largo }, (_, k) => (k % 2 === 0 ? a : b));
-        const sigue = largo % 2 === 0 ? a : b;
+      // Series de bolas de colores y series de cosas de dos colores (fresa roja, plátano amarillo…).
+      const conBolas = sample([['rojo', 'azul'], ['amarillo', 'verde'], ['rojo', 'amarillo'], ['azul', 'amarillo'], ['verde', 'rojo']], 3)
+        .map(([a, b]) => [bola(COLORES[a]), bola(COLORES[b])]);
+      const conFotos = sample([['🍓', '🍌'], ['🍎', '🥦'], ['🍒', '🍋'], ['pimiento', '🌽'], ['🌻', '🥦'], ['🍇', '🍋']], 2)
+        .map(([a, b]) => [E(a), E(b)]);
+      const largos = shuffle([3, 4, 4, 5, 5]);
+      return shuffle([...conBolas, ...conFotos]).map(([a, b], i) => {
+        const serie = Array.from({ length: largos[i] }, (_, k) => (k % 2 === 0 ? a : b));
+        const sigue = largos[i] % 2 === 0 ? a : b;
         return {
-          voz: 'Mira la serie. ¿Qué color va ahora?',
-          escena: `<span class="serie">${serie.map(c => bola(COLORES[c])).join('')}${hueco}</span>`,
-          opciones: [op(bola(COLORES[a]), sigue === a), op(bola(COLORES[b]), sigue === b)]
+          enunciado: 'Mira la serie. ¿Qué color va ahora?',
+          escena: `<span class="serie">${serie.join('')}${hueco}</span>`,
+          opciones: [op(a, sigue === a), op(b, sigue === b)]
         };
       });
     }
@@ -180,10 +145,14 @@ export const JUEGOS_QUIZ = {
     titulo: 'Dentro y fuera', icono: '📦', criterio: 'de6',
     intro: 'Vamos a jugar con la caja.',
     rondas: () => {
-      const cosas = shuffle([['🐱', 'el gato'], ['🐶', 'el perro'], ['⚽', 'la pelota'], ['🧸', 'el osito'], ['🐰', 'el conejo']]);
+      const cosas = sample([
+        ['🐱', 'el gato'], ['🐶', 'el perro'], ['⚽', 'la pelota'], ['🧸', 'el osito'], ['🐰', 'el conejo'], ['🦆', 'el pato'],
+        ['🐢', 'la tortuga'], ['raton', 'el ratón'], ['coche-juguete', 'el coche'], ['🦖', 'el dinosaurio'], ['pato-goma', 'el patito'],
+        ['muneca', 'la muñeca'], ['🐷', 'el cerdito']
+      ], 5);
       const tipos = shuffle(['dentro', 'dentro', 'fuera', 'fuera', pick(['dentro', 'fuera'])]);
       return cosas.map(([e, nombre], i) => ({
-        voz: `Toca ${nombre} que está ${tipos[i]} de la caja.`,
+        enunciado: `Toca ${nombre} que está ${tipos[i]} de la caja.`,
         opciones: [op(caja(e, true), tipos[i] === 'dentro'), op(caja(e, false), tipos[i] === 'fuera')]
       }));
     }
@@ -193,15 +162,18 @@ export const JUEGOS_QUIZ = {
     titulo: 'Arriba y abajo', icono: '⬆️', criterio: 'de7',
     intro: '¿Está arriba o está abajo? ¡Fíjate bien!',
     rondas: () => {
-      const enMesa = shuffle([['⚽', 'la pelota'], ['🐱', 'el gato'], ['🧸', 'el osito']]);
-      const enArbol = shuffle([['🐦', 'el pájaro'], ['🐿️', 'la ardilla']]);
+      const enMesa = sample([
+        ['⚽', 'la pelota'], ['🐱', 'el gato'], ['🧸', 'el osito'], ['📕', 'el libro'], ['🍎', 'la manzana'], ['🐶', 'el perro'],
+        ['🐰', 'el conejo'], ['pato-goma', 'el patito'], ['muneca', 'la muñeca'], ['dado', 'el dado']
+      ], 3);
+      const enArbol = sample([['🐦', 'el pájaro'], ['🐿️', 'la ardilla'], ['🦉', 'el búho'], ['🦋', 'la mariposa'], ['🐨', 'el koala']], 2);
       const tipos = shuffle(['arriba', 'arriba', 'abajo', 'abajo', pick(['arriba', 'abajo'])]);
       const rondas = [
         ...enMesa.map(([e, n]) => ({ e, n, dibujo: mesa, donde: { arriba: 'arriba, encima de la mesa', abajo: 'abajo, debajo de la mesa' } })),
         ...enArbol.map(([e, n]) => ({ e, n, dibujo: arbol, donde: { arriba: 'arriba, en el árbol', abajo: 'abajo, en el suelo' } }))
       ];
       return shuffle(rondas.map((r, i) => ({
-        voz: `Toca ${r.n} que está ${r.donde[tipos[i]]}.`,
+        enunciado: `Toca ${r.n} que está ${r.donde[tipos[i]]}.`,
         opciones: [op(r.dibujo(r.e, true), tipos[i] === 'arriba'), op(r.dibujo(r.e, false), tipos[i] === 'abajo')]
       })));
     }
@@ -211,46 +183,17 @@ export const JUEGOS_QUIZ = {
     titulo: 'El círculo', icono: '⭕', criterio: 'de8',
     intro: 'Vamos a buscar círculos.',
     rondas: () => {
-      const colores = sample(Object.values(COLORES), 3);
+      const colores = sample(Object.values(COLORES), 2);
       const formas = colores.map(color => ({
-        voz: 'Toca el círculo.',
+        enunciado: 'Toca el círculo.',
         opciones: [op(forma('circulo', color), true), ...sample(['cuadrado', 'triangulo', 'rectangulo'], 2).map(f => op(forma(f, color)))]
       }));
-      const objetos = sample(['🍪', '🕒', '🍩', '⚽'], 2).map(r => ({
-        voz: '¿Qué tiene forma de círculo?',
-        opciones: [op(E(r), true), ...sample(['📕', '📦', 'porcion-pizza', '🧀', '🖼️'], 2).map(o => op(E(o)))]
+      // Cosas vistas de frente o desde arriba, para que se vea bien que son un círculo.
+      const objetos = sample(['🕒', '⚽', 'luna', 'pizza', 'naranja-cortada', 'moneda', 'piruleta'], 3).map(r => ({
+        enunciado: '¿Qué tiene forma de círculo?',
+        opciones: [op(E(r), true), ...sample(['📕', '📦', 'porcion-pizza', '🧀', '🖼️', '📄', 'dado', '✏️', 'sobre'], 2).map(o => op(E(o)))]
       }));
       return shuffle([...formas, ...objetos]);
-    }
-  },
-
-  otono: {
-    titulo: 'Llega el otoño', icono: '🍂', criterio: 'de9',
-    intro: 'Ha llegado el otoño. ¿Qué cambia?',
-    rondas: () => shuffle([
-      { voz: '¿Qué árbol es de otoño?', opciones: [op(arbolEstacion('otono'), true), op(arbolEstacion('verano')), op(arbolEstacion('invierno'))] },
-      { voz: '¿Qué cae de los árboles en otoño?', escena: E('🌳'), opciones: [op(E('🍂'), true), op(E('❄️')), op(E('🍉'))] },
-      { voz: 'En otoño llueve. ¿Qué usamos?', escena: E('🌧️'), opciones: [op(E('☂️'), true), op(E('🕶️')), op(E('🩴'))] },
-      { voz: '¿Qué encontramos en el bosque en otoño?', opciones: [op(E(pick(['🌰', '🍄'])), true), op(E('⛄')), op(E('🏖️'))] },
-      { voz: 'En otoño hace fresquito. ¿Qué ropa nos ponemos?', opciones: [op(E('🧥'), true), op(E('🕶️')), op(E('🩳'))] }
-    ])
-  },
-
-  vocabulario: {
-    titulo: '¿Dónde está?', icono: '🗣️', criterio: 'cr1',
-    intro: 'Escucha la palabra y toca el dibujo.',
-    rondas: () => {
-      const palabras = [
-        ['🍂', 'la hoja'], ['🌰', 'la castaña'], ['🍄', 'la seta'], ['☂️', 'el paraguas'], ['🎒', 'la mochila'],
-        ['✏️', 'el lápiz'], ['📕', 'el libro'], ['🍎', 'la manzana'], ['🐿️', 'la ardilla'], ['✋', 'la mano'],
-        ['👁️', 'el ojo'], ['👃', 'la nariz'], ['👂', 'la oreja'], ['🦶', 'el pie'], ['🌳', 'el árbol'],
-        ['☁️', 'la nube'], ['🧥', 'el abrigo'], ['🪥', 'el cepillo de dientes']
-      ];
-      const objetivos = sample(palabras, 6);
-      return objetivos.map(([e, nombre]) => ({
-        voz: `¿Dónde está ${nombre}?`,
-        opciones: [op(E(e), true), ...sample(palabras.filter(p => p[0] !== e), 2).map(([o]) => op(E(o)))]
-      }));
     }
   }
 };
