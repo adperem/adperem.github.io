@@ -54,21 +54,21 @@
   <main class="zona-juego" id="app"></main>
 
   <script type="module">
-    import { cabecera, pantallaInicio, pantallaFinal, hablar, sonidoAcierto, sonidoFallo, sonidoPop, sample, shuffle, pick, el, ELOGIOS } from './js/comun.js';
+    import { cabecera, pantallaInicio, pantallaFinal, sonidoAcierto, sonidoFallo, sonidoPop, sample, shuffle, el } from './js/comun.js';
     import { empezarSesion, registrarRonda, terminarSesion } from './js/storage.js';
     import { E } from './js/dibujos.js';
 
     const INTRO = '¡Qué desorden! Los juguetes van a la caja y los papeles a la papelera. Arrástralos con el dedo.';
     const app = document.getElementById('app');
-    cabecera({ titulo: 'Recogemos la clase', onRepetir: () => hablar(INTRO) });
+    cabecera({ titulo: 'Recogemos la clase' });
 
     pantallaInicio(app, {
       icono: '🧸',
       titulo: 'Recogemos la clase',
-      onEmpezar: async () => {
+      intro: INTRO,
+      onEmpezar: () => {
         empezarSesion('recoger');
         jugar();
-        hablar(INTRO);
       }
     });
 
@@ -78,6 +78,7 @@
       const papeles = sample(['📄', '🗞️', '📃', 'sobre', 'bolsa-papel'], 2).map(e => ({ e, destino: 'papelera' }));
       const objetos = shuffle([...juguetes, ...papeles]);
 
+      app.append(el(`<p class="enunciado">${INTRO}</p>`));
       const suelo = el(`
         <div class="suelo">
           <div class="destino caja" data-d="caja" aria-label="Caja de juguetes">${E('🧺')}</div>
@@ -151,14 +152,12 @@
               n.style.left = d.offsetLeft + d.offsetWidth / 2 - n.offsetWidth / 2 + 'px';
               n.style.top = d.offsetTop + d.offsetWidth / 2 - n.offsetHeight / 2 + 'px';
               sonidoAcierto();
-              hablar(pick(ELOGIOS));
               setTimeout(() => n.remove(), 400);
               if (--pendientes === 0) setTimeout(fin, 900);
             } else {
               d.classList.add('mal');
               setTimeout(() => d.classList.remove('mal'), 500);
               sonidoFallo();
-              hablar(o.destino === 'caja' ? '¡Uy! Es un juguete. Va a la caja.' : '¡Uy! Es un papel. Va a la papelera.');
               n.classList.add('vuelve');
               n.style.left = desde.left;
               n.style.top = desde.top;

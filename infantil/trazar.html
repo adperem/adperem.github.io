@@ -27,13 +27,13 @@
   <main class="zona-juego" id="app"></main>
 
   <script type="module">
-    import { cabecera, pantallaInicio, pantallaFinal, hablar, params, sonidoAcierto, pick, sample, el, ELOGIOS, Progreso, nota } from './js/comun.js';
+    import { cabecera, pantallaInicio, pantallaFinal, params, sonidoAcierto, sample, el, Progreso, nota } from './js/comun.js';
     import { empezarSesion, registrarRonda, terminarSesion } from './js/storage.js';
     import { cargarFoto } from './js/fotos.js';
 
     // Trazos en coordenadas normalizadas (0..1). inicio/fin: emoji de apoyo en los extremos; apoyo: dibujo grande al lado.
-    const vertical = (voz, arriba, abajo) => ({ voz, puntos: [[0.5, 0.2], [0.5, 0.82]], inicio: [arriba, 0.5, 0.09], fin: [abajo, 0.5, 0.92] });
-    const tumbada = (voz, izq, der) => ({ voz, puntos: [[0.2, 0.5], [0.8, 0.5]], inicio: [izq, 0.09, 0.5], fin: [der, 0.91, 0.5] });
+    const vertical = (enunciado, arriba, abajo) => ({ enunciado, puntos: [[0.5, 0.2], [0.5, 0.82]], inicio: [arriba, 0.5, 0.09], fin: [abajo, 0.5, 0.92] });
+    const tumbada = (enunciado, izq, der) => ({ enunciado, puntos: [[0.2, 0.5], [0.8, 0.5]], inicio: [izq, 0.09, 0.5], fin: [der, 0.91, 0.5] });
     const verticales = sample([
       vertical('Haz que caiga la lluvia de la nube a la flor. De arriba abajo.', '☁️', '🌷'),
       vertical('La manzana cae del árbol a la cesta.', '🌳', '🧺'),
@@ -60,7 +60,7 @@
           ['🦆', 'un pato'], ['🍎', 'una manzana'], ['🎈', 'un globo'], ['🐟', 'un pez'], ['⚽', 'una pelota'],
           ['🐢', 'una tortuga'], ['🧸', 'un osito'], ['pato-goma', 'un patito']
         ], 3).map(([e, cosa]) => ({
-          voz: `Aquí hay ${cosa}. Haz el número uno. Sube un poquito y baja recto.`,
+          enunciado: `Aquí hay ${cosa}. Haz el número uno. Sube un poquito y baja recto.`,
           puntos: [[0.36, 0.33], [0.56, 0.16], [0.56, 0.86]],
           fin: ['⭐', 0.56, 0.94],
           apoyo: [e, 0.82, 0.5, 0.24]
@@ -73,26 +73,28 @@
     document.title = `${modo.titulo} · Jugamos y aprendemos`;
     const app = document.getElementById('app');
     let rondaActual = null;
-    cabecera({ titulo: modo.titulo, onRepetir: () => rondaActual && hablar(rondaActual.voz) });
+    cabecera({ titulo: modo.titulo });
 
     pantallaInicio(app, {
       icono: modo.icono,
       titulo: modo.titulo,
+      intro: modo.intro,
       onEmpezar: () => {
         empezarSesion(idJuego);
-        jugar(hablar(modo.intro));
+        jugar();
       }
     });
 
-    function jugar(intro) {
+    function jugar() {
       const progreso = new Progreso(app, modo.rondas.length);
+      const enunciado = el('<p class="enunciado"></p>');
       const lienzo = el('<div class="lienzo"><canvas class="guia"></canvas><canvas class="trazo"></canvas></div>');
       const controles = el(`
         <div class="controles">
           <button class="btn-redondo" type="button" data-a="borrar" aria-label="Borrar y empezar otra vez">🧽</button>
           <button class="btn-redondo" type="button" data-a="saltar" aria-label="Saltar (para el profe)">⏭️</button>
         </div>`);
-      app.append(lienzo, controles);
+      app.append(enunciado, lienzo, controles);
       const [guia, trazo] = lienzo.querySelectorAll('canvas');
       const g = guia.getContext('2d');
       const t = trazo.getContext('2d');
@@ -206,9 +208,7 @@
         }
         cubiertas = muestras.map(() => false);
         pintarGuia();
-        const voz = rondaActual.voz;
-        // En la primera ronda se espera a que termine la explicación inicial.
-        (i === 0 ? intro : Promise.resolve()).then(() => { if (rondaActual.voz === voz && !terminado) hablar(voz); });
+        enunciado.textContent = rondaActual.enunciado;
       }
 
       function anadirPunto(p) {
@@ -239,7 +239,6 @@
         pintarGuia(true);
         sonidoAcierto();
         progreso.marcar(i);
-        hablar(pick(ELOGIOS));
         setTimeout(siguiente, 1800);
       }
 
@@ -247,6 +246,7 @@
         i++;
         if (i < modo.rondas.length) prepararRonda();
         else {
+          enunciado.remove();
           lienzo.remove();
           controles.remove();
           progreso.el.remove();

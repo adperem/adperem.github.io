@@ -84,7 +84,7 @@
   <script type="module">
     import { AREAS, ACTIVIDADES } from './js/datos.js';
     import { alumnos, alumnoActual, fijarAlumnoActual, completados } from './js/storage.js';
-    import { hablar, audio, sonidoPop } from './js/comun.js';
+    import { audio, sonidoPop } from './js/comun.js';
     import { E } from './js/dibujos.js';
 
     const $ = s => document.querySelector(s);
@@ -136,8 +136,6 @@
       fijarAlumnoActual(b.dataset.id || null);
       invitado = !b.dataset.id;
       sessionStorage.setItem('infantil-invitado', invitado ? '1' : '0');
-      const a = alumnoActual();
-      hablar(a ? `¡Hola, ${a.nombre}! ¿A qué jugamos?` : '¡Hola! ¿A qué jugamos?');
       vistaMenu();
     });
 

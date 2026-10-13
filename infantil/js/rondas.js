@@ -1,10 +1,10 @@
-// Motor de rondas "escucha y toca".
+// Motor de rondas "mira y toca". El enunciado sale escrito para que el profe lo lea en voz alta.
 // Solo cuenta el PRIMER toque de cada ronda para la evaluación; después el niño puede
 // seguir probando hasta acertar, para que nunca se quede atascado ni sienta que falla.
-import { hablar, sonidoAcierto, sonidoFallo, pick, shuffle, el, ELOGIOS, ANIMOS, Progreso } from './comun.js';
+import { sonidoAcierto, sonidoFallo, shuffle, el, Progreso } from './comun.js';
 import { registrarRonda } from './storage.js';
 
-export function ejecutarRondas({ contenedor, rondas, criterio, onFin, conProgreso = true, esperar = null }) {
+export function ejecutarRondas({ contenedor, rondas, criterio, onFin, conProgreso = true }) {
   const zona = el('<div class="rondas"></div>');
   contenedor.append(zona);
   const progreso = conProgreso ? new Progreso(zona, rondas.length) : null;
@@ -16,30 +16,14 @@ export function ejecutarRondas({ contenedor, rondas, criterio, onFin, conProgres
   let primerToque = true;
   let bloqueado = false;
 
-  async function decir() {
-    const r = rondas[i];
-    if (!r) return;
-    // La primera pregunta espera a que termine la explicación inicial (si la hay).
-    if (esperar) { const e = esperar; esperar = null; await e; if (rondas[i] !== r || !primerToque) return; }
-    await hablar(r.voz);
-    if (r.audio && rondas[i] === r) r.audio();
-  }
-
   function mostrar() {
     const r = rondas[i];
     primerToque = true;
     bloqueado = false;
     const opciones = shuffle(r.opciones);
     cuerpo.innerHTML = '';
-    if (r.escena || r.audio) {
-      const escena = el(`<div class="escena">${r.escena || ''}</div>`);
-      if (r.audio) {
-        const b = el('<button class="btn-redondo escuchar" type="button" aria-label="Escuchar otra vez">👂</button>');
-        b.addEventListener('click', () => r.audio());
-        escena.append(b);
-      }
-      cuerpo.append(escena);
-    }
+    cuerpo.append(el(`<p class="enunciado">${r.enunciado}</p>`));
+    if (r.escena) cuerpo.append(el(`<div class="escena">${r.escena}</div>`));
     const lista = el(`<div class="opciones" style="--n:${opciones.length}"></div>`);
     opciones.forEach(o => {
       const b = el(`<button class="opcion" type="button">${o.html}</button>`);
@@ -50,7 +34,6 @@ export function ejecutarRondas({ contenedor, rondas, criterio, onFin, conProgres
     cuerpo.classList.remove('entra');
     void cuerpo.offsetWidth;
     cuerpo.classList.add('entra');
-    decir();
   }
 
   function tocar(boton, opcion, r) {
@@ -65,13 +48,11 @@ export function ejecutarRondas({ contenedor, rondas, criterio, onFin, conProgres
       boton.classList.add('bien');
       sonidoAcierto();
       progreso?.marcar(i);
-      hablar(pick(ELOGIOS));
       setTimeout(siguiente, 1700);
     } else {
       boton.classList.add('mal');
       boton.disabled = true;
       sonidoFallo();
-      hablar(pick(ANIMOS));
     }
   }
 
@@ -85,5 +66,4 @@ export function ejecutarRondas({ contenedor, rondas, criterio, onFin, conProgres
   }
 
   mostrar();
-  return { repetir: decir };
 }

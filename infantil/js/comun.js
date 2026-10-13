@@ -1,49 +1,7 @@
-// Utilidades compartidas: voz, sonidos, azar y piezas de interfaz.
+// Utilidades compartidas: sonidos, azar y piezas de interfaz.
 import { alumnos, alumnoActual, evaluacion, fijarEvaluacion, NIVELES } from './storage.js';
 import { CRITERIOS } from './datos.js';
 import { E } from './dibujos.js';
-
-// ---------- Voz (los niños de 3 años no leen: todas las consignas se dicen en voz alta) ----------
-
-let vozES = null;
-function elegirVoz() {
-  const voces = speechSynthesis.getVoices();
-  vozES = voces.find(v => v.lang === 'es-ES' && /Helena|Laura|Elvira|Monica|Lucia|female|mujer/i.test(v.name))
-    || voces.find(v => v.lang === 'es-ES')
-    || voces.find(v => v.lang?.startsWith('es'))
-    || null;
-}
-if ('speechSynthesis' in window) {
-  elegirVoz();
-  speechSynthesis.addEventListener?.('voiceschanged', elegirVoz);
-}
-
-export function hablar(texto) {
-  return new Promise(resolve => {
-    if (!texto || !('speechSynthesis' in window)) { resolve(); return; }
-    speechSynthesis.cancel();
-    const u = new SpeechSynthesisUtterance(texto);
-    u.lang = 'es-ES';
-    if (vozES) u.voice = vozES;
-    u.rate = 0.88;
-    u.pitch = 1.1;
-    let hecho = false;
-    // Algunos navegadores no disparan onend: plan B por tiempo.
-    const plazo = setTimeout(() => fin(), 1500 + texto.length * 95);
-    function fin() {
-      if (hecho) return;
-      hecho = true;
-      clearTimeout(plazo);
-      resolve();
-    }
-    u.onend = fin;
-    u.onerror = fin;
-    speechSynthesis.speak(u);
-  });
-}
-
-export const ELOGIOS = ['¡Muy bien!', '¡Genial!', '¡Eso es!', '¡Fantástico!', '¡Bravo!', '¡Lo has conseguido!'];
-export const ANIMOS = ['¡Uy! Prueba otra vez.', 'Casi. Inténtalo otra vez.', 'Mira bien y prueba otra vez.'];
 
 // ---------- Sonido (Web Audio, sin archivos) ----------
 
@@ -96,16 +54,15 @@ export function el(html) {
   return t.content.firstElementChild;
 }
 
-export function cabecera({ titulo, onRepetir = null, volver = 'index.html' }) {
+export function cabecera({ titulo, volver = 'index.html' }) {
   const a = alumnoActual();
+  // Sin alumno se deja un hueco invisible para que el título siga centrado.
   const header = el(`
     <header class="barra">
       <a class="btn-redondo" href="${volver}" aria-label="Volver al menú">🏠</a>
       <h1>${titulo}</h1>
-      ${a ? `<span class="quien" title="${a.nombre}">${E(a.avatar)}</span>` : ''}
-      ${onRepetir ? '<button class="btn-redondo" type="button" aria-label="Repetir la pregunta">🔊</button>' : ''}
+      ${a ? `<span class="quien" title="${a.nombre}">${E(a.avatar)}</span>` : '<span class="quien vacio" aria-hidden="true"></span>'}
     </header>`);
-  header.querySelector('button')?.addEventListener('click', onRepetir);
   document.body.prepend(header);
   return header;
 }
@@ -140,7 +97,6 @@ export function confeti() {
 export function pantallaFinal({ mensaje = '¡Lo has conseguido!', detalle = '', criterios = [], onOtraVez = () => location.reload() } = {}) {
   sonidoFin();
   confeti();
-  hablar(mensaje);
   const capa = el(`
     <div class="final" role="dialog" aria-label="${mensaje}">
       <div class="final-tarjeta">
@@ -212,12 +168,13 @@ export function cajaProfe(contenedor, criterios, { abierta = false } = {}) {
   return caja;
 }
 
-// Pantalla de inicio común: icono grande + botón de jugar (necesario para activar audio y voz).
-export function pantallaInicio(contenedor, { icono, titulo, onEmpezar }) {
+// Pantalla de inicio común: icono grande, explicación para el profe y botón de jugar (necesario para activar el audio).
+export function pantallaInicio(contenedor, { icono, titulo, intro = '', onEmpezar }) {
   const s = el(`
     <section class="inicio">
       <div class="icono-grande">${E(icono)}</div>
       <h2>${titulo}</h2>
+      ${intro ? `<p class="enunciado">${intro}</p>` : ''}
       <button class="btn-jugar" type="button" aria-label="Empezar">▶</button>
     </section>`);
   s.querySelector('button').addEventListener('click', () => {

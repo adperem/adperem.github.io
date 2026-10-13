@@ -15,7 +15,7 @@
   <script type="module">
     import { JUEGOS_QUIZ } from './js/quiz-juegos.js';
     import { ejecutarRondas } from './js/rondas.js';
-    import { cabecera, pantallaInicio, pantallaFinal, hablar, params } from './js/comun.js';
+    import { cabecera, pantallaInicio, pantallaFinal, params } from './js/comun.js';
     import { empezarSesion, terminarSesion } from './js/storage.js';
 
     const id = params().get('j');
@@ -27,17 +27,16 @@
 
     document.title = `${juego.titulo} · Jugamos y aprendemos`;
     const app = document.getElementById('app');
-    let partida = null;
 
-    cabecera({ titulo: juego.titulo, onRepetir: () => partida?.repetir() });
+    cabecera({ titulo: juego.titulo });
 
     pantallaInicio(app, {
       icono: juego.icono,
       titulo: juego.titulo,
+      intro: juego.intro,
       onEmpezar: () => {
         empezarSesion(id);
-        partida = ejecutarRondas({
-          esperar: hablar(juego.intro),
+        ejecutarRondas({
           contenedor: app,
           rondas: juego.rondas(),
           criterio: juego.criterio,
