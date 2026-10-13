@@ -188,7 +188,8 @@ export const JUEGOS_QUIZ = {
         enunciado: 'Toca el círculo.',
         opciones: [op(forma('circulo', color), true), ...sample(['cuadrado', 'triangulo', 'rectangulo'], 2).map(f => op(forma(f, color)))]
       }));
-      const objetos = sample(['🕒', '🍩', '⚽', '🍊', 'plato', 'boton', 'pizza', 'luna'], 3).map(r => ({
+      // Cosas vistas de frente o desde arriba, para que se vea bien que son un círculo.
+      const objetos = sample(['🕒', '⚽', 'luna', 'pizza', 'naranja-cortada', 'moneda', 'piruleta'], 3).map(r => ({
         enunciado: '¿Qué tiene forma de círculo?',
         opciones: [op(E(r), true), ...sample(['📕', '📦', 'porcion-pizza', '🧀', '🖼️', '📄', 'dado', '✏️', 'sobre'], 2).map(o => op(E(o)))]
       }));

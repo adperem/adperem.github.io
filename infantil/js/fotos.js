@@ -6,7 +6,7 @@ import { RECORTES, FOTOS_COMPLETAS } from './fotos-lista.js';
 const EMOJI = {
   '🍎': 'manzana', '🍌': 'platano', '🚗': 'coche', '✏': 'lapiz', '🔨': 'martillo', '🍩': 'donut', '📕': 'libro',
   '🧽': 'esponja', '🐇': 'conejo', '🐰': 'conejo', '🐢': 'tortuga', '🐎': 'caballo', '🐴': 'caballo', '🦄': 'caballo',
-  '🧸': 'osito', '👙': 'banador', '🩱': 'banador', '🗑': 'papelera', '👂': 'oreja', '😀': 'cara-contenta',
+  '🧸': 'osito', '👙': 'banador', '🩱': 'banador', '🗑': 'papelera', '😀': 'cara-contenta',
   '😢': 'cara-triste', '🎂': 'cumpleanos', '🍓': 'fresa', '🍒': 'cerezas', '🍅': 'tomate', '🚒': 'camion-bomberos',
   '🌹': 'rosa', '🎈': 'globo', '🥦': 'brocoli', '🍋': 'limon', '🐸': 'rana', '🌻': 'girasol', '🍇': 'uvas', '🐳': 'ballena',
   '🌽': 'maiz', '🍪': 'galleta', '🍐': 'pera', '🍊': 'naranja', '🐘': 'elefante', '🐶': 'perro', '🐱': 'gato',
