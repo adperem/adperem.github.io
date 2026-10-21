@@ -15,7 +15,8 @@ export const AREAS = [
       { id: 'ca4', n: 4, texto: 'Diferencia entre movimiento y reposo.', tipo: 'observacion' },
       { id: 'ca5', n: 5, texto: 'Aprende a trabajar de forma cooperativa.', tipo: 'observacion' },
       { id: 'ca6', n: 6, texto: 'Se pone y se quita el abrigo solo.', tipo: 'observacion' },
-      { id: 'ca7', n: 7, texto: 'Identifica las emociones de alegría y tristeza.', tipo: 'juego' }
+      { id: 'ca7', n: 7, texto: 'Identifica las emociones de alegría y tristeza.', tipo: 'juego' },
+      { id: 'ca8', n: 8, texto: 'Identifica a los miembros de la familia: papá, mamá, hermanos, abuelos y bebé.', tipo: 'juego' }
     ]
   },
   {
@@ -66,6 +67,7 @@ const q = id => `juego.html?j=${id}`;
 export const ACTIVIDADES = [
   { id: 'recoger', titulo: 'Recogemos la clase', icono: '🧸', area: 'ca', criterios: ['ca2'], url: 'recoger.html' },
   { id: 'emociones', titulo: 'Contento o triste', icono: '😀', area: 'ca', criterios: ['ca7'], url: q('emociones') },
+  { id: 'familia', titulo: 'La familia', icono: 'familia', area: 'ca', criterios: ['ca8'], url: q('familia') },
 
   { id: 'rojo', titulo: 'El color rojo', icono: '🍎', area: 'de', criterios: ['de1'], url: q('rojo') },
   { id: 'uno-ninguno', titulo: 'Uno o ninguno', icono: 'plato-comida', area: 'de', criterios: ['de2'], url: q('uno-ninguno') },
