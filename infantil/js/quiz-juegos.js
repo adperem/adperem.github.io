@@ -33,6 +33,36 @@ export const JUEGOS_QUIZ = {
     }
   },
 
+  familia: {
+    titulo: 'La familia', icono: 'familia', criterio: 'ca8',
+    intro: 'Mamá, papá, los hermanos, los abuelos y el bebé. ¿Quién es quién?',
+    rondas: () => {
+      // Tres fotos de cada uno: img/familia-<quien>-<1..3>.webp
+      const quien = {
+        papa: 'el papá', mama: 'la mamá', abuelo: 'el abuelo', abuela: 'la abuela',
+        hermano: 'el hermano', hermana: 'la hermana', bebe: 'el bebé'
+      };
+      // Una de las opciones incorrectas se le parece (misma edad o mismo sexo), para que no baste con descartar.
+      const parecidos = {
+        papa: ['mama', 'abuelo'], mama: ['papa', 'abuela'], abuelo: ['abuela', 'papa'], abuela: ['abuelo', 'mama'],
+        hermano: ['hermana', 'bebe'], hermana: ['hermano', 'bebe'], bebe: ['hermano', 'hermana']
+      };
+      const quedan = {};
+      const foto = m => {
+        if (!quedan[m]?.length) quedan[m] = shuffle([1, 2, 3]);
+        return E(`familia-${m}-${quedan[m].pop()}`);
+      };
+      return shuffle(['papa', 'mama', 'abuelo', 'abuela', 'bebe', pick(['hermano', 'hermana'])]).map(m => {
+        const parecido = pick(parecidos[m]);
+        const otro = pick(Object.keys(quien).filter(x => x !== m && x !== parecido));
+        return {
+          enunciado: `¿Quién es ${quien[m]}?`,
+          opciones: [op(foto(m), true), op(foto(parecido)), op(foto(otro))]
+        };
+      });
+    }
+  },
+
   rojo: {
     titulo: 'El color rojo', icono: '🍎', criterio: 'de1',
     intro: 'Vamos a buscar el color rojo.',
